@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.json.JSONObject;
+
 import com.dumbpug.vem.C;
 import com.dumbpug.vem.Entities.Drone;
 import com.dumbpug.vem.Entities.Vem;
@@ -75,24 +78,15 @@ public class World {
 		// Here we are initalising a new 'vem'. what we will have to do is create our vem
 		// by reading his saved properties from disk (such as position)
 		Scanner scanner = null;
-		Direction direction = Direction.SOUTH;
-		int vemPositionY;
-		int vemPositionX;
 		// Read for VEM entity save file to get info and set up this session
 		try {
 			scanner = new Scanner(new File(C.ENTITY_VEM_SAVE_FILE));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		String rawPosition = scanner.nextLine();  // Position
-		String rawFacingDirection = scanner.nextLine();   // Direction
-		// Get actual Positional data from read input
-		vemPositionY = Integer.parseInt(rawPosition.split("_")[0]);
-		vemPositionX = Integer.parseInt(rawPosition.split("_")[1]);
-		// Get actual Facing Direction data from read input
-		direction = Direction.valueOf(rawFacingDirection);
+		JSONObject charObject = new JSONObject(scanner.nextLine());
 		// Create a new instance of VEM
-		vem = new Vem(vemPositionY, vemPositionX, direction);
+		vem = new Vem(charObject.getInt("posY"), charObject.getInt("posX"), Direction.valueOf(charObject.getString("Direction")), charObject.getString("MemBank"));
 		// ---------------------------------------------------------------------------------
 	}
 	
@@ -173,6 +167,21 @@ public class World {
 	 */
 	public ArrayList<Drone> getDrones() {
 		return drones;
+	}
+	
+	/**
+	 * Get drone with matching id
+	 * @return
+	 */
+	public Drone getDrone(String id) {
+		Drone returnDrone = null;
+		for(Drone drone : drones) {
+			if(drone.getId().toLowerCase().equals(id.toLowerCase())) {
+				returnDrone = drone;
+				break;
+			}
+		}
+		return returnDrone;
 	}
 	
 	/**

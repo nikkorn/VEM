@@ -1,5 +1,8 @@
 package com.dumbpug.vem.GamePanel;
 
+import com.dumbpug.vem.VEM;
+import com.dumbpug.vem.Entities.Drone;
+
 /**
  * 
  * @author Nikolas Howard
@@ -22,6 +25,11 @@ public class CommandProcessor {
 				"Constructed 3012 - WRP Corp. \n" +
 				"ser. H56L098RR3 \n" +
 				"ver. 7.007.897";
+			
+		// The user has requested drone management.
+		case "dm":
+			return processDroneManagement(commandTokens);
+		
 		// The user has requested help.
 		case "help":
 			// Do we only have one token? (as in has the user only typed 'help')
@@ -60,5 +68,111 @@ public class CommandProcessor {
 		}
 		// We were't able to handle this command, simply error
 		return "ERROR: command '" + rawCommand + "' is invalid!";
+	}
+
+	/**
+	 * The user wants to do something with drone management
+	 * @param commandTokens
+	 * @return output
+	 */
+	private String processDroneManagement(String[] commandTokens) {
+		if(commandTokens.length > 1) {
+			if(commandTokens[1].toLowerCase().equals("list")) {
+				// The user simply wants a list of all existing drones
+				String output = "";
+				int droneIndex = 1;
+				for(Drone drone : VEM.world.getDrones()) {
+					output += droneIndex + ". " + drone.getId();
+				}
+				return output;
+			} else {
+				// The second token MUST be a drone id. Check it is valid
+				String droneId = commandTokens[1];
+				// We can't continue if the drone that the user specified doesn't exist
+				if(VEM.world.getDrone(droneId) == null) {
+					return "drone '" + droneId + "' does not exist";
+				}
+				// Process the next command token
+				if(commandTokens.length > 2) {
+					switch(commandTokens[2].toLowerCase()) {
+					case "scripts":
+						int snippetLength = 18;
+						for(Drone drone : VEM.world.getDrones()) {
+							// Is this the target drone?
+							if(drone.getId().toLowerCase().equals(droneId.trim().toLowerCase())){
+								String output = "";
+								for(int position = 0; position < 5; position++) {
+									String code = drone.getScriptCode(position);
+									String codeSnippet = "--";
+									// Construct a code snippet to show user
+									if(!code.isEmpty()) {
+										if(code.length() > snippetLength) {
+											codeSnippet = "'" + code.substring(0, snippetLength) + "'";
+										} else {
+											codeSnippet = "'" + addPadding(code, snippetLength) + "'";
+										}
+									}
+									output += (position+1) + ". " + codeSnippet + " ";
+									// Is this script currently running?
+									if(drone.getRunningScriptIndex() == position) {
+										output += "(Running)";
+									}
+									output += "\n";
+								}
+								return output;
+							}
+						}
+						// We didn't find our drone, let the user know
+						return "drone '" + droneId + "' does not exist";
+					case "run-script":
+						// Run the drone script
+						// TODO you must set the target script with the next command token first
+						VEM.world.getDrone(droneId).runScript();
+						return "drone '" + droneId + "' began executing script";
+					case "stop-script":
+						// Stop the currently executing script
+						VEM.world.getDrone(droneId).stopScript();
+						return "drone '" + droneId + "' was stopped";
+					case "state":
+						return "This drone is cool!";
+					default:
+						return "usage: 'dm " + droneId + " scripts' \n"
+						 + "       'dm " + droneId + " stop-script' \n"
+						 + "       'dm " + droneId + " run-script 1' \n"
+						 + "       'dm " + droneId + " state' \n";
+					}
+				} else {
+					return "usage: 'dm " + droneId + " scripts' \n"
+							 + "       'dm " + droneId + " stop-script' \n"
+							 + "       'dm " + droneId + " run-script 1' \n"
+							 + "       'dm " + droneId + " state' \n";
+				}
+			}
+		} else
+		{
+			return "usage: 'dm list' \n" 
+				 + "       'dm drone_name scripts' \n"
+				 + "       'dm drone_name stop-script' \n"
+				 + "       'dm drone_name run-script 1' \n"
+				 + "       'dm drone_name state' \n";
+		}
+	}
+	
+	/**
+	 * Simply a helper method to add padding to a string
+	 * @param input
+	 * @param length
+	 * @return
+	 */
+	private String addPadding(String input, int length) {
+		if(input.length() >= length) {
+			return input;
+		} else {
+			String padding = "";
+			for(int i = 0 ; i < (length - input.length()); i++) {
+				padding += " ";
+			}
+			return input + padding;
+		}
 	}
 }

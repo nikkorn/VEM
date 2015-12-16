@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 import javax.imageio.ImageIO;
+
+import org.json.JSONObject;
+
 import com.dumbpug.vem.C;
 import com.dumbpug.vem.Math.Math;
 import com.dumbpug.vem.Math.SimplexNoise;
@@ -269,6 +272,11 @@ public class MapGenerator {
 	private void generateCharacterSaveFile(SpawnPoint spawnPoint) {
 		File targetFile = new File(C.ENTITY_VEM_SAVE_FILE);
 		targetFile.getParentFile().mkdirs();
+		JSONObject charObject = new JSONObject();
+		charObject.put("posX", spawnPoint.posX);
+		charObject.put("posY", spawnPoint.posY);
+		charObject.put("Direction", "SOUTH");
+		charObject.put("MemBank", "");
 		try {
 			targetFile.createNewFile();
 		} catch (IOException e1) {
@@ -280,8 +288,7 @@ public class MapGenerator {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		pr.println(spawnPoint.posY + "_" + spawnPoint.posX); // Position
-		pr.println("SOUTH"); // Direction
+		pr.println(charObject); 
 		pr.flush();
 		if(pr != null) {
 			pr.close();

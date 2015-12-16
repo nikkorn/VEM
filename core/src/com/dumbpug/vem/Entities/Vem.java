@@ -14,17 +14,18 @@ public class Vem implements Drawable {
 	// Properties
 	private WorldObject wObject = new WorldObject(WorldObjectType.VEM, this);
 	private boolean canTravelOnWater = false;
-	
 	private double step = 0;
 	private int cell_x;
 	private int cell_y;
 	private boolean stuck = false;
-	
 	private int pendingMovementCells = 0;
 	private volatile Direction pendingMovementDirection = Direction.NONE;
+	// This is essentially VEMs cache, we can copy drone scripts here.
+	private String memoryBank = "";
 	
-	public Vem(int posY, int posX, Direction facingDirection) {
+	public Vem(int posY, int posX, Direction facingDirection, String memBank) {
 		setPosition(posX, posY);
+		this.memoryBank = memBank;
 		pendingMovementDirection = facingDirection;
 	}
 	
@@ -239,5 +240,9 @@ public class Vem implements Drawable {
 	
 	public Direction getFacingDirection() {
 		return this.pendingMovementDirection;
+	}
+	
+	public String getMemoryBankContents() {
+		return this.memoryBank;
 	}
 }

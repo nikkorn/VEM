@@ -1,7 +1,6 @@
 package com.dumbpug.vem.Entities;
 
-import javax.script.ScriptContext;
-
+import org.mozilla.javascript.Context;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,7 +11,7 @@ import com.dumbpug.vem.FontPack;
 import com.dumbpug.vem.TexturePack;
 import com.dumbpug.vem.VEM;
 import com.dumbpug.vem.ScriptInterface.DroneIntermediary;
-import com.dumbpug.vem.ScriptInterface.Script;
+import com.dumbpug.vem.ScriptInterface.DroneScript;
 import com.dumbpug.vem.ScriptInterface.Scriptable;
 import com.dumbpug.vem.World.WorldFamiliarity;
 import com.dumbpug.vem.World.WorldObject;
@@ -28,6 +27,7 @@ public class Drone implements Scriptable, Drawable {
 	private String id = "";
 	private WorldObject wObject = new WorldObject(WorldObjectType.DRONE, this);
 	private boolean canTravelOnWater = false;
+	private boolean scriptStopped = false;
 
 	// Position
 	private int cell_x;
@@ -35,10 +35,13 @@ public class Drone implements Scriptable, Drawable {
 	
 	// Movement
 	private boolean stuck = false;
-	private int pendingMovementCells = 0;
-	private double step = 0;
+	private volatile int pendingMovementCells = 0;
+	private volatile double step = 0;
 	private volatile Direction pendingMovementDirection = Direction.NONE;
 	private int movementUnit = C.MOVEMENT_UNIT_DIVISION;
+	
+	// Our Raw Scripts
+	String[] scripts = new String[5];
 	
 	// Speech
 	public String speechContents = "";
@@ -49,22 +52,51 @@ public class Drone implements Scriptable, Drawable {
 	private GlyphLayout layout;
 	
 	// Scripting
-	private Script script;
+	private DroneScript script;
 	
 	//--------------------------- Entity Logic ---------------------------
 	
 	public Drone(int cellX, int cellY, String id) {
 		setPosition(cellX, cellY);
 		this.setId(id);
-		// Set up glyphlayout and font to help with drawing speech modals
+		// TODO Get scripts from disk
+		setScripts("","","","var i = 1","sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfs");
+		// Set up GlyphLayout and font to help with drawing speech modal
 		layout = new GlyphLayout();
 		// Create a new script object
-		script = new Script();
+		script = new DroneScript();
 		// Every entity that is manipulated by a script will have its java object (via an intermediary) referenced by the identifier MACHINE.
-		script.getContext().setAttribute("MACHINE", new DroneIntermediary(script, this), ScriptContext.ENGINE_SCOPE);
+		script.getGlobalScope().put("MACHINE", script.getGlobalScope(), Context.javaToJS(new DroneIntermediary(script, this), script.getGlobalScope()));
 	}
 	
+	/**
+	 * Set the scripts for the drone
+	 * @param script1
+	 * @param script2
+	 * @param script3
+	 * @param script4
+	 * @param script5
+	 */
+	private void setScripts(String script1, String script2, String script3, String script4, String script5) {
+		scripts[0] = script1;
+		scripts[1] = script2;
+		scripts[2] = script3;
+		scripts[3] = script4;
+		scripts[4] = script5;
+	}
+
+	/**
+	 * Do some processing for the drone.
+	 */
 	public void tick() {
+		// First of all, we need to check whether we have a script running. We may have stopped it then we want the 
+		// drone to cease all activities that may have been started by the JS engine (e.g. movement)
+		if(scriptStopped && !script.isRunning()){
+			// Let us stop our drone from moving
+			pendingMovementCells = 0;
+			// reset the scriptStopped flag
+			scriptStopped = false;
+		}
 		// Let's move!
 		if(pendingMovementCells > 0 || step > 0) {
 			// If step is 0 then we're about to move into another cell, check that this is cool.
@@ -153,7 +185,7 @@ public class Drone implements Scriptable, Drawable {
 	public void setPosition(int newPositionX, int newPositionY) {
 		// First we have to remove this drones world object at its old position...
 		VEM.world.removeWorldObject(cell_x, cell_y);
-		// ... And add int at its new position.
+		// ... And add it at its new position.
 		VEM.world.setWorldObject(wObject, newPositionX, newPositionY);
 		// We now need to work out if we have visited this part of the map (familiarity).
 		// If not then this are needs to be marked as familiar
@@ -194,6 +226,24 @@ public class Drone implements Scriptable, Drawable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	/**
+	 * Return the raw script code for the script at position scriptIndex
+	 * @param scriptIndex
+	 * @return
+	 */
+	public String getScriptCode(int scriptIndex) {
+		return scripts[scriptIndex];
+	}
+	
+	/**
+	 * Returns the index of running script.
+	 * @return index of running script, -1 if none are running
+	 */
+	public int getRunningScriptIndex() {
+		// TODO repair this
+		return 4;
 	}
 	
 	public void draw(SpriteBatch batch, float pY, float pX) {
@@ -265,6 +315,15 @@ public class Drone implements Scriptable, Drawable {
 	@Override
 	public void runScript() {
 		script.run();
+	}
+	
+	@Override
+	public void stopScript() {
+		if(script.isRunning()) {
+			script.stop();
+			// Set a flag to show that the running script was recently stopped
+			scriptStopped = true;
+		}
 	}
 
 	@Override

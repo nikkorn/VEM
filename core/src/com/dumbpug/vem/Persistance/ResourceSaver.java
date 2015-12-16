@@ -2,7 +2,10 @@ package com.dumbpug.vem.Persistance;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+
+import org.json.JSONObject;
 
 import com.dumbpug.vem.C;
 import com.dumbpug.vem.World.World;
@@ -44,14 +47,24 @@ public class ResourceSaver {
 	 */
 	private static void saveVemState(World world) {
 		File targetFile = new File(C.ENTITY_VEM_SAVE_FILE);
+		JSONObject charObject = new JSONObject();
+		charObject.put("posX", world.getVem().getCellX());
+		charObject.put("posY", world.getVem().getCellY());
+		charObject.put("Direction", world.getVem().getFacingDirection().toString());
+		charObject.put("MemBank", world.getVem().getMemoryBankContents());
+		try {
+			targetFile.createNewFile();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		PrintWriter pr = null;
 		try {
 			pr = new PrintWriter(targetFile);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		pr.println(world.getVem().getCellY() + "_" + world.getVem().getCellX()); // Position
-		pr.println(world.getVem().getFacingDirection()); // Direction
+		pr.println(charObject); 
+		pr.flush();
 		if(pr != null) {
 			pr.close();
 		}

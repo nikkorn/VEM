@@ -8,9 +8,9 @@ public class DroneIntermediary implements DroneScriptInterface {
 	private Drone entity;
 	
 	@SuppressWarnings("unused")
-	private Script script;
+	private DroneScript script;
 	
-	public DroneIntermediary(Script script, Drone droneEntity) {
+	public DroneIntermediary(DroneScript script, Drone droneEntity) {
 		this.script = script;
 		this.entity = droneEntity;
 	}
