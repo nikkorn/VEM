@@ -3,6 +3,8 @@ package com.dumbpug.vem.ScriptInterface;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 
+import com.dumbpug.vem.ScriptInterface.MyFactory.StoppableContext;
+
 /**
  * 
  * @author Nikolas Howard
@@ -12,7 +14,7 @@ public class DroneScript {
 	private String rawScript = "";
 	private boolean running = false;
 	private org.mozilla.javascript.Scriptable scriptable = null;
-	private ObservingDebugger observingDebugger;
+	private ContextStopper contextStopper = null;
 	
 	public DroneScript() {
 		Context cx = Context.enter();
@@ -33,11 +35,9 @@ public class DroneScript {
 			// Run our Rhino script in a new thread
 			new Thread(new Runnable() {
 				public void run() {
-					Context cx = Context.enter();
-					observingDebugger = new ObservingDebugger();
-					cx.setDebugger(observingDebugger, new Integer(0));
-					cx.setGeneratingDebug(true);
-					cx.setOptimizationLevel(-1);
+					StoppableContext cx = (StoppableContext) Context.enter();
+					contextStopper = new ContextStopper();
+					cx.setContextStopper(contextStopper);
 					Script script = cx.compileString(rawScript, "drone_script", 1, null);
 					
 					try {
@@ -46,6 +46,9 @@ public class DroneScript {
 						// TODO Determine if this was the debugger calling a stop, or bad code
 					}
 					
+					// Reset the ContextStopper
+					contextStopper = null;
+					// This script is no longer running
 					running = false;
 				}
 			}).start();
@@ -69,7 +72,7 @@ public class DroneScript {
 	 */
 	public void stop() {
 		if(running) {
-			observingDebugger.setDisconnected(true);
+			contextStopper.stop();
 		}
 	}
 }

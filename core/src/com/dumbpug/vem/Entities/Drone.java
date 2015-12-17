@@ -53,14 +53,17 @@ public class Drone implements Scriptable, Drawable {
 	
 	// Scripting
 	private DroneScript script;
+	private int currentScriptIndex = -1;
 	
 	//--------------------------- Entity Logic ---------------------------
 	
-	public Drone(int cellX, int cellY, String id) {
+	public Drone(int cellX, int cellY, String id, Direction facingDirection, String script1, String script2, String script3, String script4, String script5) {
 		setPosition(cellX, cellY);
 		this.setId(id);
+		// Set the last (or first ever) facing direction of this drone.
+		this.pendingMovementDirection = facingDirection;
 		// TODO Get scripts from disk
-		setScripts("","","","var i = 1","sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfs");
+		setScripts(script1, script2, script3, script4, script5);
 		// Set up GlyphLayout and font to help with drawing speech modal
 		layout = new GlyphLayout();
 		// Create a new script object
@@ -182,6 +185,10 @@ public class Drone implements Scriptable, Drawable {
 		return cell_y;
 	}
 	
+	public Direction getFacingDirection() {
+		return this.pendingMovementDirection;
+	}
+	
 	public void setPosition(int newPositionX, int newPositionY) {
 		// First we have to remove this drones world object at its old position...
 		VEM.world.removeWorldObject(cell_x, cell_y);
@@ -242,14 +249,17 @@ public class Drone implements Scriptable, Drawable {
 	 * @return index of running script, -1 if none are running
 	 */
 	public int getRunningScriptIndex() {
-		// TODO repair this
-		return 4;
+		if(!script.isRunning()) {
+			return -1;
+		} else {
+			return currentScriptIndex;
+		}
 	}
 	
 	public void draw(SpriteBatch batch, float pY, float pX) {
 		TextureRegion txRegion = null;
 		TexturePack texturePack = VEM.getTexturePack();
-
+		TextureRegion[][] droneTextureRegions;
 		float posX = pX;
 		float posY = pY;
 		
@@ -273,22 +283,29 @@ public class Drone implements Scriptable, Drawable {
 			}
 		} 
 		
+		// The drone will look different if it is running a script at the time.
+		if(script.isRunning()) {
+			droneTextureRegions = texturePack.droneTextureRegions_Running;
+		} else {
+			droneTextureRegions = texturePack.droneTextureRegions_Stopped;
+		}
+		
 		// Set the texture to draw depending on direction
 		switch(pendingMovementDirection) {
 		case EAST:
-			txRegion = texturePack.droneTextureRegions[0][2];
+			txRegion = droneTextureRegions[0][2];
 			break;
 		case NORTH:
-			txRegion = texturePack.droneTextureRegions[0][1];
+			txRegion = droneTextureRegions[0][1];
 			break;
 		case SOUTH:
-			txRegion = texturePack.droneTextureRegions[0][0];
+			txRegion = droneTextureRegions[0][0];
 			break;
 		case WEST:
-			txRegion = texturePack.droneTextureRegions[0][3];
+			txRegion = droneTextureRegions[0][3];
 			break;
 		default:
-			txRegion = texturePack.droneTextureRegions[0][0];
+			txRegion = droneTextureRegions[0][0];
 			break;
 		}
 		
@@ -332,7 +349,8 @@ public class Drone implements Scriptable, Drawable {
 	}
 
 	@Override
-	public void setScript(String scriptString) {
-		script.setScript(scriptString);
+	public void setScript(int index) {
+		currentScriptIndex = index;
+		script.setScript(scripts[index]);
 	}
 }

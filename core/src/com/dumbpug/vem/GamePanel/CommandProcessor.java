@@ -82,7 +82,7 @@ public class CommandProcessor {
 				String output = "";
 				int droneIndex = 1;
 				for(Drone drone : VEM.world.getDrones()) {
-					output += droneIndex + ". " + drone.getId();
+					output += droneIndex++ + ". " + drone.getId() + "\n";
 				}
 				return output;
 			} else {
@@ -125,10 +125,12 @@ public class CommandProcessor {
 						// We didn't find our drone, let the user know
 						return "drone '" + droneId + "' does not exist";
 					case "run-script":
-						// Run the drone script
-						// TODO you must set the target script with the next command token first
-						VEM.world.getDrone(droneId).runScript();
-						return "drone '" + droneId + "' began executing script";
+						// Run the drone script. check that we have a script index token though
+						if(commandTokens.length > 3) {
+							return runDroneScript(commandTokens[3], droneId);
+						} else {
+							return "usage: 'dm " + droneId + " run-script script_number' \n";
+						}
 					case "stop-script":
 						// Stop the currently executing script
 						VEM.world.getDrone(droneId).stopScript();
@@ -158,6 +160,33 @@ public class CommandProcessor {
 		}
 	}
 	
+	/**
+	 * Run a drone script.
+	 * @param string
+	 * @param droneId
+	 * @return
+	 */
+	private String runDroneScript(String rawScriptIndex, String droneId) {
+		int scriptIndex = -1;
+		// Attempt to parse the users input as a valid index (int)
+		try {
+			scriptIndex = Integer.parseInt(rawScriptIndex);
+		} catch(NumberFormatException nfe) {
+			return "ERROR: '" + rawScriptIndex + "' is not a valid script index. \n" +
+					"the index must be between 1 - 5 \n";
+		}
+		// Make sure that this index is in range 1-5 
+		if(!((scriptIndex >= 1) && (scriptIndex <= 5))) {
+			return "ERROR: '" + rawScriptIndex + "' is not a valid script index. \n" +
+					"the index must be between 1 - 5 \n";
+		}
+		// Set the script
+		VEM.world.getDrone(droneId).setScript(scriptIndex - 1);
+		// Run the script
+		VEM.world.getDrone(droneId).runScript();
+		return "drone '" + droneId + "' began executing script";
+	}
+
 	/**
 	 * Simply a helper method to add padding to a string
 	 * @param input

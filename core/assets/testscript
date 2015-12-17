@@ -19,3 +19,6 @@ while(true) {
 	
 	MACHINE.say("Stuck here too, lets go back!", 4000);
 }
+
+
+while(true) { MACHINE.move('NORTH','6'); while(MACHINE.isTravelling()) { } MACHINE.move('SOUTH','6'); while(MACHINE.isTravelling()) { } }

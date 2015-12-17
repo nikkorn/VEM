@@ -46,7 +46,8 @@ public class TexturePack {
 	
 	// Texture Regions
 	public TextureRegion[][] vemTextureRegions;
-	public TextureRegion[][] droneTextureRegions;
+	public TextureRegion[][] droneTextureRegions_Running;
+	public TextureRegion[][] droneTextureRegions_Stopped;
 	
 	public void loadResources() {
 		consoleBackground = new Texture("images/misc/vem_console.png");
@@ -81,7 +82,8 @@ public class TexturePack {
 		SCRAP_STAGE_2 = new Texture("images/world/SCRAP_STAGE_2.png");
 		SCRAP_STAGE_3 = new Texture("images/world/SCRAP_STAGE_3.png");
 		modalBackgroundTexture = new Texture("images/misc/speech_back.png");
-		droneTextureRegions = TextureRegion.split(new Texture("images/entities/BasicDrone_2.png"), 33, 33);
+		droneTextureRegions_Running = TextureRegion.split(new Texture("images/entities/drone_base_running.png"), 33, 33);
+		droneTextureRegions_Stopped = TextureRegion.split(new Texture("images/entities/drone_base_stopped.png"), 33, 33);
 		vemTextureRegions = TextureRegion.split(new Texture("images/entities/vem.png"), 25, 25);
 	}
 	

@@ -4,5 +4,5 @@ public interface Scriptable {
 	public void runScript();
 	public void stopScript();
 	public boolean isCurrentlyRunningScript();
-	public void setScript(String script);
+	public void setScript(int scriptIndex);
 }

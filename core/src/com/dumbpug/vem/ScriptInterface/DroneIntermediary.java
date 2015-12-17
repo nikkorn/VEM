@@ -29,27 +29,10 @@ public class DroneIntermediary implements DroneScriptInterface {
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-	public void moveAndWait(String direction, int numberOfCells) {
-		try {
-			entity.move(Direction.valueOf(direction), numberOfCells);
-		} catch(Exception e) { 
-			e.printStackTrace();
-		}
-		
-		// We need to stop the script thread until this action has been carried out!
-		while(isTravelling()) { 
-			try {
-				Thread.sleep(2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	@Override
 	public void say(String info, long milliseconds) {
+		System.out.println("SAY!");
 		// Restrict message length
 		if(info.length() > C.MODAL_MAX_LENGTH) {
 			entity.speechContents = info.substring(0, C.MODAL_MAX_LENGTH) + "..."; 

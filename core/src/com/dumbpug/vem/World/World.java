@@ -1,16 +1,10 @@
 package com.dumbpug.vem.World;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
-
 import org.json.JSONObject;
-
 import com.dumbpug.vem.C;
 import com.dumbpug.vem.Entities.Drone;
 import com.dumbpug.vem.Entities.Vem;
@@ -37,44 +31,27 @@ public class World {
 	 * Read all entity info from disk (VEM, Drone)
 	 */
 	public void populateSpecialWorldObjectsFromDisk() {
-		// ------------TEST--------------
-		Drone droneA = new Drone(781,782,"Alpha"); 
-	
-		BufferedReader br = null;
-		String everything = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream("bin\\testscript")));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-		    StringBuilder sb = new StringBuilder();
-		    String line = br.readLine();
-
-		    while (line != null) {
-		        sb.append(line);
-		        sb.append(System.lineSeparator());
-		        line = br.readLine();
-		    }
-		    everything = sb.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-		    try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		// -------------------------------- Get Drones from Disk -----------------------------
+		// If we don't have a drone save directory then just move on.
+		File droneSaveDir = new File(C.ENTITY_DRONE_SAVE_DIRECTORY);
+		if(droneSaveDir.exists()) {
+			for(File droneSaveFile: droneSaveDir.listFiles()) {
+				Scanner scanner = null;
+				try {
+					scanner = new Scanner(droneSaveFile);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				// Reconstruct our drone JSON object.
+				JSONObject drObject = new JSONObject(scanner.nextLine());
+				Drone newDrone = new Drone(drObject.getInt("posX"), drObject.getInt("posY"), drObject.getString("id"), Direction.valueOf(drObject.getString("direction"))
+						, drObject.getString("script_1") , drObject.getString("script_2") , drObject.getString("script_3") , drObject.getString("script_4") , drObject.getString("script_5"));
+				drones.add(newDrone);
 			}
-		}
+		} 
+		// -----------------------------------------------------------------------------------
 		
-		droneA.setScript(everything);
-		drones.add(droneA);
-		// ------------TEST--------------
-		
-		// --------------------------------Get VEM from Disk -------------------------------
+		// --------------------------------Get VEM from Disk ---------------------------------
 		// Here we are initalising a new 'vem'. what we will have to do is create our vem
 		// by reading his saved properties from disk (such as position)
 		Scanner scanner = null;
@@ -87,7 +64,7 @@ public class World {
 		JSONObject charObject = new JSONObject(scanner.nextLine());
 		// Create a new instance of VEM
 		vem = new Vem(charObject.getInt("posY"), charObject.getInt("posX"), Direction.valueOf(charObject.getString("Direction")), charObject.getString("MemBank"));
-		// ---------------------------------------------------------------------------------
+		// -----------------------------------------------------------------------------------
 	}
 	
 	/**

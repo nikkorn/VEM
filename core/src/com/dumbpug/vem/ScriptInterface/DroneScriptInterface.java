@@ -5,7 +5,6 @@ public interface DroneScriptInterface {
 	public boolean isStuck();
 	public boolean isTravelling();
 	public void move(String direction, int numberOfCells);
-	public void moveAndWait(String direction, int numberOfCells);
 	public int getPositionX();
 	public int getPositionY();
 	public void stop();

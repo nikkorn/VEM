@@ -27,4 +27,5 @@ public class C {
 	// Save File Paths
 	public static final String WORLD_FAMILIARITY_SAVE_FILE = "bin/map/worldFm";
 	public static final String ENTITY_VEM_SAVE_FILE = "bin/map/specials/vem.char";
+	public static final String ENTITY_DRONE_SAVE_DIRECTORY = "bin/map/specials/drones/";
 }

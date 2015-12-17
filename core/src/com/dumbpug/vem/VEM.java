@@ -1,6 +1,9 @@
 package com.dumbpug.vem;
 
 import java.util.ArrayList;
+
+import org.mozilla.javascript.ContextFactory;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -13,6 +16,7 @@ import com.dumbpug.vem.Entities.Vem;
 import com.dumbpug.vem.GamePanel.GamePanel;
 import com.dumbpug.vem.Input.VemInputProcessor;
 import com.dumbpug.vem.Persistance.ResourceSaver;
+import com.dumbpug.vem.ScriptInterface.MyFactory;
 import com.dumbpug.vem.World.World;
 
 public class VEM extends ApplicationAdapter {
@@ -59,9 +63,11 @@ public class VEM extends ApplicationAdapter {
 		loadingTexture = new Texture("images/misc/loading.png");
 		// Load our resources in a new thread (so we can draw our loading screen and stuff)
 		resourceLoader = new ResourceLoader(world, texturePack);
-		// Inisialise our InputProcessor and set it as our primary InputProcessor.
+		// Initialise our InputProcessor and set it as our primary InputProcessor.
 		inputProcessor = new VemInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
+		// Required in order for ContextFactory to produce StoppableContexts
+		ContextFactory.initGlobal(new MyFactory());
 	}
 
 	@Override
