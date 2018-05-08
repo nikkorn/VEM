@@ -1,0 +1,13 @@
+Loading a New Map
+=================
+
+1. Launch server with map name, and optionally seed.
+2. Create new 'World' instance, passing name and optionally seed.
+3. Create new 'GameEngine' instance, passing World.
+4. Load and make active the chunks around the spawn. 
+5. Follow loop of:
+	- Listen for and process player input.
+	- Review active state of chunks.
+	- Tick active chunks.
+	- Broadcast any chunk modifications.
+	- Broadcast player messages.
