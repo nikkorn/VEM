@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import javax.imageio.ImageIO;
-
 import server.world.TileType;
 
 public class PerlinTest {
@@ -17,7 +16,7 @@ public class PerlinTest {
 	private static void test() {
 		int size         = 1024;
 		int worldSize    = 1024;
-		long seed        = 3435655458l;
+		long seed        = 11223344l;
 		Random rng       = new Random(seed);
 
 		File outputfile   = new File(System.currentTimeMillis() + "_map.png");
@@ -29,10 +28,12 @@ public class PerlinTest {
 		// Generate each tile static tile and draw it to our world image.
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
-				// Generate noise for the current world position.
-				double noise = generateNoise(worldSize, x, y, z);
+				// Generate terrain noise for the current world position.
+				int terrainNoise = (int)(generateNoise(0.02f, worldSize, x, y, z) * 10);
+				// Generate biome noise for the current world position.
+				int biomeNoise = (int)(generateNoise(0.025f, worldSize, x, y, z + 100) * 10);
 				// Convert this piece of noise to a tile type.
-				TileType tileType = convertNoiseToTileType((int)(noise * 10));
+				TileType tileType = convertNoiseToTileType(terrainNoise, biomeNoise);
 				// Draw the current tile to our world image.
 				drawTileToWorldImage(img, x, y, tileType);
 			}
@@ -93,6 +94,16 @@ public class PerlinTest {
 				g = 241; 
 				b = 64;
 				break;
+			case METAL:
+				r = 255;
+				g = 0; 
+				b = 0;
+				break;
+			case ROCK:
+				r = 206;
+				g = 112; 
+				b = 61;
+				break;
 			case SNOW:
 				r = 255;
 				g = 255; 
@@ -109,49 +120,90 @@ public class PerlinTest {
 	
 	/**
 	 * Converts a piece of noise to a static world tile type.
-	 * @param noise The piece of noise.
+	 * @param terrainNoise The piece of terrain noise.
+	 * @param biomeNoise The piece of biome noise.
 	 * @return The tile type.
 	 */
-	private static TileType convertNoiseToTileType(int noise) {
-		switch(noise) {
+	private static TileType convertNoiseToTileType(int terrainNoise, int biomeNoise) {
+		TileType type = null;
+		// Get the initial tile type, without consideration for biomes.
+		switch(terrainNoise) {
 			case 6:
 			case 5:
-				return TileType.FOREST;
+				type = TileType.FOREST;
+				break;
 			case 4:
 			case 3:
-				return TileType.GRASS;
+				type = TileType.GRASS;
+				break;
 			case 2:
-				return TileType.PLAINS;
+				type = TileType.PLAINS;
+				break;
 			case 1:
-				return TileType.SAND;
+				type = TileType.SAND;
+				break;
 			case 0:
-				return TileType.OCEAN_SHALLOWS;
+				type = TileType.OCEAN_SHALLOWS;
+				break;
 			case -1:
 			case -2:
 			case -3:
 			case -4:
-				return TileType.OCEAN;
+				type = TileType.OCEAN;
+				break;
 			case -5:
 			case -6:
 			case -7:
-				return TileType.OCEAN_DEEP;
+				type = TileType.OCEAN_DEEP;
+				break;
 			default:
-				return noise < 0 ? TileType.OCEAN_DEEP : TileType.SNOW;
+				type = terrainNoise < 0 ? TileType.OCEAN_DEEP : TileType.SNOW;
 		}
+		// Apply biome noise to tile types that vary between biomes.
+		switch(biomeNoise) {
+			case 7:
+			case 6:
+				type = type == TileType.FOREST ? TileType.METAL : type;
+				break;
+			case 5:
+			case 4:
+			case 3:
+				type = type == TileType.GRASS ? TileType.FOREST : type;
+				break;
+			case 2:
+				type = type == TileType.GRASS ? TileType.ROCK : type;
+				break;
+			case 1:
+			case 0:
+			case -1:
+			case -2:
+				type = type == TileType.SAND ? TileType.PLAINS : type;
+				type = type == TileType.OCEAN_SHALLOWS ? TileType.OCEAN : type;
+				break;
+			case -3:
+			case -4:
+			case -5:
+			case -6:
+			case -7:
+			default:
+				type = TileType.OCEAN;
+				break;
+		}
+		// Return the tile type.
+		return type;
 	}
 
 	/**
 	 * Generate noise for a world position.
+	 * @param frequency The frequency.
 	 * @param x The x value.
 	 * @param y The y value.
 	 * @param z The z value.
 	 * @return The noise value for the position.
 	 */
-	private static double generateNoise(int worldSize, int x, int y, double z) {
-		// Frequency = features. Higher = more features.
-		float frequency = 0.02f;
-		float nx        = x * frequency;
-		float ny        = y * frequency;
+	private static double generateNoise(float frequency, int worldSize, int x, int y, double z) {
+		float nx = x * frequency;
+		float ny = y * frequency;
 		// Generate a piece of noise for this x/y position.
 		return ImprovedNoise.noise(nx, ny, z) + (0.2 * ImprovedNoise.noise(nx * 3, ny * 3, z)) + (0.25 * ImprovedNoise.noise(nx * 5, ny * 5, z));
 	}
