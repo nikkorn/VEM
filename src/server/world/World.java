@@ -1,6 +1,7 @@
 package server.world;
 
 import java.util.HashMap;
+import server.players.ConnectedPlayerPool;
 import server.world.generation.WorldGenerator;
 
 /**
@@ -19,6 +20,10 @@ public class World {
 	 * The cached chunks.
 	 */
 	private HashMap<String, Chunk> cachedChunks = new HashMap<String, Chunk>();
+	/**
+	 * The connected player pool
+	 */
+	private ConnectedPlayerPool connectedPlayerPool;
 	
 	/**
 	 * Creates a new instance of the WorldInformation class.
@@ -60,6 +65,14 @@ public class World {
 			// Return the chunk information.
 			return chunkInformation;
 		}
+	}
+	
+	/**
+	 * Set the connected player pool.
+	 * @param connectedPlayerPool The connected player pool.
+	 */
+	public void setConnectedPlayerPool(ConnectedPlayerPool connectedPlayerPool) {
+		this.connectedPlayerPool = connectedPlayerPool;
 	}
 	
 	/**
