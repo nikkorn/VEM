@@ -1,0 +1,51 @@
+Tiles
+=====
+
+Tiles have 3 layers:
+	1. TileType: The base layer which is static and is determined by the world generator.
+		Examples: Grass, Ocean, Snow.
+		
+	2. Placement: A placement is a stateful modification to the base tile type. 
+		Examples: Over grass a placement could be 'Tilled Earth'.
+				  Over deep ocean can be a fishing spot.
+				  Over a rock tile could be a rock to mine.
+				  Over water could be a bridge.
+				  Over any land could be a fence.
+				  Over any land could be a gate.
+		
+		Placements can just hold state or may also have logic they want to do every tick. For example, a 'Tilled Earth' 
+		placement can be ticked to 'grow' a seed that it may have in its container layer. Whether this placement is in a 
+		state of being watered could mean that this process happens quicker. A fishing spot may need need to tick in order 
+		to determine whether to trigger a player fishing at that spot to catch a fish.
+		
+		Placements that wouldn't need to tick are things like a bridge placement, or a fence.
+		
+		Placements define whether they are walkable. For example, a fence post placement will not be walkable, but tilled
+		earth would be until it grows a plant. Maybe, walking ton to a tilled earth placement when there is a plant will 
+		kill the plant and clear the container layer (which may hold goods produced by the plant).
+		
+		Items can be used on placements to:
+			1. Change State: E.g. using a full watering can on 'Tilled Earth' will set it to be WATERED for some ticks.
+			2. Destroy the placement.
+		
+	3. Container: The container layer can have items put it/taken out of it. Some containers can have only specific 
+		items types placed in them.
+	
+		Tickable placements can take action on the items that are in the container. For example, putting a seed in the 
+		container of a tile the has a 'Tilled earth' placement will prompt the placement to eventually put the fruit of
+		the plant it grows into in a container slot.
+		
+		Some slots in a container can be 'TAKE ONLY', meaning that a placement is the only thing that can place an item there. 
+		
+		Dropping an item on the ground (must not already be a container there) creates a container for that tile and puts the
+		dropped item in it.
+		
+
+Priority
+========
+
+Every tickable placement will have priority (LOW, MEDIUM, HIGH). The priority of a tickable placement mean different things.
+ 1. LOW: The placement will ONLY be ticked if a player or adjoining placement directly interacts with the placement. (e.g. switch)
+ 2. MEDIUM: The placement will be ticked by the game engine AS LONG as the chunk it resides in is active.
+ 3. HIGH: The placement will be ticked by the game engine at all times, as its presence in a chunk means that the chunk is ALWAYS active.
+ 
