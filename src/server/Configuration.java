@@ -57,6 +57,14 @@ public class Configuration {
 		}
 		// Convert the raw configuration JSON into a JSONObject instance.
 		JSONObject rawConfigJSON = Helpers.readJSONObjectFromFile(serverConfigFile);
-		//....
+		// Parse the configuration options from the JSON.
+		int port               = rawConfigJSON.getInt("port");
+		long worldSaveInterval = rawConfigJSON.getLong("save_interval");
+		// Print the configuration to the console.
+		System.out.println("loading server config from 'server.config.json'...");
+		System.out.println("port:              " + port);
+		System.out.println("worldSaveInterval: " + worldSaveInterval);
+		// Return the configuration instance.
+		return new Configuration(port, worldSaveInterval);
 	}
 }

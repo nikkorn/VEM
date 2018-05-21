@@ -1,7 +1,7 @@
 package server.world;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import server.players.ConnectedPlayerPool;
 import server.world.generation.WorldGenerator;
 
 /**
@@ -20,10 +20,6 @@ public class World {
 	 * The cached chunks.
 	 */
 	private HashMap<String, Chunk> cachedChunks = new HashMap<String, Chunk>();
-	/**
-	 * The connected player pool
-	 */
-	private ConnectedPlayerPool connectedPlayerPool;
 	
 	/**
 	 * Creates a new instance of the WorldInformation class.
@@ -53,26 +49,26 @@ public class World {
 	public Chunk getChunk(int x, int y) {
 		// Create the key for the chunk we are looking for.
 		String chunkKey = getChunkKey(x, y);
-		// Check whether we have already cached the chunk information.
+		// Check whether we have already cached the chunk.
 		if (this.cachedChunks.containsKey(chunkKey)) {
-			// We already have information for this chunk!
+			// We already have this chunk!
 			return this.cachedChunks.get(chunkKey);
 		} else {
-			// Create the chunk info.
+			// Create the chunk.
 			Chunk chunkInformation = new Chunk(x, y, this.worldGenerator);
-			// Cache this chunk info so that we don't have to keep generating it.
+			// Cache this chunk so that we don't have to keep generating it.
 			this.cachedChunks.put(chunkKey, chunkInformation);
-			// Return the chunk information.
+			// Return the chunk.
 			return chunkInformation;
 		}
 	}
 	
 	/**
-	 * Set the connected player pool.
-	 * @param connectedPlayerPool The connected player pool.
+	 * Get all cached chunks.
+	 * @return All cached chunks.
 	 */
-	public void setConnectedPlayerPool(ConnectedPlayerPool connectedPlayerPool) {
-		this.connectedPlayerPool = connectedPlayerPool;
+	public ArrayList<Chunk> getCachedChunks() {
+		return new ArrayList<Chunk>(this.cachedChunks.values());
 	}
 	
 	/**
@@ -83,18 +79,5 @@ public class World {
 	 */
 	private static String getChunkKey(int x, int y) {
 		return x + "-" + y;
-	}
-	
-	/**
-	 * Tick the game world.
-	 */
-	public void tick() {
-		// Tick any active chunks.
-		for (Chunk chunk : this.cachedChunks.values()) {
-			// Is this chunk active?
-			if (chunk.isActive()) {
-				chunk.tick();
-			}
-		}
 	}
 }
