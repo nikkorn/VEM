@@ -2,6 +2,9 @@ package server.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.world.generation.WorldGenerator;
 
 /**
@@ -69,6 +72,25 @@ public class World {
 	 */
 	public ArrayList<Chunk> getCachedChunks() {
 		return new ArrayList<Chunk>(this.cachedChunks.values());
+	}
+	
+	/**
+	 * Get the world state as JSON.
+	 * @return The world state as JSON.
+	 */
+	public JSONObject getState() {
+		// Create the JSON object that will represent this world.
+		JSONObject worldState = new JSONObject();
+		// Set the world seed.
+		worldState.put("seed", this.seed);
+		// Add chunk state. TODO Determine whether we want to save ALL chunks, or just cached/dirty ones.
+		JSONArray chunksArray = new JSONArray();
+		for (Chunk cachedChunk : this.cachedChunks.values()) {
+			chunksArray.put(cachedChunk.getState());
+		}
+		worldState.put("chunks", chunksArray);	
+		// Return the world state.
+		return worldState;
 	}
 	
 	/**

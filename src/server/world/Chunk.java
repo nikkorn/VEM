@@ -1,7 +1,9 @@
 package server.world;
 
+import org.json.JSONObject;
 import server.Constants;
 import server.world.generation.WorldGenerator;
+import server.world.placement.Placement;
 
 /**
  * Provides chunk information derived from RNG and Perlin noise.
@@ -11,6 +13,10 @@ public class Chunk {
 	 * The static tiles that this chunk is composed of.
 	 */
 	private TileType[][] tiles = new TileType[Constants.WORLD_CHUNK_SIZE][Constants.WORLD_CHUNK_SIZE];
+	/**
+	 * The placements that this chunk is composed of.
+	 */
+	private Placement[][] placements = new Placement[Constants.WORLD_CHUNK_SIZE][Constants.WORLD_CHUNK_SIZE];
 	/**
 	 * The x/y positions of the chunk.
 	 */
@@ -81,6 +87,23 @@ public class Chunk {
 	 */
 	public void tick() {
 		
+	}
+	
+	/**
+	 * Get the chunk state as JSON.
+	 * @return The chunk state as JSON.
+	 */
+	public JSONObject getState() {
+		// Create the JSON object that will represent this chunk.
+		JSONObject chunkState = new JSONObject();
+		// Set the position.
+		chunkState.put("x", this.x);
+		chunkState.put("y", this.y);
+		
+		// TODO Add placement state.
+		
+		// Return the chunk state.
+		return chunkState;
 	}
 
 	/**
