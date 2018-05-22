@@ -8,8 +8,7 @@ import server.world.WorldFactory;
 /**
  * The game server.
  */
-public class Server 
-{
+public class Server {
 	/**
 	 * The server configuration.
 	 */
@@ -48,12 +47,14 @@ public class Server
 	 * This is called at a consistent rate by the server clock.
 	 */
 	public void loop() {
-		// ....
+		// TODO Handle new player connections.
+		// TODO Handle player disconnects.
 		
 		// Tick the game engine.
 		engine.tick();
 		
-		// ....
+		// TODO Broadcast changes to connected players who care about them.
+		// TODO Check for whether to save world state to disk.
 	}
 	
 	/**
@@ -63,7 +64,7 @@ public class Server
 	 */
 	public Engine createGameEngine(String worldName) {
 		// Create the world.
-		World world = WorldFactory.create(worldName);
+		World world = WorldFactory.createWorld(worldName);
 		// Create the connected player pool.
 		ConnectedPlayerPool connectedPlayerPool = new ConnectedPlayerPool();
 		// Create and return the game engine.
