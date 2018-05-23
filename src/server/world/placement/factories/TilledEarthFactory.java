@@ -1,7 +1,7 @@
 package server.world.placement.factories;
 
 import org.json.JSONObject;
-import server.world.WorldFactory;
+import server.world.ChunkFactory;
 import server.world.placement.IPlacementAction;
 import server.world.placement.Placement;
 import server.world.placement.PlacementType;
@@ -21,7 +21,7 @@ public class TilledEarthFactory implements IPlacementFactory {
 		// Set the priority of this placement.
 		placement.setPriority(Priority.HIGH);
 		// Set the container for this placement.
-		placement.setContainer(WorldFactory.createContainer(3));
+		placement.setContainer(ChunkFactory.createContainer(3));
 		// Return the newly created placement.
 		return placement;
 	}
@@ -35,7 +35,7 @@ public class TilledEarthFactory implements IPlacementFactory {
 		// Set the priority of this placement.
 		placement.setPriority(Priority.HIGH);
 		// Set the container for this placement.
-		placement.setContainer(WorldFactory.createContainer(3, placementJSON.getJSONArray("container")));
+		placement.setContainer(ChunkFactory.createContainer(3, placementJSON.getJSONArray("container")));
 		// Return the placement placement.
 		return placement;
 	}

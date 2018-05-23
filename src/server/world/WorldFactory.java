@@ -1,10 +1,11 @@
 package server.world;
 
-import org.json.JSONArray;
+import java.io.File;
+import java.util.Random;
 import org.json.JSONObject;
-import server.world.placement.Container;
-import server.world.placement.Placement;
-import server.world.placement.PlacementType;
+import server.world.generation.WorldGenerator;
+import server.world.time.Season;
+import server.world.time.Time;
 
 /**
  * A factory for world entities.
@@ -12,48 +13,48 @@ import server.world.placement.PlacementType;
 public class WorldFactory {
 	
 	/**
-	 * Create a world instance based on a world save file.
+	 * Create a world instance, potentially based on an existing world save file.
 	 * @param name The name of the world.
 	 * @return The world instance.
 	 */
 	public static World createWorld(String name) {
-		return null;
+		// Check whether a world save directory of this name already exists.
+		File worldSaveDir = new File("worlds/" + name);
+		if (worldSaveDir.exists() && worldSaveDir.isDirectory()) {
+			// A save already exists for this world!
+			return null;
+		} else {
+			// We are creating a new world save.
+			// Create a brand new world seed.
+			long worldSeed = new Random().nextLong();
+			// Create the initial world time.
+			Time initalWorldTime = new Time(Season.SPRING, 1, 9, 0);
+			// Create a new world!
+			World world = new World(initalWorldTime, new WorldGenerator(worldSeed));
+			// Create the world save directory for this new world.
+			createWorldSaveDirectory(worldSaveDir, name, world);
+			// Return the new world.
+			return world;
+		}
 	}
 	
 	/**
-	 * Create a placement of the specified type in its default state.
-	 * @param type The placement type.
-	 * @return The placement.
+	 * Create a world save directory.
+	 * @param worldSaveDir The file instance pointing to the target world save directory.
+	 * @param worldName The world name.
+	 * @param world The newly created world.
 	 */
-	public static Placement createPlacement(PlacementType type) {
-		return null;
-	}
-	
-	/**
-	 * Create a placement based on existing world state.
-	 * @param placement The JSON object representing an existing placement.
-	 * @return The placement.
-	 */
-	public static Placement createPlacement(JSONObject placement) {
-		return null;
-	}
-	
-	/**
-	 * Create an empty container with the specified number of slots.
-	 * @param numberOfSlots The number of slots.
-	 * @return The container.
-	 */
-	public static Container createContainer(int numberOfSlots) {
-		return null;
-	}
-	
-	/**
-	 * Create a container based on existing world state.
-	 * @param numberOfSlots The number of slots.
-	 * @param slots The JSON array representing the existing slots.
-	 * @return The container.
-	 */
-	public static Container createContainer(int numberOfSlots, JSONArray slots) {
-		return null;
+	private static void createWorldSaveDirectory(File worldSaveDir, String worldName, World world) {
+		// Firstly, create the world save directory.
+		worldSaveDir.mkdir();
+		// Create the world chunks directory.
+		new File("worlds/" + worldName + "/chunks").mkdir();
+		// Create the player state directory.
+		new File("worlds/" + worldName + "/players").mkdir();
+		// Create the world JSON file.
+		File worldSaveFile = new File("worlds/" + worldName + "/" + worldName + ".json");
+		// Get the world state as JSON (excluding chunk information) and write it to the world save file.
+		JSONObject worldState = world.getState();
+		// ....
 	}
 }

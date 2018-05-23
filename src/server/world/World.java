@@ -2,23 +2,22 @@ package server.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 import server.world.generation.WorldGenerator;
+import server.world.time.Time;
 
 /**
  * Represents the game world.
  */
 public class World {
 	/**
+	 * The world time.
+	 */
+	private Time time;
+	/**
 	 * The world generator.
 	 */
 	private WorldGenerator worldGenerator;
-	/**
-	 * The world seed.
-	 */
-	private long seed;
 	/**
 	 * The cached chunks.
 	 */
@@ -26,21 +25,20 @@ public class World {
 	
 	/**
 	 * Creates a new instance of the WorldInformation class.
-	 * @param seed The world seed.
+	 * @param time The world time.
+	 * @param worldGenerator The world generator.
 	 */
-	public World(long seed) {
-		// Set the seed.
-		this.seed = seed;
-		// Create the world generator.
-		this.worldGenerator = new WorldGenerator(seed);
+	public World(Time time, WorldGenerator worldGenerator) {
+		this.time           = time;
+		this.worldGenerator = worldGenerator;
 	}
 	
 	/**
-	 * Get the world seed.
-	 * @return The world seed.
+	 * Get the world time.
+	 * @return The world time.
 	 */
-	public long getSeed() {
-		return this.seed;
+	public Time getTime() {
+		return this.time;
 	}
 	
 	/**
@@ -82,13 +80,9 @@ public class World {
 		// Create the JSON object that will represent this world.
 		JSONObject worldState = new JSONObject();
 		// Set the world seed.
-		worldState.put("seed", this.seed);
-		// Add chunk state. TODO Determine whether we want to save ALL chunks, or just cached/dirty ones.
-		JSONArray chunksArray = new JSONArray();
-		for (Chunk cachedChunk : this.cachedChunks.values()) {
-			chunksArray.put(cachedChunk.getState());
-		}
-		worldState.put("chunks", chunksArray);	
+		worldState.put("seed", this.worldGenerator.getSeed());
+		// Set the world time.
+		worldState.put("time", this.time.getState());
 		// Return the world state.
 		return worldState;
 	}

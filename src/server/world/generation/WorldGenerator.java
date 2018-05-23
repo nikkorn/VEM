@@ -13,6 +13,10 @@ public class WorldGenerator {
 	 * Seeding Perlin noise is just a matter of applying a random offset to an axis.
 	 */
 	private double yOffset;
+	/**
+	 * The seed.
+	 */
+	private long seed;
 	
 	/**
 	 * Creates a new instance of the WorldGenerator class.
@@ -24,8 +28,17 @@ public class WorldGenerator {
 			throw new RuntimeException("World size must be an even number!");
 		}
 		// Randomly generate a y axis offset for our map based on our seed.
+		this.seed  = seed;
 		Random rng = new Random(seed);
 		yOffset    = rng.nextDouble() * (rng.nextInt(1000));
+	}
+	
+	/**
+	 * Get the seed.
+	 * @return The seed.
+	 */
+	public long getSeed() {
+		return this.seed;
 	}
 	
 	/**

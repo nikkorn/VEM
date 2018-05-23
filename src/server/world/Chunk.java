@@ -6,7 +6,7 @@ import server.world.generation.WorldGenerator;
 import server.world.placement.Placement;
 
 /**
- * Provides chunk information derived from RNG and Perlin noise.
+ * A world chunk.
  */
 public class Chunk {
 	/**
@@ -86,7 +86,7 @@ public class Chunk {
 	 * Tick the chunk.
 	 */
 	public void tick() {
-		
+		// ...
 	}
 	
 	/**
