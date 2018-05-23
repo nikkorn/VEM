@@ -3,6 +3,7 @@ package server.world;
 import java.io.File;
 import java.util.Random;
 import org.json.JSONObject;
+import server.Helpers;
 import server.world.generation.WorldGenerator;
 import server.world.time.Season;
 import server.world.time.Time;
@@ -21,8 +22,10 @@ public class WorldFactory {
 		// Check whether a world save directory of this name already exists.
 		File worldSaveDir = new File("worlds/" + name);
 		if (worldSaveDir.exists() && worldSaveDir.isDirectory()) {
-			// A save already exists for this world!
-			return null;
+			// A save already exists for this world! Create a world based on the saved state.
+			World world = createExistingWorld(name);
+			// Return the world.
+			return world;
 		} else {
 			// We are creating a new world save.
 			// Create a brand new world seed.
@@ -39,7 +42,25 @@ public class WorldFactory {
 	}
 	
 	/**
-	 * Create a world save directory.
+	 * Create a world instance based on an existing world save.
+	 * @param worldName The name of the existing world.
+	 * @return The created world.
+	 */
+	private static World createExistingWorld(String worldName) {
+		// Grab a handle to the world save JSON file.
+		File worldSaveFile = new File("worlds/" + worldName + "/" + worldName + ".json");
+		// Convert the world save file to JSON.
+		JSONObject worldState = Helpers.readJSONObjectFromFile(worldSaveFile);
+		// Get the world seed.
+		long worldSeed = worldState.getLong("seed");
+		// Get the world time.
+		Time worldTime = Time.fromState(worldState.getJSONObject("time"));
+		// Create and return the world instance.
+		return new World(worldTime, new WorldGenerator(worldSeed));
+	}
+	
+	/**
+	 * Create a new world save directory.
 	 * @param worldSaveDir The file instance pointing to the target world save directory.
 	 * @param worldName The world name.
 	 * @param world The newly created world.
@@ -54,7 +75,6 @@ public class WorldFactory {
 		// Create the world JSON file.
 		File worldSaveFile = new File("worlds/" + worldName + "/" + worldName + ".json");
 		// Get the world state as JSON (excluding chunk information) and write it to the world save file.
-		JSONObject worldState = world.getState();
-		// ....
+		Helpers.writeStringToFile(worldSaveFile, world.getState().toString());
 	}
 }

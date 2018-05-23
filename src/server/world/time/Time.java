@@ -51,4 +51,17 @@ public class Time {
 		// Return the item as a JSON object.
 		return timeState;
 	}
+	
+	/**
+	 * Create a new instance of time based on existing state.
+	 * @param state The existing time state as JSON.
+	 * @return The time as defined by the existing state.
+	 */
+	public static Time fromState(JSONObject state) {
+		Season season = Season.values()[state.getInt("season")];
+		int day       = state.getInt("day");
+		int hour      = state.getInt("hour");
+		int minute    = state.getInt("minute");
+		return new Time(season, day, hour, minute);
+	}
 }

@@ -1,7 +1,10 @@
 package server;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,5 +56,23 @@ public class Helpers {
 			}
 		} 
 		return rawString;
+	}
+	
+	/**
+	 * Write a string value into a file.
+	 * @param file The file to write the string into.
+	 * @param value The string value to write.
+	 */
+	public static void writeStringToFile(File file, String value) {
+		try {
+			// Create a buffered writer.
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			// Write the value to the file.
+			writer.write(value);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

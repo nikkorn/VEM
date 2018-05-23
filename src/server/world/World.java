@@ -55,12 +55,12 @@ public class World {
 			// We already have this chunk!
 			return this.cachedChunks.get(chunkKey);
 		} else {
-			// Create the chunk.
-			Chunk chunkInformation = new Chunk(x, y, this.worldGenerator);
+			// Create the chunk. This may be a new chunk, or one read from disk.
+			Chunk chunk = ChunkFactory.createChunk(worldGenerator, x, y);
 			// Cache this chunk so that we don't have to keep generating it.
-			this.cachedChunks.put(chunkKey, chunkInformation);
+			this.cachedChunks.put(chunkKey, chunk);
 			// Return the chunk.
-			return chunkInformation;
+			return chunk;
 		}
 	}
 	

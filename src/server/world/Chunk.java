@@ -2,7 +2,6 @@ package server.world;
 
 import org.json.JSONObject;
 import server.Constants;
-import server.world.generation.WorldGenerator;
 import server.world.placement.Placement;
 
 /**
@@ -25,19 +24,24 @@ public class Chunk {
 	 * Whether the chunk is active. Active chunks are ticked.
 	 */
 	private boolean isActive = false;
+	/**
+	 * Whether the chunk is dirty.
+	 * Dirty chunks need to be persisted back to disk.
+	 */
+	private boolean isDirty = true;
 	
 	/**
 	 * Creates a new instance of the ChunkInformation class.
 	 * @param x The x position of this chunk.
 	 * @param y The y position of this chunk.
-	 * @param worldGenerator The world generator.
+	 * @param tiles The multi-dimensional array holding the tile types for the chunk.
+	 * @param placements The multi-dimensional array holding the placements that this chunk is composed of.
 	 */
-	public Chunk(int x, int y, WorldGenerator worldGenerator) {
-		// Set the chunk position.
-		this.x = x;
-		this.y = y;
-		// Populate the static tile information.
-		populateTileInformation(worldGenerator);
+	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements) {
+		this.x          = x;
+		this.y          = y;
+		this.tiles      = tiles;
+		this.placements = placements;
 	}
 	
 	/**
@@ -73,6 +77,15 @@ public class Chunk {
 	}
 	
 	/**
+	 * Get whether the chunk is dirty.
+	 * Dirty chunks need to be persisted back to disk.
+	 * @return Whether the chunk is dirty.
+	 */
+	public boolean isDirty() {
+		return this.isDirty;
+	}
+	
+	/**
 	 * Get the type of tile at the specified position.
 	 * @param x The x position of the tile.
 	 * @param y The y position of the tile.
@@ -104,19 +117,5 @@ public class Chunk {
 		
 		// Return the chunk state.
 		return chunkState;
-	}
-
-	/**
-	 * Populate the static tile information.
-	 * @param worldGenerator The world generator.
-	 */
-	private void populateTileInformation(WorldGenerator worldGenerator) {
-		int tileXOffset = this.x * Constants.WORLD_CHUNK_SIZE;
-		int tileYOffset = this.y * Constants.WORLD_CHUNK_SIZE;
-		for (int tileX = 0; tileX < Constants.WORLD_CHUNK_SIZE; tileX++) {
-			for (int tileY = 0; tileY < Constants.WORLD_CHUNK_SIZE; tileY++) {
-				this.tiles[tileX][tileY] = worldGenerator.getTileAt(tileX + tileXOffset, tileY + tileYOffset);
-			}
-		}
 	}
 }
