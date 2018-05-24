@@ -1,5 +1,7 @@
 package server.world.placement;
 
+import org.json.JSONObject;
+
 import server.world.placement.state.IPlacementState;
 
 /**
@@ -106,5 +108,16 @@ public class Placement {
 	 */
 	public void setState(IPlacementState state) {
 		this.state = state;
+	}
+	
+	/**
+	 * Serialise the placement to JSON to be persisted to disk.
+	 * @return The serialised placement.
+	 */
+	public JSONObject serialise() {
+		// TODO Set container.
+		// TODO Set state.
+		// TODO Set x/y.
+		return null;
 	}
 }

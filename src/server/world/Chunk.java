@@ -1,5 +1,6 @@
 package server.world;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
 import server.world.placement.Placement;
@@ -103,18 +104,28 @@ public class Chunk {
 	}
 	
 	/**
-	 * Get the chunk state as JSON.
+	 * Serialise the chunk to JSON to be persisted to disk.
 	 * @return The chunk state as JSON.
 	 */
-	public JSONObject getState() {
+	public JSONObject serialise() {
 		// Create the JSON object that will represent this chunk.
 		JSONObject chunkState = new JSONObject();
 		// Set the position.
 		chunkState.put("x", this.x);
 		chunkState.put("y", this.y);
-		
-		// TODO Add placement state.
-		
+		// Create a JSON array to hold placement state.
+		JSONArray placementArray = new JSONArray();
+		// Add placement state.
+		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
+			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
+				// Get the placement at the current position.
+				Placement currentPlacement = placements[placementX][placementY];
+				// Only serialise placements that actually exist.
+				if (currentPlacement != null) {
+					placementArray.put(currentPlacement.serialise());
+				}
+			}
+		}
 		// Return the chunk state.
 		return chunkState;
 	}
