@@ -1,5 +1,7 @@
 package server.world.placement;
 
+import server.world.placement.state.IPlacementState;
+
 /**
  * Represents a tile-positioned placement.
  */
@@ -20,7 +22,11 @@ public class Placement {
 	 * The placement action to be executed per game engine tick
 	 * or once per interaction if the placement priority is LOW.
 	 */
-	private IPlacementAction action;
+	private IPlacementAction<? extends IPlacementState> action;
+	/**
+	 * The placement state.
+	 */
+	private IPlacementState state;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -58,7 +64,7 @@ public class Placement {
 	 * Get the placement action.
 	 * @return The placement action.
 	 */
-	public IPlacementAction getAction() {
+	public IPlacementAction<? extends IPlacementState> getAction() {
 		return action;
 	}
 
@@ -66,7 +72,7 @@ public class Placement {
 	 * Set the placement action.
 	 * @param action The placement action.
 	 */
-	public void setAction(IPlacementAction action) {
+	public void setAction(IPlacementAction<? extends IPlacementState> action) {
 		this.action = action;
 	}
 
@@ -84,5 +90,21 @@ public class Placement {
 	 */
 	public void setContainer(Container container) {
 		this.container = container;
+	}
+
+	/**
+	 * Get the state of the placement.
+	 * @return The state of the placement.
+	 */
+	public IPlacementState getState() {
+		return state;
+	}
+
+	/**
+	 * Set the state of the placement.
+	 * @param state The state of the placement.
+	 */
+	public void setState(IPlacementState state) {
+		this.state = state;
 	}
 }

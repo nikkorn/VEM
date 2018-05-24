@@ -2,15 +2,17 @@ package server.world.placement.factories;
 
 import org.json.JSONObject;
 import server.world.TileFactory;
+import server.world.placement.Container;
 import server.world.placement.IPlacementAction;
 import server.world.placement.Placement;
 import server.world.placement.PlacementType;
 import server.world.placement.Priority;
+import server.world.placement.state.TilledEarthPlacementState;
 
 /**
  * Factory for creating a tilled earth placement.
  */
-public class TilledEarthFactory implements IPlacementFactory {
+public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementState> {
 
 	@Override
 	public Placement create(PlacementType type) {
@@ -39,16 +41,24 @@ public class TilledEarthFactory implements IPlacementFactory {
 		// Return the placement placement.
 		return placement;
 	}
+
+	@Override
+	public TilledEarthPlacementState createState() {
+		return new TilledEarthPlacementState();
+	}
+
+	@Override
+	public TilledEarthPlacementState createState(JSONObject stateJSON) {
+		// TODO Create state based on JSON!
+		return new TilledEarthPlacementState();
+	}
 	
-	/**
-	 * Create the placement action for this placement.
-	 * @return The placement action.
-	 */
-	private IPlacementAction createAction() {
-		return new IPlacementAction() {
+	@Override
+	protected IPlacementAction<TilledEarthPlacementState> createAction() {
+		return new IPlacementAction<TilledEarthPlacementState>() {
 			@Override
-			public void execute(Placement placement) {
-				System.out.println("This " + placement.getType().toString() + " placement is just growing some plants!");
+			public void execute(TilledEarthPlacementState state, Container container) {
+				System.out.println("Just growing some plants!");
 			}
 		};
 	}
