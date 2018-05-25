@@ -27,6 +27,7 @@ public interface IPlacementAction<TState extends IPlacementState> {
 	 * @param state The placement state.
 	 * @param container The placement container.
 	 * @param item The item used in interacting with the placement.
+	 * @returns The modified item type.
 	 */
-	void onInteraction(TState state, Container container, ItemType item);
+	ItemType onInteraction(TState state, Container container, ItemType item);
 }

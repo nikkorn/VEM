@@ -28,6 +28,10 @@ public class Placement {
 	 * The placement state.
 	 */
 	private IPlacementState state;
+	/**
+	 * The Placement visualisation.
+	 */
+	private Visualisation visualisation = Visualisation.DEFAULT;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -107,6 +111,22 @@ public class Placement {
 	 */
 	public void setState(IPlacementState state) {
 		this.state = state;
+	}
+	
+	/**
+	 * Get the placement visualisation. 
+	 * @return The placement visualisation. 
+	 */
+	public Visualisation getVisualisation() {
+		return visualisation;
+	}
+
+	/**
+	 * Set the placement visualisation.
+	 * @param visualisation The placement visualisation.
+	 */
+	public void setVisualisation(Visualisation visualisation) {
+		this.visualisation = visualisation;
 	}
 	
 	/**

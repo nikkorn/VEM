@@ -68,8 +68,9 @@ public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementSta
 			}
 
 			@Override
-			public void onInteraction(TilledEarthPlacementState state, Container container, ItemType item) {
-				System.out.println("Just growing some plants, did you use that item on me?");
+			public ItemType onInteraction(TilledEarthPlacementState state, Container container, ItemType item) {
+				System.out.println("Just growing some plants, did you use that item on me? I will keep it!");
+				return ItemType.NONE;
 			}
 		};
 	}

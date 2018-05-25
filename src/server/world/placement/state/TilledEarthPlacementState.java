@@ -7,9 +7,9 @@ import org.json.JSONObject;
  */
 public class TilledEarthPlacementState implements IPlacementState {
 	/**
-	 * The number of ticks that the tilled earth is watered for.
+	 * The number of minutes that the tilled earth is watered for.
 	 */
-	public int wateredTicks = 4000;
+	public int wateredTicks = 100;
 
 	@Override
 	public JSONObject serialise() {
