@@ -3,6 +3,9 @@ package server.world;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.JSONObject;
+
+import server.world.chunk.Chunk;
+import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
 import server.world.time.Time;
 

@@ -1,8 +1,9 @@
-package server.world;
+package server.world.chunk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
+import server.world.TileType;
 import server.world.placement.Placement;
 
 /**

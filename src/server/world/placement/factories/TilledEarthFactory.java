@@ -1,6 +1,7 @@
 package server.world.placement.factories;
 
 import org.json.JSONObject;
+import server.items.ItemType;
 import server.world.TileFactory;
 import server.world.placement.Container;
 import server.world.placement.IPlacementAction;
@@ -57,8 +58,18 @@ public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementSta
 	protected IPlacementAction<TilledEarthPlacementState> createAction() {
 		return new IPlacementAction<TilledEarthPlacementState>() {
 			@Override
-			public void execute(TilledEarthPlacementState state, Container container) {
-				System.out.println("Just growing some plants!");
+			public void onServerTick(TilledEarthPlacementState state, Container container) {
+				System.out.println("Just growing some plants at 100% capacity!");
+			}
+
+			@Override
+			public void onTimeUpdate(TilledEarthPlacementState state, Container container) {
+				System.out.println("Just growing some plants, oh did the time change?");
+			}
+
+			@Override
+			public void onInteraction(TilledEarthPlacementState state, Container container, ItemType item) {
+				System.out.println("Just growing some plants, did you use that item on me?");
 			}
 		};
 	}

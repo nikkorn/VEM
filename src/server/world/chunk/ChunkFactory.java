@@ -1,6 +1,7 @@
-package server.world;
+package server.world.chunk;
 
 import server.Constants;
+import server.world.TileType;
 import server.world.generation.WorldGenerator;
 import server.world.placement.Placement;
 

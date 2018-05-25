@@ -1,6 +1,7 @@
 package server.world.time;
 
 import org.json.JSONObject;
+import server.Constants;
 
 /**
  * Represents game time.
@@ -22,6 +23,10 @@ public class Time {
 	 * The minute. (0-59)
 	 */
 	private int minute;
+	/**
+	 * The number of server ticks since the last time change.
+	 */
+	private long ticksSinceLastChange = 0;
 	
 	/**
 	 * Create a new instance of the Time class.
@@ -35,6 +40,118 @@ public class Time {
 		this.day    = day;
 		this.hour   = hour;
 		this.minute = minute;
+	}
+	
+	/**
+	 * Get the season.
+	 * @return The season.
+	 */
+	public Season getSeason() {
+		return this.season;
+	}
+	
+	/**
+	 * Get the day.
+	 * @return The day.
+	 */
+	public int getDay() {
+		return this.day;
+	}
+	
+	/**
+	 * Get the hour.
+	 * @return The hour.
+	 */
+	public int getHour() {
+		return this.hour;
+	}
+	
+	/**
+	 * Get the minute.
+	 * @return The minute.
+	 */
+	public int getMinute() {
+		return this.minute;
+	}
+	
+	/**
+	 * Get the formatted time.
+	 * @return The formatted time.
+	 */
+	public String getFormattedTime() {
+		return "SEASON: " + season.toString() + " DAY: " + this.day  + " HOUR: " + this.hour + " MINUTE: " + this.minute;
+	}
+	
+	/**
+	 * Update the time.
+	 * @return Whether the time has changed.
+	 */
+	public boolean update() {
+		ticksSinceLastChange += 1;
+		// Have we had enough server ticks to update the time?
+		if (ticksSinceLastChange == Constants.SERVER_TIME_MINUTE_TICKS) {
+			// Reset our server tick counter.
+			ticksSinceLastChange = 0;
+			// We have moved into the next minute.
+			tickMinute();
+			// The time did change.
+			return true;
+		}
+		// The time did not change.
+		return false;
+	}
+	
+	/**
+	 * Tick the time to the next minute.
+	 */
+	private void tickMinute() {
+		minute += 1;
+		if (minute > 59) {
+			minute = 0;
+			tickHour();
+		}
+	}
+	
+	/**
+	 * Tick the time to the next hour.
+	 */
+	private void tickHour() {
+		hour += 1;
+		if (hour > 23) {
+			hour = 0;
+			tickDay();
+		}
+	}
+	
+	/**
+	 * Tick the time to the next day.
+	 */
+	private void tickDay() {
+		day += 1;
+		if (day > 30) {
+			day = 1;
+			tickSeason();
+		}
+	}
+	
+	/**
+	 * Tick the time to the next season.
+	 */
+	private void tickSeason() {
+		switch(this.season) {
+			case SPRING:
+				this.season = Season.SUMMER;
+				break;
+			case SUMMER:
+				this.season = Season.AUTUMN;
+				break;
+			case AUTUMN:
+				this.season = Season.WINTER;
+				break;
+			case WINTER:
+				this.season = Season.SPRING;
+				break;
+		}
 	}
 	
 	/**

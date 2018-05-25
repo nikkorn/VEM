@@ -6,10 +6,17 @@ import org.json.JSONObject;
  * Represents the internal state of a tilled earth placement.
  */
 public class TilledEarthPlacementState implements IPlacementState {
+	/**
+	 * The number of ticks that the tilled earth is watered for.
+	 */
+	public int wateredTicks = 4000;
 
 	@Override
 	public JSONObject serialise() {
-		// TODO Auto-generated method stub
-		return null;
+		// Create the JSON object that will hold the information about this placement state.
+		JSONObject state = new JSONObject();
+		state.put("watered-ticks", this.wateredTicks);
+		// Return the serialised state.
+		return state;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 import org.json.JSONObject;
 import server.Helpers;
 import server.world.generation.WorldGenerator;
+import server.world.generation.WorldMapImageCreator;
 import server.world.time.Season;
 import server.world.time.Time;
 
@@ -32,10 +33,14 @@ public class WorldFactory {
 			long worldSeed = new Random().nextLong();
 			// Create the initial world time.
 			Time initalWorldTime = new Time(Season.SPRING, 1, 9, 0);
+			// Create the world generator.
+			WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
 			// Create a new world!
-			World world = new World(initalWorldTime, new WorldGenerator(worldSeed));
+			World world = new World(initalWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
+			// Create the map overview image file.
+			WorldMapImageCreator.create(worldGenerator, "map", "worlds/" + name + "/");
 			// Return the new world.
 			return world;
 		}
@@ -48,7 +53,7 @@ public class WorldFactory {
 	 */
 	private static World createExistingWorld(String worldName) {
 		// Grab a handle to the world save JSON file.
-		File worldSaveFile = new File("worlds/" + worldName + "/" + worldName + ".json");
+		File worldSaveFile = new File("worlds/" + worldName + "/world.json");
 		// Convert the world save file to JSON.
 		JSONObject worldState = Helpers.readJSONObjectFromFile(worldSaveFile);
 		// Get the world seed.
@@ -73,7 +78,7 @@ public class WorldFactory {
 		// Create the player state directory.
 		new File("worlds/" + worldName + "/players").mkdir();
 		// Create the world JSON file.
-		File worldSaveFile = new File("worlds/" + worldName + "/" + worldName + ".json");
+		File worldSaveFile = new File("worlds/" + worldName + "/world.json");
 		// Get the world state as JSON (excluding chunk information) and write it to the world save file.
 		Helpers.writeStringToFile(worldSaveFile, world.getState().toString());
 	}

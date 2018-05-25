@@ -1,7 +1,7 @@
 package server;
 
 /**
- * Game Constants.
+ * Server Constants.
  */
 public class Constants 
 {
@@ -13,4 +13,7 @@ public class Constants
 	
 	/** The server clock rate (ms). */
 	public static long SERVER_CLOCK_RATE = 125l;
+	
+	/** The number of server ticks per minute in game. */
+	public static int SERVER_TIME_MINUTE_TICKS = 16;
 }

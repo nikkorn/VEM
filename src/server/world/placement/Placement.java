@@ -1,7 +1,6 @@
 package server.world.placement;
 
 import org.json.JSONObject;
-
 import server.world.placement.state.IPlacementState;
 
 /**
@@ -21,8 +20,8 @@ public class Placement {
 	 */
 	private Priority priority;
 	/**
-	 * The placement action to be executed per game engine tick
-	 * or once per interaction if the placement priority is LOW.
+	 * The placement action to be executed per game engine tick and/or time update.
+	 * This could also be done per interaction if the placement priority is LOW.
 	 */
 	private IPlacementAction<? extends IPlacementState> action;
 	/**
@@ -115,9 +114,17 @@ public class Placement {
 	 * @return The serialised placement.
 	 */
 	public JSONObject serialise() {
-		// TODO Set container.
-		// TODO Set state.
-		// TODO Set x/y.
-		return null;
+		// Create the JSON object that will hold the information about this placement.
+		JSONObject placement = new JSONObject();
+		// Set container (if this placement has one).
+		if (this.state != null) {
+			placement.put("container", this.container.serialise());
+		}
+		// Set state (if this placement has any).
+		if (this.state != null) {
+			placement.put("state", this.state.serialise());
+		}
+		// Return the serialised placement.
+		return placement;
 	}
 }

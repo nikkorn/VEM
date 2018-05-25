@@ -30,6 +30,12 @@ public class Engine {
 	 * Tick the game engine.
 	 */
 	public void tick() {
+		// Update the world time and get whether it has changed.
+		// It does not change every server tick, just ever game minute.
+		boolean timeChanged = this.world.getTime().update();
 		// ....
+		if (timeChanged) {
+			System.out.println(this.world.getTime().getFormattedTime());
+		}
 	}
 }
