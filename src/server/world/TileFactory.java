@@ -1,15 +1,25 @@
 package server.world;
 
+import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.world.placement.Container;
 import server.world.placement.Placement;
 import server.world.placement.PlacementType;
+import server.world.placement.factories.PlacementFactory;
+import server.world.placement.factories.TilledEarthFactory;
 
 /**
  * A factory for creating tile entities.
  */
 public class TileFactory {
+	/**
+	 * The map of placement factories, keyed on placement type.
+	 */
+	private static HashMap<PlacementType, PlacementFactory> placementFactories = new HashMap<PlacementType, PlacementFactory>()
+	{{ 
+		this.put(PlacementType.TILLED_EARTH, new TilledEarthFactory());
+	}};
 	
 	/**
 	 * Create a placement of the specified type in its default state.
@@ -17,7 +27,7 @@ public class TileFactory {
 	 * @return The placement.
 	 */
 	public static Placement createPlacement(PlacementType type) {
-		return null;
+		return placementFactories.get(type).create();
 	}
 	
 	/**
@@ -26,7 +36,7 @@ public class TileFactory {
 	 * @return The placement.
 	 */
 	public static Placement createPlacement(JSONObject placement) {
-		return null;
+		return placementFactories.get(PlacementType.values()[placement.getInt("type")]).create();
 	}
 	
 	/**

@@ -28,10 +28,6 @@ public class Placement {
 	 * The placement state.
 	 */
 	private IPlacementState state;
-	/**
-	 * The Placement visualisation.
-	 */
-	private Visualisation visualisation = Visualisation.DEFAULT;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -114,28 +110,14 @@ public class Placement {
 	}
 	
 	/**
-	 * Get the placement visualisation. 
-	 * @return The placement visualisation. 
-	 */
-	public Visualisation getVisualisation() {
-		return visualisation;
-	}
-
-	/**
-	 * Set the placement visualisation.
-	 * @param visualisation The placement visualisation.
-	 */
-	public void setVisualisation(Visualisation visualisation) {
-		this.visualisation = visualisation;
-	}
-	
-	/**
 	 * Serialise the placement to JSON to be persisted to disk.
 	 * @return The serialised placement.
 	 */
 	public JSONObject serialise() {
 		// Create the JSON object that will hold the information about this placement.
 		JSONObject placement = new JSONObject();
+		// Set the type.
+		placement.put("type", this.type.ordinal());
 		// Set container (if this placement has one).
 		if (this.state != null) {
 			placement.put("container", this.container.serialise());

@@ -16,7 +16,7 @@ import server.world.placement.state.TilledEarthPlacementState;
 public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementState> {
 
 	@Override
-	public Placement create(PlacementType type) {
+	public Placement create() {
 		// Create the placement of the expected type.
 		Placement placement = new Placement(PlacementType.TILLED_EARTH);
 		// Set the action for this placement.

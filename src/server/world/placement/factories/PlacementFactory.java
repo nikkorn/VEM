@@ -3,7 +3,6 @@ package server.world.placement.factories;
 import org.json.JSONObject;
 import server.world.placement.IPlacementAction;
 import server.world.placement.Placement;
-import server.world.placement.PlacementType;
 import server.world.placement.state.IPlacementState;
 
 /**
@@ -13,11 +12,10 @@ import server.world.placement.state.IPlacementState;
 public abstract class PlacementFactory<TState extends IPlacementState> {
 	
 	/**
-	 * Create a placement of the specified type in its default state.
-	 * @param type The placement type.
-	 * @return The placement.
+	 * Create a placement in its default state.
+	 * @return The placement in its default state.
 	 */
-	public abstract Placement create(PlacementType type);
+	public abstract Placement create();
 	
 	/**
 	 * Create a placement based on existing world state.
