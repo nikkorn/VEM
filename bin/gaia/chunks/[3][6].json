@@ -3,10 +3,10 @@
 	"y": 6,
 	"placements": [
 		{
-			"type": 56,
+			"type": 0,
 			"state": 2,
-			"x": 123,
-			"y": 634,
+			"x": 12,
+			"y": 25,
 			"container": [
 				{
 					"slot": 0,

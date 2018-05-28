@@ -39,11 +39,12 @@ public class ChunkFactory {
 	 * The chunk we create will reflect this saved state state.
 	 * @param chunkJSON The JSON object representing the chunk.
 	 * @param generator The world generator.
-	 * @param x The x position of the chunk.
-	 * @param y The y position of the chunk.
 	 * @return The created chunk.
 	 */
-	public static Chunk createChunk(JSONObject chunkJSON, WorldGenerator generator, int x, int y) {
+	public static Chunk createChunk(JSONObject chunkJSON, WorldGenerator generator) {
+		// Get the x/y chunk position.
+		int x = chunkJSON.getInt("x");
+		int y = chunkJSON.getInt("y");
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// We already have state for this chunk saved so read the existing placement state.

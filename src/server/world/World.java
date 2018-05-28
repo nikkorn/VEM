@@ -74,6 +74,14 @@ public class World {
 	public ArrayList<Chunk> getCachedChunks() {
 		return new ArrayList<Chunk>(this.cachedChunks.values());
 	}
+
+	/**
+	 * Add a cached chunk to the world.
+	 * @param chunk The chunk to add.
+     */
+	public void addCachedChunk(Chunk chunk) {
+		this.cachedChunks.put(World.getChunkKey(chunk.getX(), chunk.getY()), chunk);
+	}
 	
 	/**
 	 * Get the world state as JSON.

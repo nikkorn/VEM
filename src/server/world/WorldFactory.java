@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Random;
 import org.json.JSONObject;
 import server.Helpers;
+import server.world.chunk.Chunk;
+import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
 import server.world.generation.WorldMapImageCreator;
 import server.world.time.Season;
@@ -32,11 +34,11 @@ public class WorldFactory {
 			// Create a brand new world seed.
 			long worldSeed = new Random().nextLong();
 			// Create the initial world time.
-			Time initalWorldTime = new Time(Season.SPRING, 1, 9, 0);
+			Time initialWorldTime = new Time(Season.SPRING, 1, 9, 0);
 			// Create the world generator.
 			WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
 			// Create a new world!
-			World world = new World(initalWorldTime, worldGenerator);
+			World world = new World(initialWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
 			// Create the map overview image file.
@@ -60,10 +62,35 @@ public class WorldFactory {
 		long worldSeed = worldState.getLong("seed");
 		// Get the world time.
 		Time worldTime = Time.fromState(worldState.getJSONObject("time"));
-		// Create and return the world instance.
-		return new World(worldTime, new WorldGenerator(worldSeed));
+		// Create the world instance.
+		WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
+		World world                   = new World(worldTime, worldGenerator);
+		// Create the world chunks.
+		createExistingChunks(worldName, world, worldGenerator);
+		// Return the world instance.
+		return world;
 	}
-	
+
+	/**
+	 * Create the world chunks from saved state.
+	 * @param worldName The world name.
+	 * @param world The world.
+	 * @param worldGenerator The world generator.
+     */
+	private static void createExistingChunks(String worldName, World world, WorldGenerator worldGenerator) {
+		// Grab a handle to the chunks directory.
+		File chunksDirectory = new File("worlds/" + worldName + "/chunks");
+		// Create a chunk for each chunk file in the directory.
+		for (File chunkFile : chunksDirectory.listFiles()) {
+			// Convert the chunk save file to JSON.
+			JSONObject chunkState = Helpers.readJSONObjectFromFile(chunkFile);
+			// Create the chunk.
+			Chunk chunk = ChunkFactory.createChunk(chunkState, worldGenerator);
+			// Add the chunk to the world.
+			world.addCachedChunk(chunk);
+		}
+	}
+
 	/**
 	 * Create a new world save directory.
 	 * @param worldSaveDir The file instance pointing to the target world save directory.
