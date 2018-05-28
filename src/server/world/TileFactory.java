@@ -8,6 +8,7 @@ import server.world.placement.Placement;
 import server.world.placement.PlacementType;
 import server.world.placement.factories.PlacementFactory;
 import server.world.placement.factories.TilledEarthFactory;
+import server.world.placement.state.IPlacementState;
 
 /**
  * A factory for creating tile entities.
@@ -27,16 +28,32 @@ public class TileFactory {
 	 * @return The placement.
 	 */
 	public static Placement createPlacement(PlacementType type) {
-		return placementFactories.get(type).create();
+		// Get the relevant placement factory.
+		PlacementFactory<? extends IPlacementState> placementFactory = placementFactories.get(type);
+		// Create the placement.
+		Placement placement = placementFactory.create();
+		// Create the placement state.
+		placement.setState(placementFactory.createState());
+		// Return the new placement.
+		return placement;
 	}
 	
 	/**
 	 * Create a placement based on existing world state.
-	 * @param placement The JSON object representing an existing placement.
+	 * @param placementJSON The JSON object representing an existing placement.
 	 * @return The placement.
 	 */
-	public static Placement createPlacement(JSONObject placement) {
-		return placementFactories.get(PlacementType.values()[placement.getInt("type")]).create();
+	public static Placement createPlacement(JSONObject placementJSON) {
+		// Get the relevant placement factory.
+		PlacementFactory<? extends IPlacementState> placementFactory = placementFactories.get(PlacementType.values()[placementJSON.getInt("type")]);
+		// Create the placement.
+		Placement placement = placementFactory.create(placementJSON);
+		// Create the placement state if there is any.
+		if (placementJSON.has("state")) {
+			placement.setState(placementFactory.createState(placementJSON.getJSONObject("state")));
+		}
+		// Return the new placement.
+		return placement;
 	}
 	
 	/**

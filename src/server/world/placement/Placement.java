@@ -119,7 +119,7 @@ public class Placement {
 		// Set the type.
 		placement.put("type", this.type.ordinal());
 		// Set container (if this placement has one).
-		if (this.state != null) {
+		if (this.container != null) {
 			placement.put("container", this.container.serialise());
 		}
 		// Set state (if this placement has any).

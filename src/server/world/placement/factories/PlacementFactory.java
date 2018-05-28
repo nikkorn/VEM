@@ -28,20 +28,20 @@ public abstract class PlacementFactory<TState extends IPlacementState> {
 	 * Create default state for the placement type.
 	 * @return The default placement state.
 	 */
-	protected abstract TState createState();
+	public abstract TState createState();
 	
 	/**
 	 * Create state for the placement type based on existing save state.
 	 * @param stateJSON The existing save state.
 	 * @return The existing placement state.
 	 */
-	protected abstract TState createState(JSONObject stateJSON);
+	public abstract TState createState(JSONObject stateJSON);
 	
 	/**
 	 * Create the placement action for this placement.
 	 * @return The placement action.
 	 */
-	protected IPlacementAction<TState> createAction() {
+	public IPlacementAction<TState> createAction() {
 		// Placements have no action by default.
 		return null;
 	}

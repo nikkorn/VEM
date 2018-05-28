@@ -55,7 +55,7 @@ public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementSta
 	}
 	
 	@Override
-	protected IPlacementAction<TilledEarthPlacementState> createAction() {
+	public IPlacementAction<TilledEarthPlacementState> createAction() {
 		return new IPlacementAction<TilledEarthPlacementState>() {
 			@Override
 			public void onServerTick(TilledEarthPlacementState state, Container container) {
