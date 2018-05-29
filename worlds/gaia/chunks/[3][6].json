@@ -1,19 +1,24 @@
 {
-	"x": 3,
-	"y": 6,
-	"placements": [
-		{
-			"type": 0,
-			"state": {},
-			"x": 12,
-			"y": 25,
-			"container": [
-				{
-					"slot": 0,
-					"id": 52
-				}
-			]
-		}
-	
-	]
+  "x": 3,
+  "y": 6,
+  "placements": [
+    {
+      "type": 0,
+      "priority": 2,
+      "state": {
+        "watered-ticks": 200
+      },
+      "x": 12,
+      "y": 25,
+      "container": {
+        "size": 3,
+        "slots": [
+          {
+            "slot": 0,
+            "id": 52
+          }
+        ]
+      }
+    }
+  ]
 }

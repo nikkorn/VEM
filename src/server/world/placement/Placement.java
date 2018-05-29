@@ -6,11 +6,7 @@ import server.world.placement.state.IPlacementState;
 /**
  * Represents a tile-positioned placement.
  */
-public class Placement {
-	/**
-	 * The type of the placement.
-	 */
-	private PlacementType type;
+public abstract class Placement<TState extends IPlacementState> {
 	/**
 	 * The container of the placement.
 	 */
@@ -20,22 +16,14 @@ public class Placement {
 	 */
 	private Priority priority;
 	/**
+	 * The placement state.
+	 */
+	private TState state;
+	/**
 	 * The placement action to be executed per game engine tick and/or time update.
 	 * This could also be done per interaction if the placement priority is LOW.
 	 */
-	private IPlacementAction<? extends IPlacementState> action;
-	/**
-	 * The placement state.
-	 */
-	private IPlacementState state;
-	
-	/**
-	 * Create a new instance of the Placement class.
-	 * @param type The type of the placement.
-	 */
-	public Placement(PlacementType type) {
-		this.type = type;
-	}
+	private IPlacementAction<TState> action;
 
 	/**
 	 * Get the placement priority.
@@ -50,6 +38,8 @@ public class Placement {
 	 * @param priority The placement priority.
 	 */
 	public void setPriority(Priority priority) {
+		// TODO Should call some callback to let the chunk know it has changed
+		// priority as this could mean the chunk becomes active/inactive.
 		this.priority = priority;
 	}
 
@@ -57,15 +47,13 @@ public class Placement {
 	 * Get the placement type.
 	 * @return The placement type.
 	 */
-	public PlacementType getType() {
-		return type;
-	}
-
+	public abstract PlacementType getType();
+	
 	/**
 	 * Get the placement action.
 	 * @return The placement action.
 	 */
-	public IPlacementAction<? extends IPlacementState> getAction() {
+	public IPlacementAction<TState> getAction() {
 		return action;
 	}
 
@@ -73,7 +61,7 @@ public class Placement {
 	 * Set the placement action.
 	 * @param action The placement action.
 	 */
-	public void setAction(IPlacementAction<? extends IPlacementState> action) {
+	public void setAction(IPlacementAction<TState> action) {
 		this.action = action;
 	}
 
@@ -97,7 +85,7 @@ public class Placement {
 	 * Get the state of the placement.
 	 * @return The state of the placement.
 	 */
-	public IPlacementState getState() {
+	public TState getState() {
 		return state;
 	}
 
@@ -105,7 +93,7 @@ public class Placement {
 	 * Set the state of the placement.
 	 * @param state The state of the placement.
 	 */
-	public void setState(IPlacementState state) {
+	public void setState(TState state) {
 		this.state = state;
 	}
 	
@@ -117,7 +105,7 @@ public class Placement {
 		// Create the JSON object that will hold the information about this placement.
 		JSONObject placement = new JSONObject();
 		// Set the type.
-		placement.put("type", this.type.ordinal());
+		placement.put("type", this.getType().ordinal());
 		// Set container (if this placement has one).
 		if (this.container != null) {
 			placement.put("container", this.container.serialise());
@@ -126,6 +114,8 @@ public class Placement {
 		if (this.state != null) {
 			placement.put("state", this.state.serialise());
 		}
+		// Set the priority.
+		placement.put("priority", this.priority.ordinal());
 		// Return the serialised placement.
 		return placement;
 	}

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import server.Constants;
 import server.world.TileType;
 import server.world.placement.Placement;
+import server.world.placement.Priority;
 
 /**
  * A world chunk.
@@ -98,10 +99,26 @@ public class Chunk {
 	}
 	
 	/**
-	 * Tick the chunk.
+	 * Tick this chunk.
+	 * @param hasTimeChanged Whether the time has changed in the current server tick.
 	 */
-	public void tick() {
+	public void tick(boolean hasTimeChanged) {
 		// ...
+		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
+			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
+				// Get the placement at the current position.
+				Placement placement = placements[placementX][placementY];
+				// ....
+				if (placement != null && placement.getAction() != null && placement.getPriority() != Priority.LOW) {
+					// ....
+					placement.getAction().onServerTick(placement.getState(), placement.getContainer());
+					// ....
+					if (hasTimeChanged) {
+						placement.getAction().onTimeUpdate(placement.getState(), placement.getContainer());
+					}
+				}
+			}
+		}
 	}
 	
 	/**

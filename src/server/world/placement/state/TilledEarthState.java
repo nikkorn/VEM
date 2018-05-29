@@ -5,7 +5,7 @@ import org.json.JSONObject;
 /**
  * Represents the internal state of a tilled earth placement.
  */
-public class TilledEarthPlacementState implements IPlacementState {
+public class TilledEarthState implements IPlacementState {
 	/**
 	 * The number of minutes that the tilled earth is watered for.
 	 */

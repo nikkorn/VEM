@@ -9,20 +9,20 @@ import server.world.placement.state.IPlacementState;
  * The base abstract placement factory.
  * @param <TState> The placement state type.
  */
-public abstract class PlacementFactory<TState extends IPlacementState> {
+public abstract class PlacementFactory<TPlacement extends Placement<TState>, TState extends IPlacementState> {
 	
 	/**
 	 * Create a placement in its default state.
 	 * @return The placement in its default state.
 	 */
-	public abstract Placement create();
+	public abstract TPlacement create();
 	
 	/**
 	 * Create a placement based on existing world state.
 	 * @param placementJSON The JSON object representing an existing placement.
 	 * @return The placement.
 	 */
-	public abstract Placement create(JSONObject placementJSON);
+	public abstract TPlacement create(JSONObject placementJSON);
 	
 	/**
 	 * Create default state for the placement type.

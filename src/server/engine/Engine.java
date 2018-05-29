@@ -2,6 +2,7 @@ package server.engine;
 
 import server.players.ConnectedPlayerPool;
 import server.world.World;
+import server.world.chunk.Chunk;
 
 /**
  * The server-side game engine.
@@ -33,9 +34,10 @@ public class Engine {
 		// Update the world time and get whether it has changed.
 		// It does not change every server tick, just ever game minute.
 		boolean timeChanged = this.world.getTime().update();
-		// ....
-		if (timeChanged) {
-			System.out.println(this.world.getTime().getFormattedTime());
+		// Tick each of our cached chunks.
+		// TODO This eventually should only be done for active chunks.
+		for (Chunk chunk : world.getCachedChunks()) {
+			chunk.tick(timeChanged);
 		}
 	}
 }

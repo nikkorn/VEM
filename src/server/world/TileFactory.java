@@ -1,14 +1,13 @@
 package server.world;
 
 import java.util.HashMap;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import server.world.placement.Container;
 import server.world.placement.Placement;
 import server.world.placement.PlacementType;
+import server.world.placement.Priority;
 import server.world.placement.factories.PlacementFactory;
 import server.world.placement.factories.TilledEarthFactory;
-import server.world.placement.state.IPlacementState;
 
 /**
  * A factory for creating tile entities.
@@ -29,11 +28,13 @@ public class TileFactory {
 	 */
 	public static Placement createPlacement(PlacementType type) {
 		// Get the relevant placement factory.
-		PlacementFactory<? extends IPlacementState> placementFactory = placementFactories.get(type);
+		PlacementFactory placementFactory = placementFactories.get(type);
 		// Create the placement.
 		Placement placement = placementFactory.create();
 		// Create the placement state.
 		placement.setState(placementFactory.createState());
+		// Create the action for this placement.
+		placement.setAction(placementFactory.createAction());
 		// Return the new placement.
 		return placement;
 	}
@@ -45,13 +46,17 @@ public class TileFactory {
 	 */
 	public static Placement createPlacement(JSONObject placementJSON) {
 		// Get the relevant placement factory.
-		PlacementFactory<? extends IPlacementState> placementFactory = placementFactories.get(PlacementType.values()[placementJSON.getInt("type")]);
+		PlacementFactory placementFactory = placementFactories.get(PlacementType.values()[placementJSON.getInt("type")]);
 		// Create the placement.
 		Placement placement = placementFactory.create(placementJSON);
+		// Create the action for this placement.
+		placement.setAction(placementFactory.createAction());
 		// Create the placement state if there is any.
 		if (placementJSON.has("state")) {
 			placement.setState(placementFactory.createState(placementJSON.getJSONObject("state")));
 		}
+		// Set the placement priority.
+		placement.setPriority(Priority.values()[placementJSON.getInt("priority")]);
 		// Return the new placement.
 		return placement;
 	}
@@ -67,11 +72,10 @@ public class TileFactory {
 	
 	/**
 	 * Create a container based on existing world state.
-	 * @param numberOfSlots The number of slots.
-	 * @param slots The JSON array representing the existing slots.
+	 * @param containerJSON The JSON object representing the container.
 	 * @return The container.
 	 */
-	public static Container createContainer(int numberOfSlots, JSONArray slots) {
+	public static Container createContainer(JSONObject containerJSON) {
 		return null;
 	}
 }

@@ -5,20 +5,19 @@ import server.items.ItemType;
 import server.world.TileFactory;
 import server.world.placement.Container;
 import server.world.placement.IPlacementAction;
-import server.world.placement.Placement;
-import server.world.placement.PlacementType;
 import server.world.placement.Priority;
-import server.world.placement.state.TilledEarthPlacementState;
+import server.world.placement.placements.TilledEarth;
+import server.world.placement.state.TilledEarthState;
 
 /**
  * Factory for creating a tilled earth placement.
  */
-public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementState> {
+public class TilledEarthFactory extends PlacementFactory<TilledEarth, TilledEarthState> {
 
 	@Override
-	public Placement create() {
+	public TilledEarth create() {
 		// Create the placement of the expected type.
-		Placement placement = new Placement(PlacementType.TILLED_EARTH);
+		TilledEarth placement = new TilledEarth();
 		// Set the action for this placement.
 		placement.setAction(createAction());
 		// Set the priority of this placement.
@@ -30,45 +29,45 @@ public class TilledEarthFactory extends PlacementFactory<TilledEarthPlacementSta
 	}
 
 	@Override
-	public Placement create(JSONObject placementJSON) {
+	public TilledEarth create(JSONObject placementJSON) {
 		// Create the placement of the expected type.
-		Placement placement = new Placement(PlacementType.TILLED_EARTH);
+		TilledEarth placement = new TilledEarth();
 		// Set the action for this placement.
 		placement.setAction(createAction());
 		// Set the priority of this placement.
 		placement.setPriority(Priority.HIGH);
 		// Set the container for this placement.
-		placement.setContainer(TileFactory.createContainer(3, placementJSON.getJSONArray("container")));
+		placement.setContainer(TileFactory.createContainer(placementJSON.getJSONObject("container")));
 		// Return the placement placement.
 		return placement;
 	}
 
 	@Override
-	public TilledEarthPlacementState createState() {
-		return new TilledEarthPlacementState();
+	public TilledEarthState createState() {
+		return new TilledEarthState();
 	}
 
 	@Override
-	public TilledEarthPlacementState createState(JSONObject stateJSON) {
+	public TilledEarthState createState(JSONObject stateJSON) {
 		// TODO Create state based on JSON!
-		return new TilledEarthPlacementState();
+		return new TilledEarthState();
 	}
 	
 	@Override
-	public IPlacementAction<TilledEarthPlacementState> createAction() {
-		return new IPlacementAction<TilledEarthPlacementState>() {
+	public IPlacementAction<TilledEarthState> createAction() {
+		return new IPlacementAction<TilledEarthState>() {
 			@Override
-			public void onServerTick(TilledEarthPlacementState state, Container container) {
+			public void onServerTick(TilledEarthState state, Container container) {
 				System.out.println("Just growing some plants at 100% capacity!");
 			}
 
 			@Override
-			public void onTimeUpdate(TilledEarthPlacementState state, Container container) {
+			public void onTimeUpdate(TilledEarthState state, Container container) {
 				System.out.println("Just growing some plants, oh did the time change?");
 			}
 
 			@Override
-			public ItemType onInteraction(TilledEarthPlacementState state, Container container, ItemType item) {
+			public ItemType onInteraction(TilledEarthState state, Container container, ItemType item) {
 				System.out.println("Just growing some plants, did you use that item on me? I will keep it!");
 				return ItemType.NONE;
 			}
