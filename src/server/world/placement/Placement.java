@@ -6,7 +6,11 @@ import server.world.placement.state.IPlacementState;
 /**
  * Represents a tile-positioned placement.
  */
-public abstract class Placement<TState extends IPlacementState> {
+public class Placement {
+	/**
+	 * The placement type.
+	 */
+	private PlacementType type;
 	/**
 	 * The container of the placement.
 	 */
@@ -18,12 +22,28 @@ public abstract class Placement<TState extends IPlacementState> {
 	/**
 	 * The placement state.
 	 */
-	private TState state;
+	private IPlacementState state;
 	/**
 	 * The placement action to be executed per game engine tick and/or time update.
 	 * This could also be done per interaction if the placement priority is LOW.
 	 */
-	private IPlacementAction<TState> action;
+	private IPlacementAction action;
+	
+	/**
+	 * Create a new instance of the Placement class.
+	 * @param type The placement type.
+	 */
+	public Placement(PlacementType type) {
+		this.type = type;
+	}
+	
+	/**
+	 * Get the placement type.
+	 * @return The placement type.
+	 */
+	public PlacementType getType() {
+		return this.type;
+	}
 
 	/**
 	 * Get the placement priority.
@@ -42,18 +62,12 @@ public abstract class Placement<TState extends IPlacementState> {
 		// priority as this could mean the chunk becomes active/inactive.
 		this.priority = priority;
 	}
-
-	/**
-	 * Get the placement type.
-	 * @return The placement type.
-	 */
-	public abstract PlacementType getType();
 	
 	/**
 	 * Get the placement action.
 	 * @return The placement action.
 	 */
-	public IPlacementAction<TState> getAction() {
+	public IPlacementAction getAction() {
 		return action;
 	}
 
@@ -61,7 +75,7 @@ public abstract class Placement<TState extends IPlacementState> {
 	 * Set the placement action.
 	 * @param action The placement action.
 	 */
-	public void setAction(IPlacementAction<TState> action) {
+	public void setAction(IPlacementAction action) {
 		this.action = action;
 	}
 
@@ -85,7 +99,7 @@ public abstract class Placement<TState extends IPlacementState> {
 	 * Get the state of the placement.
 	 * @return The state of the placement.
 	 */
-	public TState getState() {
+	public IPlacementState getState() {
 		return state;
 	}
 
@@ -93,7 +107,7 @@ public abstract class Placement<TState extends IPlacementState> {
 	 * Set the state of the placement.
 	 * @param state The state of the placement.
 	 */
-	public void setState(TState state) {
+	public void setState(IPlacementState state) {
 		this.state = state;
 	}
 	

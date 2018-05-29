@@ -6,21 +6,21 @@ import server.world.placement.state.IPlacementState;
 /**
  * Represents an action to be taken by a placement.
  */
-public interface IPlacementAction<TState extends IPlacementState> {
+public interface IPlacementAction {
 	
 	/**
 	 * Execute the action in response to a server tick.
 	 * @param state The placement state.
 	 * @param container The placement container.
 	 */
-	void onServerTick(TState state, Container container);
+	public abstract void onServerTick(IPlacementState state, Container container);
 	
 	/**
 	 * Execute the action in response to the time being updated.
 	 * @param state The placement state.
 	 * @param container The placement container.
 	 */
-	void onTimeUpdate(TState state, Container container);
+	public abstract void onTimeUpdate(IPlacementState state, Container container);
 	
 	/**
 	 * Execute the action in response to interaction from another entity.
@@ -29,5 +29,5 @@ public interface IPlacementAction<TState extends IPlacementState> {
 	 * @param item The item used in interacting with the placement.
 	 * @returns The modified item type.
 	 */
-	ItemType onInteraction(TState state, Container container, ItemType item);
+	public abstract ItemType onInteraction(IPlacementState state, Container container, ItemType item);
 }
