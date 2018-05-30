@@ -24,14 +24,15 @@ public class Chunk {
 	 */
 	private int x, y;
 	/**
-	 * Whether the chunk is active. Active chunks are ticked.
-	 */
-	private boolean isActive = false;
-	/**
 	 * Whether the chunk is dirty.
 	 * Dirty chunks need to be persisted back to disk.
 	 */
 	private boolean isDirty = true;
+	/**
+	 * Whether this chunk has at least one high priority placement.
+	 * A chunk with a high priority placement will always be active.
+	 */
+	private boolean hasHighPriorityPlacement = false;
 	
 	/**
 	 * Creates a new instance of the ChunkInformation class.
@@ -45,6 +46,17 @@ public class Chunk {
 		this.y          = y;
 		this.tiles      = tiles;
 		this.placements = placements;
+		// Determine whether any placement is a high priority one.
+		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
+			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
+				// Get the placement at the current position.
+				Placement placement = placements[placementX][placementY];
+				// Is this a high priority placement?
+				if (placement != null && placement.getPriority() == Priority.HIGH) {
+					this.hasHighPriorityPlacement = true;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -64,19 +76,11 @@ public class Chunk {
 	}
 	
 	/**
-	 * Get whether the chunk is active.
-	 * @return Whether the chunk is active.
+	 * Gets whether this chunk has at least one high priority placement.
+	 * @return Whether this chunk has at least one high priority placement.
 	 */
-	public boolean isActive() {
-		return this.isActive;
-	}
-	
-	/**
-	 * Set whether the chunk is active.
-	 * @param active Whether the chunk is active.
-	 */
-	public void setActive(boolean active) {
-		this.isActive = active;
+	public boolean hasHighPriorityPlacement() {
+		return this.hasHighPriorityPlacement;
 	}
 	
 	/**
@@ -103,22 +107,34 @@ public class Chunk {
 	 * @param hasTimeChanged Whether the time has changed in the current server tick.
 	 */
 	public void tick(boolean hasTimeChanged) {
-		// ...
+		boolean highPriorityPlacementFound = false;
+		// Execute placement actions for each placement.
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
 			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
 				// Get the placement at the current position.
 				Placement placement = placements[placementX][placementY];
-				// ....
-				if (placement != null && placement.getAction() != null && placement.getPriority() != Priority.LOW) {
-					// ....
+				// Do nothing if there is no placement at this position.
+				if (placement == null) {
+					continue;
+				}
+				// We only care about placements with an action, excluding those with low priorities. 
+				if (placement.getAction() != null && placement.getPriority() != Priority.LOW) {
+					// Execute the placement action that is called once per server tick.
 					placement.getAction().onServerTick(placement.getState(), placement.getContainer());
-					// ....
+					// Execute the placement action that is called for a time change if it has.
 					if (hasTimeChanged) {
 						placement.getAction().onTimeUpdate(placement.getState(), placement.getContainer());
 					}
 				}
+				// Is this a high priority placement?
+				if (placement.getPriority() == Priority.HIGH) {
+					highPriorityPlacementFound = true;
+				}
 			}
 		}
+		// Set whether this chunk contains any high priority placements.
+		// This will impact whether the chunk stays active when no player is in it.
+		this.hasHighPriorityPlacement = highPriorityPlacementFound;
 	}
 	
 	/**

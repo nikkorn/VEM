@@ -35,9 +35,13 @@ public class Engine {
 		// It does not change every server tick, just ever game minute.
 		boolean timeChanged = this.world.getTime().update();
 		// Tick each of our cached chunks.
-		// TODO This eventually should only be done for active chunks.
 		for (Chunk chunk : world.getCachedChunks()) {
-			chunk.tick(timeChanged);
+			// We only want to tick chunks that are active. An active chunk either:
+			// - Contains a high priority placement.
+			// - TODO Contains a player.
+			if (chunk.hasHighPriorityPlacement()) {
+				chunk.tick(timeChanged);
+			}
 		}
 	}
 }

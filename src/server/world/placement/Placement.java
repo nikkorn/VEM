@@ -18,7 +18,7 @@ public class Placement {
 	/**
 	 * The placement priority.
 	 */
-	private Priority priority;
+	private Priority priority = Priority.NONE;
 	/**
 	 * The placement state.
 	 */
@@ -58,8 +58,6 @@ public class Placement {
 	 * @param priority The placement priority.
 	 */
 	public void setPriority(Priority priority) {
-		// TODO Should call some callback to let the chunk know it has changed
-		// priority as this could mean the chunk becomes active/inactive.
 		this.priority = priority;
 	}
 	
