@@ -5,8 +5,6 @@ import server.items.ItemType;
 import server.world.TileFactory;
 import server.world.placement.Container;
 import server.world.placement.IPlacementAction;
-import server.world.placement.Placement;
-import server.world.placement.PlacementType;
 import server.world.placement.Priority;
 import server.world.placement.state.IPlacementState;
 import server.world.placement.state.TilledEarthState;
@@ -14,31 +12,7 @@ import server.world.placement.state.TilledEarthState;
 /**
  * Factory for creating a tilled earth placement.
  */
-public class TilledEarthFactory extends PlacementFactory {
-
-	@Override
-	public Placement create() {
-		// Create the placement of the expected type.
-		Placement placement = new Placement(PlacementType.TILLED_EARTH);
-		// Set the priority of this placement.
-		placement.setPriority(Priority.HIGH);
-		// Set the container for this placement.
-		placement.setContainer(TileFactory.createContainer(3));
-		// Return the newly created placement.
-		return placement;
-	}
-
-	@Override
-	public Placement create(JSONObject placementJSON) {
-		// Create the placement of the expected type.
-		Placement placement = new Placement(PlacementType.TILLED_EARTH);
-		// Set the priority of this placement.
-		placement.setPriority(Priority.HIGH);
-		// Set the container for this placement.
-		placement.setContainer(TileFactory.createContainer(placementJSON.getJSONObject("container")));
-		// Return the placement placement.
-		return placement;
-	}
+public class TilledEarthFactory implements IPlacementFactory {
 
 	@Override
 	public IPlacementState createState() {
@@ -52,7 +26,7 @@ public class TilledEarthFactory extends PlacementFactory {
 	}
 	
 	@Override
-	public IPlacementAction createAction() {
+	public IPlacementAction getAction() {
 		return new IPlacementAction() {
 			@Override
 			public void onServerTick(IPlacementState state, Container container) {
@@ -70,5 +44,15 @@ public class TilledEarthFactory extends PlacementFactory {
 				return ItemType.NONE;
 			}
 		};
+	}
+
+	@Override
+	public Priority getInitialPriority() {
+		return Priority.HIGH;
+	}
+
+	@Override
+	public Container getInitialContainer() {
+		return TileFactory.createContainer(3);
 	}
 }
