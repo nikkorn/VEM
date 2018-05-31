@@ -58,16 +58,27 @@ public class WorldGenerator {
 		// This value will raise the edges of the world to produce the cold lands.
 		int boundaryNoise = (int)(generateBoundaryNoise(0.025f, centreToEdge, x, yOffset, z) * 5);
 		// Convert this piece of noise to a tile type and return it.
-		return convertNoiseToTileType(terrainNoise - boundaryNoise, biomeNoise);
+		return convertNoiseToTileType(terrainNoise - boundaryNoise, biomeNoise, getPositionSeed(x, z));
+	}
+	
+	/**
+	 * Get a unique seed for a position.
+	 * @param x The tile x position.
+	 * @param y The tile y position.
+	 * @return A unique seed for a position.
+	 */
+	public long getPositionSeed(int x, int y) {
+		return seed + (x << 16 + y);
 	}
 	
 	/**
 	 * Converts a piece of noise to a static world tile type.
 	 * @param terrainNoise The piece of terrain noise.
 	 * @param biomeNoise The piece of biome noise.
+	 * @param biomeNoise The unique seed for the position at which we are creating a tile.
 	 * @return The tile type.
 	 */
-	private static TileType convertNoiseToTileType(int terrainNoise, int biomeNoise) {
+	private static TileType convertNoiseToTileType(int terrainNoise, int biomeNoise, long positionSeed) {
 		TileType type = null;
 		// Get the initial tile type, without consideration for biomes.
 		switch(terrainNoise) {
