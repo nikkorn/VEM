@@ -83,6 +83,16 @@ public class WorldMapImageCreator {
 				g = 219; 
 				b = 74;
 				break;
+			case PLAINS_GRASS_TUFT:
+				r = 185;
+				g = 210; 
+				b = 70;
+				break;
+			case PLAINS_GRASS_FLOWER:
+				r = 198;
+				g = 225; 
+				b = 78;
+				break;
 			case SAND:
 				r = 247;
 				g = 241; 

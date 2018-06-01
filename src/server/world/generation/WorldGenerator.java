@@ -17,6 +17,11 @@ public class WorldGenerator {
 	 * The seed.
 	 */
 	private long seed;
+	/**
+	 * The world tile lottos.
+	 * These lottos are used in determining whether any static tiles should be substituted based on position.
+	 */
+	private TileLottos tileLottos = new TileLottos();
 	
 	/**
 	 * Creates a new instance of the WorldGenerator class.
@@ -32,7 +37,7 @@ public class WorldGenerator {
 		Random rng = new Random(seed);
 		yOffset    = rng.nextDouble() * (rng.nextInt(1000));
 	}
-	
+
 	/**
 	 * Get the seed.
 	 * @return The seed.
@@ -78,7 +83,7 @@ public class WorldGenerator {
 	 * @param biomeNoise The unique seed for the position at which we are creating a tile.
 	 * @return The tile type.
 	 */
-	private static TileType convertNoiseToTileType(int terrainNoise, int biomeNoise, long positionSeed) {
+	private TileType convertNoiseToTileType(int terrainNoise, int biomeNoise, long positionSeed) {
 		TileType type = null;
 		// Get the initial tile type, without consideration for biomes.
 		switch(terrainNoise) {
@@ -143,6 +148,8 @@ public class WorldGenerator {
 				type = TileType.OCEAN;
 				break;
 		}
+		// We may need to substitute the tile type.
+		type = this.tileLottos.getSubstitutionForTile(type, positionSeed);
 		// Return the tile type.
 		return type;
 	}
