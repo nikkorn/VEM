@@ -67,13 +67,13 @@ public class WorldGenerator {
 	}
 	
 	/**
-	 * Get a unique seed for a position.
-	 * @param x The tile x position.
-	 * @param y The tile y position.
-	 * @return A unique seed for a position.
+	 * Get a unique seed for a position based on the world height offset.
+	 * @param x The x position.
+	 * @param y The y position.
+	 * @return A unique seed for the position.
 	 */
 	public long getPositionSeed(int x, int y) {
-		return seed + (x << 16 + y);
+		return x ^ y * 137 ^ ((int)this.yOffset) * 11317;
 	}
 	
 	/**

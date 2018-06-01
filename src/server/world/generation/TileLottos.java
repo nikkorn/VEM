@@ -49,6 +49,6 @@ public class TileLottos extends HashMap<TileType, Lotto<TileType>> {
 		return new Lotto<TileType>()
 			.add(TileType.PLAINS_GRASS_FLOWER, 2)
 			.add(TileType.PLAINS_GRASS_TUFT, 4)
-			.add(TileType.PLAINS, 15);
+			.add(TileType.PLAINS, 30);
 	}
 }
