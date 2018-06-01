@@ -1,7 +1,7 @@
-package server.world.placement;
+package server.world.tile.placement;
 
 import server.items.ItemType;
-import server.world.placement.state.IPlacementState;
+import server.world.tile.placement.state.IPlacementState;
 
 /**
  * Represents an action to be taken by a placement.

@@ -1,7 +1,7 @@
 package server.world.generation;
 
-import server.world.TileType;
-import server.world.placement.Placement;
+import server.world.tile.TileType;
+import server.world.tile.placement.Placement;
 
 /**
  * Generator for initial chunk placements.

@@ -1,4 +1,4 @@
-package server.world;
+package server.world.tile;
 
 /**
  * Enumeration of static world tile types.

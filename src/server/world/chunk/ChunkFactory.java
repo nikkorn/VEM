@@ -3,10 +3,10 @@ package server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
-import server.world.TileFactory;
-import server.world.TileType;
 import server.world.generation.WorldGenerator;
-import server.world.placement.Placement;
+import server.world.tile.TileFactory;
+import server.world.tile.TileType;
+import server.world.tile.placement.Placement;
 
 /**
  * A factory for chunk entities.

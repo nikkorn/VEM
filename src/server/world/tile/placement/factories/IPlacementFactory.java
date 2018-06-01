@@ -1,10 +1,11 @@
-package server.world.placement.factories;
+package server.world.tile.placement.factories;
 
 import org.json.JSONObject;
-import server.world.placement.Container;
-import server.world.placement.IPlacementAction;
-import server.world.placement.Priority;
-import server.world.placement.state.IPlacementState;
+
+import server.world.tile.placement.Container;
+import server.world.tile.placement.IPlacementAction;
+import server.world.tile.placement.Priority;
+import server.world.tile.placement.state.IPlacementState;
 
 /**
  * Represents a placement factory.

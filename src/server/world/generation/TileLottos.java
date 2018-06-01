@@ -3,7 +3,7 @@ package server.world.generation;
 import java.util.HashMap;
 import java.util.Random;
 import lotto.Lotto;
-import server.world.TileType;
+import server.world.tile.TileType;
 
 /**
  * Represents a map of tile type lottos keyed on tile type.

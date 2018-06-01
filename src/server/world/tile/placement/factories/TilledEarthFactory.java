@@ -1,13 +1,13 @@
-package server.world.placement.factories;
+package server.world.tile.placement.factories;
 
 import org.json.JSONObject;
 import server.items.ItemType;
-import server.world.TileFactory;
-import server.world.placement.Container;
-import server.world.placement.IPlacementAction;
-import server.world.placement.Priority;
-import server.world.placement.state.IPlacementState;
-import server.world.placement.state.TilledEarthState;
+import server.world.tile.TileFactory;
+import server.world.tile.placement.Container;
+import server.world.tile.placement.IPlacementAction;
+import server.world.tile.placement.Priority;
+import server.world.tile.placement.state.IPlacementState;
+import server.world.tile.placement.state.TilledEarthState;
 
 /**
  * Factory for creating a tilled earth placement.

@@ -2,7 +2,7 @@ package server.world.generation;
 
 import java.util.Random;
 import server.Constants;
-import server.world.TileType;
+import server.world.tile.TileType;
 
 /**
  * Generates portions of the world based on noise and RNG.

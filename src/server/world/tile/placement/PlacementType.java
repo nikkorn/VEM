@@ -1,4 +1,4 @@
-package server.world.placement;
+package server.world.tile.placement;
 
 /**
  * Enumeration of placement types.

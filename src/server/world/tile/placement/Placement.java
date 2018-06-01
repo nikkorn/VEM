@@ -1,7 +1,8 @@
-package server.world.placement;
+package server.world.tile.placement;
 
 import org.json.JSONObject;
-import server.world.placement.state.IPlacementState;
+
+import server.world.tile.placement.state.IPlacementState;
 
 /**
  * Represents a tile-positioned placement.

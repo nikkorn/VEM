@@ -3,9 +3,9 @@ package server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
-import server.world.TileType;
-import server.world.placement.Placement;
-import server.world.placement.Priority;
+import server.world.tile.TileType;
+import server.world.tile.placement.Placement;
+import server.world.tile.placement.Priority;
 
 /**
  * A world chunk.

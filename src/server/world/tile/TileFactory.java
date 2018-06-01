@@ -1,13 +1,14 @@
-package server.world;
+package server.world.tile;
 
 import java.util.HashMap;
 import org.json.JSONObject;
-import server.world.placement.Container;
-import server.world.placement.Placement;
-import server.world.placement.PlacementType;
-import server.world.placement.Priority;
-import server.world.placement.factories.IPlacementFactory;
-import server.world.placement.factories.TilledEarthFactory;
+
+import server.world.tile.placement.Container;
+import server.world.tile.placement.Placement;
+import server.world.tile.placement.PlacementType;
+import server.world.tile.placement.Priority;
+import server.world.tile.placement.factories.IPlacementFactory;
+import server.world.tile.placement.factories.TilledEarthFactory;
 
 /**
  * A factory for creating tile entities.

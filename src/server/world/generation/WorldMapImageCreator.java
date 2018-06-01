@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import server.Constants;
-import server.world.TileType;
+import server.world.tile.TileType;
 
 /**
  * Creates world map images to write to disk.
