@@ -2,13 +2,13 @@ package server.world.tile;
 
 import java.util.HashMap;
 import org.json.JSONObject;
-
 import server.world.tile.placement.Container;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.PlacementType;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.factories.IPlacementFactory;
 import server.world.tile.placement.factories.TilledEarthFactory;
+import server.world.tile.placement.factories.TreeFactory;
 
 /**
  * A factory for creating tile entities.
@@ -20,6 +20,7 @@ public class TileFactory {
 	private static HashMap<PlacementType, IPlacementFactory> placementFactories = new HashMap<PlacementType, IPlacementFactory>()
 	{{ 
 		this.put(PlacementType.TILLED_EARTH, new TilledEarthFactory());
+		this.put(PlacementType.TREE, new TreeFactory());
 	}};
 	
 	/**

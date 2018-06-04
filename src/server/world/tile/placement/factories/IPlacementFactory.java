@@ -1,7 +1,6 @@
 package server.world.tile.placement.factories;
 
 import org.json.JSONObject;
-
 import server.world.tile.placement.Container;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;

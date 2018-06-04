@@ -20,6 +20,7 @@ public class TileLottos extends HashMap<TileType, Lotto<TileType>> {
 	public TileLottos() {
 		// Populate this map with tile substitution lottos.
 		this.put(TileType.PLAINS, createPlainsLotto());
+		this.put(TileType.GRASS, createGrassLotto());
 	}
 	
 	/**
@@ -43,12 +44,25 @@ public class TileLottos extends HashMap<TileType, Lotto<TileType>> {
 
 	/**
 	 * Create a lotto for the plains tile type.
-	 * @return The lotto for he plains tile type.
+	 * @return The lotto for the plains tile type.
 	 */
 	private Lotto<TileType> createPlainsLotto() {
 		return new Lotto<TileType>()
 			.add(TileType.PLAINS_GRASS_FLOWER, 2)
 			.add(TileType.PLAINS_GRASS_TUFT, 4)
 			.add(TileType.PLAINS, 30);
+	}
+	
+	/**
+	 * Create a lotto for the grass tile type.
+	 * @return The lotto for the grass tile type.
+	 */
+	private Lotto<TileType> createGrassLotto() {
+		return new Lotto<TileType>()
+			.add(TileType.GRASS_FLOWERS_1, 2)
+			.add(TileType.GRASS_FLOWERS_2, 2)
+			.add(TileType.GRASS_TUFT_1, 4)
+			.add(TileType.GRASS_TUFT_2, 4)
+			.add(TileType.GRASS, 35);
 	}
 }
