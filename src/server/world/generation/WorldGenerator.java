@@ -22,6 +22,11 @@ public class WorldGenerator {
 	 * These lottos are used in determining whether any static tiles should be substituted based on position.
 	 */
 	private TileLottos tileLottos = new TileLottos();
+	/**
+	 * The world placement lottos.
+	 * These lottos are used in determining whether any placmements should be placed at a tile position.
+	 */
+	private PlacementLottos placementLottos = new PlacementLottos();
 	
 	/**
 	 * Creates a new instance of the WorldGenerator class.
@@ -44,6 +49,15 @@ public class WorldGenerator {
 	 */
 	public long getSeed() {
 		return this.seed;
+	}
+	
+	/**
+	 * Get world placement lottos.
+	 * These lottos are used in determining whether any static tiles should be substituted based on position.
+	 * @return The world placement lottos.
+	 */
+	public PlacementLottos getPlacmementLottos() {
+		return this.placementLottos;
 	}
 	
 	/**
