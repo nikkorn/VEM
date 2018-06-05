@@ -1,23 +1,38 @@
 package server.world.chunk;
 
+import java.util.HashMap;
 import java.util.Random;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
 import server.world.generation.WorldGenerator;
-import server.world.tile.TileFactory;
 import server.world.tile.TileType;
+import server.world.tile.placement.Container;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.PlacementType;
+import server.world.tile.placement.Priority;
+import server.world.tile.placement.factories.IPlacementFactory;
+import server.world.tile.placement.factories.TilledEarthFactory;
+import server.world.tile.placement.factories.TreeFactory;
 
 /**
  * A factory for chunk entities.
  */
 public class ChunkFactory {
+	/**
+	 * The map of placement factories, keyed on placement type.
+	 */
+	private static HashMap<PlacementType, IPlacementFactory> placementFactories = new HashMap<PlacementType, IPlacementFactory>()
+	{
+		private static final long serialVersionUID = 1L;
+		{ 
+			this.put(PlacementType.TILLED_EARTH, new TilledEarthFactory());
+			this.put(PlacementType.TREE, new TreeFactory());
+		}
+	};
 	
 	/**
-	 * Create a chunk.
+	 * Create a new chunk in its default state.
 	 * This chunk does not already exist (is not defined in the world save directory)
 	 * so it is the job of the world generator to spawn initial placements.
 	 * @param generator The world generator.
@@ -25,7 +40,7 @@ public class ChunkFactory {
 	 * @param y The y position of the chunk.
 	 * @return The created chunk.
 	 */
-	public static Chunk createChunk(WorldGenerator generator, int x, int y) {
+	public static Chunk createNewChunk(WorldGenerator generator, int x, int y) {
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// This is the first time we are creating this chunk (there is no 
@@ -37,14 +52,14 @@ public class ChunkFactory {
 	}
 	
 	/**
-	 * Create a chunk.
+	 * Restore an existing chunk.
 	 * This chunk already exist and is defined in the world save directory.
 	 * The chunk we create will reflect this saved state state.
 	 * @param chunkJSON The JSON object representing the chunk.
 	 * @param generator The world generator.
 	 * @return The created chunk.
 	 */
-	public static Chunk createChunk(JSONObject chunkJSON, WorldGenerator generator) {
+	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator) {
 		// Get the x/y chunk position.
 		int x = chunkJSON.getInt("x");
 		int y = chunkJSON.getInt("y");
@@ -62,7 +77,7 @@ public class ChunkFactory {
 			int placementXPosition = placementJSON.getInt("x");
 			int placementYPosition = placementJSON.getInt("y");
 			// Create the actual placement.
-			placements[placementXPosition][placementYPosition] = TileFactory.createPlacement(placementJSON);
+			placements[placementXPosition][placementYPosition] = createPlacement(placementJSON);
 		}
 		// Create and return the chunk.
 		return new Chunk(x, y, tiles, placements);
@@ -109,13 +124,82 @@ public class ChunkFactory {
 				// Try to generate a placement for this tile positon, this could be null if we didn't generate one.
 				PlacementType placementType = worldGenerator.getPlacmementLottos().getPlacementForTile(tiles[tileX][tileY], chunkRng);
 				// Create the placement if we generated one.
-				if (placementType != null) {
-					// TODO Passing the RNG means that we could generate consistent placement state!
-					placements[tileX][tileY] = TileFactory.createPlacement(placementType);
+				if (placementType != PlacementType.NONE) {
+					// Passing the RNG means that we can generate consistent placement state!
+					placements[tileX][tileY] = createPlacement(placementType, chunkRng);
 				}
 			}
 		}
 		// Return the generated placements.
 		return placements;
+	}
+	
+	/**
+	 * Create a placement of the specified type in its default state.
+	 * @param type The placement type.
+	 * @param chunkRng The rng to use in creating all the placements for a chunk.
+	 * @return The placement.
+	 */
+	private static Placement createPlacement(PlacementType type, Random chunkRng) {
+		// Create the new placement.
+		Placement placement = new Placement(type);
+		// Get the relevant placement factory.
+		IPlacementFactory placementFactory = placementFactories.get(type);
+		// Create the placement state.
+		placement.setState(placementFactory.createState(chunkRng));
+		// Create the action for this placement.
+		placement.setAction(placementFactory.getAction());
+		// Set the initial priority for this placement.
+		placement.setPriority(placementFactory.getInitialPriority());
+		// Set the initial container for this placement.
+		placement.setContainer(placementFactory.getInitialContainer(chunkRng));
+		// Return the new placement.
+		return placement;
+	}
+	
+	/**
+	 * Create a placement based on existing world state.
+	 * @param placementJSON The JSON object representing an existing placement.
+	 * @return The placement.
+	 */
+	private static Placement createPlacement(JSONObject placementJSON) {
+		// Get the placement type.
+		PlacementType placementType = PlacementType.values()[placementJSON.getInt("type")];
+		// Create the placement.
+		Placement placement = new Placement(placementType);
+		// Get the relevant placement factory.
+		IPlacementFactory placementFactory = placementFactories.get(placementType);
+		// Create the action for this placement.
+		placement.setAction(placementFactory.getAction());
+		// Create the placement state if there is any.
+		if (placementJSON.has("state")) {
+			placement.setState(placementFactory.createState(placementJSON.getJSONObject("state")));
+		}
+		// Create the placement container if it has one.
+		if (placementJSON.has("container")) {
+			placement.setContainer(createContainer(placementJSON.getJSONObject("container")));
+		}
+		// Set the placement priority.
+		placement.setPriority(Priority.values()[placementJSON.getInt("priority")]);
+		// Return the new placement.
+		return placement;
+	}
+	
+	/**
+	 * Create an empty container with the specified number of slots.
+	 * @param numberOfSlots The number of slots.
+	 * @return The container.
+	 */
+	public static Container createContainer(int numberOfSlots) {
+		return null;
+	}
+	
+	/**
+	 * Create a container based on existing world state.
+	 * @param containerJSON The JSON object representing the container.
+	 * @return The container.
+	 */
+	public static Container createContainer(JSONObject containerJSON) {
+		return null;
 	}
 }

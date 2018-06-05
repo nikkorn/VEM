@@ -3,14 +3,13 @@ package server.world;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.JSONObject;
-
 import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
 import server.world.time.Time;
 
 /**
- * Represents the game world.
+ * Represents the game world composed of separate chunks.
  */
 public class World {
 	/**
@@ -27,7 +26,7 @@ public class World {
 	private HashMap<String, Chunk> cachedChunks = new HashMap<String, Chunk>();
 	
 	/**
-	 * Creates a new instance of the WorldInformation class.
+	 * Creates a new instance of the World class.
 	 * @param time The world time.
 	 * @param worldGenerator The world generator.
 	 */
@@ -58,8 +57,8 @@ public class World {
 			// We already have this chunk!
 			return this.cachedChunks.get(chunkKey);
 		} else {
-			// Create the chunk. This may be a new chunk, or one read from disk.
-			Chunk chunk = ChunkFactory.createChunk(worldGenerator, x, y);
+			// Create the new chunk.
+			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, x, y);
 			// Cache this chunk so that we don't have to keep generating it.
 			this.cachedChunks.put(chunkKey, chunk);
 			// Return the chunk.

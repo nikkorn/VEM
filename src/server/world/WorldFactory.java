@@ -30,7 +30,7 @@ public class WorldFactory {
 			// Return the world.
 			return world;
 		} else {
-			// We are creating a new world save.
+			// We are creating a new world save!
 			// Create a brand new world seed.
 			long worldSeed = new Random().nextLong();
 			// Create the initial world time.
@@ -84,8 +84,8 @@ public class WorldFactory {
 		for (File chunkFile : chunksDirectory.listFiles()) {
 			// Convert the chunk save file to JSON.
 			JSONObject chunkState = Helpers.readJSONObjectFromFile(chunkFile);
-			// Create the chunk.
-			Chunk chunk = ChunkFactory.createChunk(chunkState, worldGenerator);
+			// Restore the chunk.
+			Chunk chunk = ChunkFactory.restoreChunk(chunkState, worldGenerator);
 			// Add the chunk to the world.
 			world.addCachedChunk(chunk);
 		}

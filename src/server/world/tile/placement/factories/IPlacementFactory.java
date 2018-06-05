@@ -1,5 +1,6 @@
 package server.world.tile.placement.factories;
 
+import java.util.Random;
 import org.json.JSONObject;
 import server.world.tile.placement.Container;
 import server.world.tile.placement.IPlacementAction;
@@ -13,9 +14,10 @@ public interface IPlacementFactory {
 	
 	/**
 	 * Create default state for the placement type.
+	 * @param chunkRng The rng to use in creating a placement for a chunk.
 	 * @return The default placement state.
 	 */
-	IPlacementState createState();
+	IPlacementState createState(Random chunkRng);
 	
 	/**
 	 * Create state for the placement type based on existing save state.
@@ -32,9 +34,10 @@ public interface IPlacementFactory {
 	
 	/**
 	 * Get the initial placement container.
+	 * @param chunkRng The rng to use in creating a placement for a chunk.
 	 * @return The initial placement container.
 	 */
-	Container getInitialContainer();
+	Container getInitialContainer(Random chunkRng);
 	
 	/**
 	 * Create the placement action for this placement.

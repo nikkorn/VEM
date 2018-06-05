@@ -1,8 +1,9 @@
 package server.world.tile.placement.factories;
 
+import java.util.Random;
 import org.json.JSONObject;
 import server.items.ItemType;
-import server.world.tile.TileFactory;
+import server.world.chunk.ChunkFactory;
 import server.world.tile.placement.Container;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
@@ -15,7 +16,7 @@ import server.world.tile.placement.state.TilledEarthState;
 public class TilledEarthFactory implements IPlacementFactory {
 
 	@Override
-	public IPlacementState createState() {
+	public IPlacementState createState(Random chunkRng) {
 		return new TilledEarthState();
 	}
 
@@ -52,7 +53,7 @@ public class TilledEarthFactory implements IPlacementFactory {
 	}
 
 	@Override
-	public Container getInitialContainer() {
-		return TileFactory.createContainer(3);
+	public Container getInitialContainer(Random chunkRng) {
+		return ChunkFactory.createContainer(3);
 	}
 }

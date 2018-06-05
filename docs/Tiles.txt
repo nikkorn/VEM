@@ -49,3 +49,7 @@ Every tickable placement will have priority (LOW, MEDIUM, HIGH). The priority of
  2. MEDIUM: The placement will be ticked by the game engine AS LONG as the chunk it resides in is active.
  3. HIGH: The placement will be ticked by the game engine at all times, as its presence in a chunk means that the chunk is ALWAYS active.
  
+ Position
+ ========
+ 
+ The tile at position 0,0 is the tile at the center (origin) of the world.
