@@ -2,6 +2,7 @@ package server.world.tile.placement;
 
 import server.items.ItemType;
 import server.world.tile.placement.state.IPlacementState;
+import server.world.time.Time;
 
 /**
  * Represents an action to be taken by a placement.
@@ -17,10 +18,11 @@ public interface IPlacementAction {
 	
 	/**
 	 * Execute the action in response to the time being updated.
+	 * @param time The current time.
 	 * @param state The placement state.
 	 * @param container The placement container.
 	 */
-	public abstract void onTimeUpdate(IPlacementState state, Container container);
+	public abstract void onTimeUpdate(Time time, IPlacementState state, Container container);
 	
 	/**
 	 * Execute the action in response to interaction from another entity.

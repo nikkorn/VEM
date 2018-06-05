@@ -1,6 +1,7 @@
 package server.engine;
 
 import server.players.ConnectedPlayerPool;
+import server.world.Position;
 import server.world.World;
 import server.world.chunk.Chunk;
 
@@ -36,12 +37,31 @@ public class Engine {
 		boolean timeChanged = this.world.getTime().update();
 		// Tick each of our cached chunks.
 		for (Chunk chunk : world.getCachedChunks()) {
+			// Are any players within the vicinity of this chunk?
+			boolean arePlayersNearChunk = arePlayersInChunkVicinity(chunk);
 			// We only want to tick chunks that are active. An active chunk either:
 			// - Contains a high priority placement.
-			// - TODO Contains a player.
-			if (chunk.hasHighPriorityPlacement()) {
-				chunk.tick(timeChanged);
+			// - Has any players in the vicinity.
+			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
+				chunk.tick(timeChanged, this.world.getTime(), arePlayersNearChunk);
 			}
 		}
+	}
+	
+	/**
+	 * Checks whether any connected players are within the vicinity of the specified chunk.
+	 * @param chunk The chunk.
+	 * @return Whether any connected players are within the vicinity of the specified chunk.
+	 */
+	private boolean arePlayersInChunkVicinity(Chunk chunk) {
+		// Check the position of each connected player.
+		for (Position playerPosition : connectedPlayerPool.getPlayerPositions()) {
+			// Is the currently connected player in the vicinity of this chunk?
+			if (chunk.isPositionInVicinity(playerPosition)) {
+				return true;
+			}
+		}
+		// No connected players were in the vicinity of this chunk.
+		return false;
 	}
 }

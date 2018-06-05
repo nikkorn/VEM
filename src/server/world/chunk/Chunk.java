@@ -3,9 +3,11 @@ package server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
+import server.world.Position;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.Priority;
+import server.world.time.Time;
 
 /**
  * A world chunk.
@@ -93,6 +95,15 @@ public class Chunk {
 	}
 	
 	/**
+	 * Gets whether the specified position is within the vicinity of this chunk.
+	 * @param position The position.
+	 * @return Whether the position is within the vicinity of this chunk.
+	 */
+	public boolean isPositionInVicinity(Position position) {
+		return position.getChunkPosition().getX() == this.getX() && position.getChunkPosition().getY() == this.getY();
+	}
+	
+	/**
 	 * Get the type of tile at the specified position.
 	 * @param x The x position of the tile.
 	 * @param y The y position of the tile.
@@ -105,8 +116,10 @@ public class Chunk {
 	/**
 	 * Tick this chunk.
 	 * @param hasTimeChanged Whether the time has changed in the current server tick.
+	 * @param time The current time.
+	 * @param arePlayersInChunkVicinity Whether any players are in the vicinity of this chunk.
 	 */
-	public void tick(boolean hasTimeChanged) {
+	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity) {
 		boolean highPriorityPlacementFound = false;
 		// Execute placement actions for each placement.
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
@@ -123,7 +136,7 @@ public class Chunk {
 					placement.getAction().onServerTick(placement.getState(), placement.getContainer());
 					// Execute the placement action that is called for a time change if it has.
 					if (hasTimeChanged) {
-						placement.getAction().onTimeUpdate(placement.getState(), placement.getContainer());
+						placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
 					}
 				}
 				// Is this a high priority placement?

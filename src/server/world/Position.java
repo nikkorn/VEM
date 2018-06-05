@@ -13,7 +13,7 @@ public class Position {
 	 */
 	private int y;
 	/**
-	 * The x position.
+	 * The chunk position.
 	 */
 	private Position chunkPosition;
 	

@@ -9,6 +9,7 @@ import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
 import server.world.tile.placement.state.TreeState;
+import server.world.time.Time;
 
 /**
  * Factory for creating a plain tree placement.
@@ -54,7 +55,7 @@ public class TreeFactory implements IPlacementFactory {
 			}
 
 			@Override
-			public void onTimeUpdate(IPlacementState state, Container container) {}
+			public void onTimeUpdate(Time time, IPlacementState state, Container container) {}
 
 			@Override
 			public ItemType onInteraction(IPlacementState state, Container container, ItemType item) {

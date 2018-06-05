@@ -9,6 +9,7 @@ import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
 import server.world.tile.placement.state.TilledEarthState;
+import server.world.time.Time;
 
 /**
  * Factory for creating a tilled earth placement.
@@ -35,7 +36,7 @@ public class TilledEarthFactory implements IPlacementFactory {
 			}
 
 			@Override
-			public void onTimeUpdate(IPlacementState state, Container container) {
+			public void onTimeUpdate(Time time, IPlacementState state, Container container) {
 				System.out.println("Just growing some plants, oh did the time change?");
 			}
 

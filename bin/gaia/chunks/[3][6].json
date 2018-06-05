@@ -3,7 +3,7 @@
   "y": 6,
   "placements": [
     {
-      "type": 0,
+      "type": 1,
       "priority": 3,
       "state": {
         "watered-ticks": 200
