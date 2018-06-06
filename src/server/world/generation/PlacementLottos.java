@@ -48,6 +48,6 @@ public class PlacementLottos extends HashMap<TileType, Lotto<PlacementType>> {
 	private Lotto<PlacementType> createForestLotto() {
 		return new Lotto<PlacementType>()
 				.add(PlacementType.TREE)
-				.add(PlacementType.NONE, 20);
+				.add(PlacementType.NONE, 25);
 	}
 }

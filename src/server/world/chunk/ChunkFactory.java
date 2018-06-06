@@ -191,7 +191,7 @@ public class ChunkFactory {
 	 * @return The container.
 	 */
 	public static Container createContainer(int numberOfSlots) {
-		return null;
+		return new Container();
 	}
 	
 	/**
@@ -200,6 +200,6 @@ public class ChunkFactory {
 	 * @return The container.
 	 */
 	public static Container createContainer(JSONObject containerJSON) {
-		return null;
+		return new Container();
 	}
 }
