@@ -130,13 +130,28 @@ public class Chunk {
 				if (placement == null) {
 					continue;
 				}
-				// We only care about placements with an action, excluding those with low priorities. 
-				if (placement.getAction() != null && placement.getPriority() != Priority.LOW) {
-					// Execute the placement action that is called once per server tick.
-					placement.getAction().onServerTick(placement.getState(), placement.getContainer());
-					// Execute the placement action that is called for a time change if it has.
-					if (hasTimeChanged) {
-						placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
+				// Does this placement have no action associated with it?
+				if (placement.getAction() == null) {
+					// We cannot execute actions for a placement when there are none!
+				} else if (arePlayersInChunkVicinity) {
+					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placments.
+					if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
+						// Execute the placement action that is called once per server tick.
+						placement.getAction().onServerTick(placement.getState(), placement.getContainer());
+						// Execute the placement action that is called for a time change if it has.
+						if (hasTimeChanged) {
+							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
+						}
+					}
+				} else {
+					// Players are not nearby, so we will just be executing actions for HIGH priority placmements only.
+					if (placement.getPriority() == Priority.HIGH) {
+						// Execute the placement action that is called once per server tick.
+						placement.getAction().onServerTick(placement.getState(), placement.getContainer());
+						// Execute the placement action that is called for a time change if it has.
+						if (hasTimeChanged) {
+							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
+						}
 					}
 				}
 				// Is this a high priority placement?
