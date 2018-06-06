@@ -1,5 +1,7 @@
 package server.world;
 
+import server.Constants;
+
 /**
  * Represents a world position.
  */
@@ -13,9 +15,13 @@ public class Position {
 	 */
 	private int y;
 	/**
-	 * The chunk position.
+	 * The chunk x position.
 	 */
-	private Position chunkPosition;
+	private int chunkX;
+	/**
+	 * The chunk y position.
+	 */
+	private int chunkY;
 	
 	/**
 	 * Creates a new instance of the Position class.
@@ -23,9 +29,8 @@ public class Position {
 	 * @param y The y position.
 	 */
 	public Position(int x, int y) {
-		this.x             = x;
-		this.y             = y;
-		this.chunkPosition = getChunkPosition(x, y);
+		this.setX(x);
+		this.setY(y);
 	}
 	
 	/**
@@ -41,7 +46,8 @@ public class Position {
 	 * @param x The x position.
 	 */
 	public void setX(int x) {
-		this.x = x;
+		this.x      = x;
+		this.chunkX = convertWorldToChunkPosition(x);
 	}
 	
 	/**
@@ -57,24 +63,32 @@ public class Position {
 	 * @param y The y position.
 	 */
 	public void setY(int y) {
-		this.y = y;
+		this.y      = y;
+		this.chunkY = convertWorldToChunkPosition(y);
 	}
 
 	/**
-	 * Gets the position of the chunk that this position is within.
-	 * @return The position of the chunk that this position is within. 
+	 * Gets the x position of the chunk that this position is within.
+	 * @return The x position of the chunk that this position is within. 
 	 */
-	public Position getChunkPosition() {
-		return this.chunkPosition;
+	public int getChunkX() {
+		return this.chunkX;
 	}
 	
 	/**
-	 * Gets the position of the chunk that this position is within. 
-	 * @param x The x position.
-	 * @param y The y position.
+	 * Gets the y position of the chunk that this position is within.
+	 * @return The y position of the chunk that this position is within. 
+	 */
+	public int getChunkY() {
+		return this.chunkY;
+	}
+	
+	/**
+	 * Converts a world postition to a chunk position.
+	 * @param position The world position.
 	 * @return The chunk position.
 	 */
-	public static Position getChunkPosition(int x, int y) {
-		return null; // TODO
+	private static int convertWorldToChunkPosition(int position) {
+		return (position / Constants.WORLD_CHUNK_SIZE) - (position < 0 ? 1 : 0);
 	}
 }

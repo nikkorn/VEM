@@ -100,7 +100,7 @@ public class Chunk {
 	 * @return Whether the position is within the vicinity of this chunk.
 	 */
 	public boolean isPositionInVicinity(Position position) {
-		return position.getChunkPosition().getX() == this.getX() && position.getChunkPosition().getY() == this.getY();
+		return position.getChunkX() == this.getX() && position.getChunkY() == this.getY();
 	}
 	
 	/**
