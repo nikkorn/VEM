@@ -2,6 +2,7 @@ package server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
+import server.ServerConsole;
 import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
 import server.world.tile.placement.Container;
@@ -32,17 +33,17 @@ public class TilledEarthFactory implements IPlacementFactory {
 		return new IPlacementAction() {
 			@Override
 			public void onServerTick(IPlacementState state, Container container) {
-				System.out.println("Just growing some plants at 100% capacity!");
+				ServerConsole.writeInfo("Just growing some plants at 100% capacity!");
 			}
 
 			@Override
 			public void onTimeUpdate(Time time, IPlacementState state, Container container) {
-				System.out.println("Just growing some plants, oh did the time change?");
+				ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
 			}
 
 			@Override
 			public ItemType onInteraction(IPlacementState state, Container container, ItemType item) {
-				System.out.println("Just growing some plants, did you use that item on me? I will keep it!");
+				ServerConsole.writeInfo("Just growing some plants, did you use that item on me? I will keep it!");
 				return ItemType.NONE;
 			}
 		};
