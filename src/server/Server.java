@@ -25,6 +25,8 @@ public class Server {
 	public Server(String worldName) {
 		// Read the server configuration from disk.
 		this.configuration = Configuration.loadFromDisk();
+		// Set whether we are going to output debug info to the console.
+		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
 		// Create the game engine.
 		this.engine = createGameEngine(worldName);
 	}

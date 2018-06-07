@@ -1,4 +1,5 @@
 {
 	"port": 23445,
-	"save_interval": 10000
+	"save_interval": 10000,
+	"debug_to_console": true
 }

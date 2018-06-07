@@ -3,6 +3,7 @@ package server.world;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.JSONObject;
+import server.Constants;
 import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
@@ -50,6 +51,10 @@ public class World {
 	 * @return The chunk.
 	 */
 	public Chunk getChunk(int x, int y) {
+		// Check to make sure that we are not trying to get a chunk for an invalid position.
+		if (!this.isValidChunkPosition(x, y)) {
+			throw new RuntimeException("error: invalid chunk position: x=" + x + " y=" + y);
+		}
 		// Create the key for the chunk we are looking for.
 		String chunkKey = getChunkKey(x, y);
 		// Check whether we have already cached the chunk.
@@ -95,6 +100,19 @@ public class World {
 		worldState.put("time", this.time.getState());
 		// Return the world state.
 		return worldState;
+	}
+	
+	/**
+	 * Checks whether the specified position is a valid chunk position.
+	 * @param x The chunk x position.
+	 * @param y The chunk y position.
+	 * @return Whether the specified position is a valid chunk position.
+	 */
+	private boolean isValidChunkPosition(int x, int y) {
+		// Get the number of chunks on either axis from the world origin to edge.
+		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
+		// Return whether either the x or y positions exceed the world boundaries.
+		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
 	}
 	
 	/**

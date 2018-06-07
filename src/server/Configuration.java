@@ -16,15 +16,21 @@ public class Configuration {
 	 * This is the time in milliseconds between saves of world state to disk.
 	 */
 	private long worldSaveInterval;
+	/**
+	 * Whether to write debug output to the console.
+	 */
+	private boolean debugToConsole;
 	
 	/**
 	 * Create a new instance of the Configuration class.
 	 * @param port The server port.
 	 * @param worldSaveInterval The world save interval.
+	 * @param debugToConsole Whether to write debug output to the console.
 	 */
-	private Configuration(int port, long worldSaveInterval) {
+	private Configuration(int port, long worldSaveInterval, boolean debugToConsole) {
 		this.port              = port;
 		this.worldSaveInterval = worldSaveInterval;
+		this.debugToConsole    = debugToConsole;
 	}
 
 	/**
@@ -45,6 +51,14 @@ public class Configuration {
 	}
 	
 	/**
+	 * Get whether to write debug output to the console.
+	 * @return Whether to write debug output to the console.
+	 */
+	public boolean isDebuggingToConsole() {
+		return this.debugToConsole;
+	}
+	
+	/**
 	 * Get server settings defined in the server configuration file.
 	 * @return The server configuration.
 	 */
@@ -60,11 +74,12 @@ public class Configuration {
 		// Parse the configuration options from the JSON.
 		int port               = rawConfigJSON.getInt("port");
 		long worldSaveInterval = rawConfigJSON.getLong("save_interval");
+		boolean debugToConsole = rawConfigJSON.getBoolean("debug_to_console");
 		// Print the configuration to the console.
 		System.out.println("loading server config from 'server.config.json'...");
 		System.out.println("port:              " + port);
 		System.out.println("worldSaveInterval: " + worldSaveInterval);
 		// Return the configuration instance.
-		return new Configuration(port, worldSaveInterval);
+		return new Configuration(port, worldSaveInterval, debugToConsole);
 	}
 }

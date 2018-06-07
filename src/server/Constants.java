@@ -11,6 +11,9 @@ public class Constants
 	/** The size of a chunk (tiles). */
 	public static int WORLD_CHUNK_SIZE = 32;
 	
+	/** The number of chunks per axis. */
+	public static int WORLD_CHUNKS_PER_AXIS = WORLD_SIZE / WORLD_CHUNK_SIZE;
+	
 	/** The server clock rate (ms). */
 	public static long SERVER_CLOCK_RATE = 125l;
 	
