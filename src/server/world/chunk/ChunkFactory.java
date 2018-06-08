@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
 import server.ServerConsole;
+import server.items.ItemType;
 import server.world.container.Container;
 import server.world.generation.WorldGenerator;
 import server.world.tile.TileType;
@@ -205,7 +206,23 @@ public class ChunkFactory {
 	 * @return The container.
 	 */
 	public static Container createContainer(JSONObject containerJSON) {
-		// TODO Create the container with the correct numebr of slots.
-		return new Container(12);
+		// Get the number of slots that this container has.
+		int numberOfSlots = containerJSON.getInt("size");
+		// Create the container with the correct numebr of slots.
+		Container container = new Container(numberOfSlots);
+		// Get the JSON array that holds our populated slot information.
+		JSONArray slotsArray = containerJSON.getJSONArray("slots");
+		// Populate the container slot for each entry in our slot JSON array.
+		for (int slotArrayIndex = 0; slotArrayIndex < slotsArray.length(); slotArrayIndex++) {
+			// Get the JSON object that represents the populated slot.
+			JSONObject slotJSON = slotsArray.getJSONObject(slotArrayIndex);
+			// Grab the index and the item type that the slot holds.
+			int slotIndex         = slotJSON.getInt("index");
+			ItemType slotItemType = ItemType.values()[slotJSON.getInt("item_type")];
+			// Set the item in the appropriate slot.
+			container.set(slotItemType, slotIndex);
+		}
+		// Return the container.
+		return container;
 	}
 }
