@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import server.ServerConsole;
 import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
-import server.world.tile.placement.Container;
+import server.world.container.Container;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;

@@ -4,7 +4,8 @@ import java.util.Random;
 import org.json.JSONObject;
 import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
-import server.world.tile.placement.Container;
+import server.world.container.Container;
+import server.world.container.NoFreeSlotException;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
@@ -50,7 +51,11 @@ public class TreeFactory implements IPlacementFactory {
 				ItemType produced = ((TreeState)state).woodProductionLotto.draw();
 				// If we were able to produce some wood then put it in the container of this tree placement.
 				if (produced != ItemType.NONE) {
-					container.add(produced);
+					try {
+						container.add(produced);
+					} catch (NoFreeSlotException e) {
+						// We have no free slot for our wood, this is fine.
+					}
 				}
 			}
 

@@ -1,6 +1,7 @@
 package server.world.tile.placement;
 
 import server.items.ItemType;
+import server.world.container.Container;
 import server.world.tile.placement.state.IPlacementState;
 import server.world.time.Time;
 

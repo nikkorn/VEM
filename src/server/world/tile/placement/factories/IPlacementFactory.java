@@ -2,7 +2,8 @@ package server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-import server.world.tile.placement.Container;
+
+import server.world.container.Container;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;

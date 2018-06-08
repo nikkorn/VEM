@@ -6,9 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
 import server.ServerConsole;
+import server.world.container.Container;
 import server.world.generation.WorldGenerator;
 import server.world.tile.TileType;
-import server.world.tile.placement.Container;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.PlacementType;
 import server.world.tile.placement.Priority;
@@ -196,7 +196,7 @@ public class ChunkFactory {
 	 * @return The container.
 	 */
 	public static Container createContainer(int numberOfSlots) {
-		return new Container();
+		return new Container(numberOfSlots);
 	}
 	
 	/**
@@ -205,6 +205,7 @@ public class ChunkFactory {
 	 * @return The container.
 	 */
 	public static Container createContainer(JSONObject containerJSON) {
-		return new Container();
+		// TODO Create the container with the correct numebr of slots.
+		return new Container(12);
 	}
 }

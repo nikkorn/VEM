@@ -14,8 +14,8 @@
         "size": 3,
         "slots": [
           {
-            "slot": 0,
-            "id": 52
+            "index": 0,
+            "item_type": 52
           }
         ]
       }
