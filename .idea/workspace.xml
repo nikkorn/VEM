@@ -2,12 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6611807e-3f9d-4f1d-9c02-97a060cdbf37" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/.gitignore" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/world/TileFactory.java" afterPath="$PROJECT_DIR$/src/server/world/TileFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/world/placement/Placement.java" afterPath="$PROJECT_DIR$/src/server/world/placement/Placement.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/world/placement/factories/PlacementFactory.java" afterPath="$PROJECT_DIR$/src/server/world/placement/factories/PlacementFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/world/placement/factories/TilledEarthFactory.java" afterPath="$PROJECT_DIR$/src/server/world/placement/factories/TilledEarthFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worlds/gaia/chunks/[3][6].json" afterPath="$PROJECT_DIR$/worlds/gaia/chunks/[3][6].json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/lotto/Lotto.class" afterPath="$PROJECT_DIR$/bin/lotto/Lotto.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/lotto/NoTicketsRuntimeException.class" afterPath="$PROJECT_DIR$/bin/lotto/NoTicketsRuntimeException.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/lotto/Participant.class" afterPath="$PROJECT_DIR$/bin/lotto/Participant.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/Configuration.class" afterPath="$PROJECT_DIR$/bin/server/Configuration.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/Constants.class" afterPath="$PROJECT_DIR$/bin/server/Constants.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/Server.class" afterPath="$PROJECT_DIR$/bin/server/Server.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/engine/Engine.class" afterPath="$PROJECT_DIR$/bin/server/engine/Engine.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/players/ConnectedPlayerPool.class" afterPath="$PROJECT_DIR$/bin/server/players/ConnectedPlayerPool.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/Position.class" afterPath="$PROJECT_DIR$/bin/server/world/Position.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/World.class" afterPath="$PROJECT_DIR$/bin/server/world/World.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/WorldFactory.class" afterPath="$PROJECT_DIR$/bin/server/world/WorldFactory.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/chunk/Chunk.class" afterPath="$PROJECT_DIR$/bin/server/world/chunk/Chunk.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/chunk/ChunkFactory.class" afterPath="$PROJECT_DIR$/bin/server/world/chunk/ChunkFactory.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/generation/WorldGenerator.class" afterPath="$PROJECT_DIR$/bin/server/world/generation/WorldGenerator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server/world/generation/WorldMapImageCreator.class" afterPath="$PROJECT_DIR$/bin/server/world/generation/WorldMapImageCreator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/gaia/chunks/[3][6].json" afterPath="$PROJECT_DIR$/bin/gaia/chunks/[3][6].json" />
     </list>
     <ignored path="VEM.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,7 +39,7 @@
     <favorites_list name="VEM" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -91,6 +102,7 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -112,7 +124,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -377,6 +388,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="6611807e-3f9d-4f1d-9c02-97a060cdbf37" name="Default" comment="" />
@@ -393,7 +407,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32868218" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -417,6 +431,14 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
@@ -433,7 +455,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -441,7 +462,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="294">
           <caret line="79" column="37" selection-start-line="79" selection-start-column="37" selection-end-line="79" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -449,7 +469,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -457,7 +476,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="77">
           <caret line="11" column="32" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -465,7 +483,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="791">
           <caret line="78" column="7" selection-start-line="78" selection-start-column="7" selection-end-line="78" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -473,7 +490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
           <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -481,7 +497,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="116" column="86" selection-start-line="116" selection-start-column="86" selection-end-line="116" selection-end-column="86" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -489,7 +504,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="197">
           <caret line="37" column="61" selection-start-line="37" selection-start-column="61" selection-end-line="37" selection-end-column="61" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -497,7 +511,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
           <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -505,9 +518,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="65">
           <caret line="48" column="32" selection-start-line="48" selection-start-column="32" selection-end-line="48" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
