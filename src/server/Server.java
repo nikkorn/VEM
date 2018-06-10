@@ -1,7 +1,7 @@
 package server;
 
 import server.engine.Engine;
-import server.players.ConnectedPlayerPool;
+import server.networking.ConnectedClientManager;
 import server.world.World;
 import server.world.WorldFactory;
 
@@ -17,6 +17,10 @@ public class Server {
 	 * The game engine.
 	 */
 	private Engine engine;
+	/**
+	 * The connected client manager.
+	 */
+	private ConnectedClientManager connectedClientManager;
 	
 	/**
 	 * Create a new instance of the server class.
@@ -27,6 +31,8 @@ public class Server {
 		this.configuration = Configuration.loadFromDisk();
 		// Set whether we are going to output debug info to the console.
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
+		// Create the connected client manager.
+		this.connectedClientManager = new ConnectedClientManager();
 		// Create the game engine.
 		this.engine = createGameEngine(worldName);
 	}
@@ -67,9 +73,7 @@ public class Server {
 	public Engine createGameEngine(String worldName) {
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
-		// Create the connected player pool.
-		ConnectedPlayerPool connectedPlayerPool = new ConnectedPlayerPool();
 		// Create and return the game engine.
-		return new Engine(world, connectedPlayerPool);
+		return new Engine(world, connectedClientManager.getConnectedPlayers(), connectedClientManager.getPlayerRequestQueue());
 	}
 }

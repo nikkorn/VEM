@@ -6,6 +6,7 @@ import server.ServerConsole;
 import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
 import server.world.container.Container;
+import server.world.messaging.WorldMessageQueue;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
@@ -32,17 +33,17 @@ public class TilledEarthFactory implements IPlacementFactory {
 	public IPlacementAction getAction() {
 		return new IPlacementAction() {
 			@Override
-			public void onServerTick(IPlacementState state, Container container) {
+			public void onServerTick(IPlacementState state, Container container, WorldMessageQueue worldMessageQueue) {
 				ServerConsole.writeInfo("Just growing some plants at 100% capacity!");
 			}
 
 			@Override
-			public void onTimeUpdate(Time time, IPlacementState state, Container container) {
+			public void onTimeUpdate(Time time, IPlacementState state, Container container, WorldMessageQueue worldMessageQueue) {
 				ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
 			}
 
 			@Override
-			public ItemType onInteraction(IPlacementState state, Container container, ItemType item) {
+			public ItemType onInteraction(IPlacementState state, Container container, ItemType item, WorldMessageQueue worldMessageQueue) {
 				ServerConsole.writeInfo("Just growing some plants, did you use that item on me? I will keep it!");
 				return ItemType.NONE;
 			}

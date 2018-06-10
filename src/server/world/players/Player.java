@@ -1,14 +1,14 @@
-package server.players;
+package server.world.players;
 
 /**
- * Represents a connected player.
+ * Represents a player in the world.
  */
 public class Player {
 	/**
 	 * The player id.
 	 */
 	private String id;
-	
+
 	/**
 	 * Create an instance of the Player class.
 	 * @param id The player id.

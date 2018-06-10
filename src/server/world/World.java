@@ -7,10 +7,11 @@ import server.Constants;
 import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
+import server.world.messaging.WorldMessageQueue;
 import server.world.time.Time;
 
 /**
- * Represents the game world composed of separate chunks.
+ * A game world composed of separate chunks.
  */
 public class World {
 	/**
@@ -25,6 +26,10 @@ public class World {
 	 * The cached chunks.
 	 */
 	private HashMap<String, Chunk> cachedChunks = new HashMap<String, Chunk>();
+	/**
+	 * The world message queue.
+	 */
+	private WorldMessageQueue worldMessageQueue = new WorldMessageQueue();
 	
 	/**
 	 * Creates a new instance of the World class.
@@ -42,6 +47,14 @@ public class World {
 	 */
 	public Time getTime() {
 		return this.time;
+	}
+
+	/**
+	 * Get the world message queue.
+	 * @return The world message queue.
+     */
+	public WorldMessageQueue getWorldMessageQueue() {
+		return worldMessageQueue;
 	}
 	
 	/**
@@ -63,7 +76,7 @@ public class World {
 			return this.cachedChunks.get(chunkKey);
 		} else {
 			// Create the new chunk.
-			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, x, y);
+			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, this.worldMessageQueue, x, y);
 			// Cache this chunk so that we don't have to keep generating it.
 			this.cachedChunks.put(chunkKey, chunk);
 			// Return the chunk.

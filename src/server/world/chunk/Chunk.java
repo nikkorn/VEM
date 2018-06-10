@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
 import server.world.Position;
+import server.world.messaging.WorldMessageQueue;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.Priority;
@@ -21,6 +22,10 @@ public class Chunk {
 	 * The placements that this chunk is composed of.
 	 */
 	private Placement[][] placements = new Placement[Constants.WORLD_CHUNK_SIZE][Constants.WORLD_CHUNK_SIZE];
+	/**
+	 * The world message queue.
+	 */
+	private WorldMessageQueue worldMessageQueue;
 	/**
 	 * The x/y positions of the chunk.
 	 */
@@ -42,12 +47,14 @@ public class Chunk {
 	 * @param y The y position of this chunk.
 	 * @param tiles The multi-dimensional array holding the tile types for the chunk.
 	 * @param placements The multi-dimensional array holding the placements that this chunk is composed of.
+	 * @param worldMessageQueue The world message queue.
 	 */
-	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements) {
-		this.x          = x;
-		this.y          = y;
-		this.tiles      = tiles;
-		this.placements = placements;
+	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements, WorldMessageQueue worldMessageQueue) {
+		this.x                 = x;
+		this.y                 = y;
+		this.tiles             = tiles;
+		this.placements        = placements;
+		this.worldMessageQueue = worldMessageQueue;
 		// Determine whether any placement is a high priority one.
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
 			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
@@ -134,23 +141,23 @@ public class Chunk {
 				if (placement.getAction() == null) {
 					// We cannot execute actions for a placement when there are none!
 				} else if (arePlayersInChunkVicinity) {
-					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placments.
+					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 					if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement.getState(), placement.getContainer());
+						placement.getAction().onServerTick(placement.getState(), placement.getContainer(), this.worldMessageQueue);
 						// Execute the placement action that is called for a time change if it has.
 						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
+							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer(), this.worldMessageQueue);
 						}
 					}
 				} else {
-					// Players are not nearby, so we will just be executing actions for HIGH priority placmements only.
+					// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 					if (placement.getPriority() == Priority.HIGH) {
 						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement.getState(), placement.getContainer());
+						placement.getAction().onServerTick(placement.getState(), placement.getContainer(), this.worldMessageQueue);
 						// Execute the placement action that is called for a time change if it has.
 						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer());
+							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer(), this.worldMessageQueue);
 						}
 					}
 				}

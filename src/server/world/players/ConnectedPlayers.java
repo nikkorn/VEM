@@ -1,12 +1,12 @@
-package server.players;
+package server.world.players;
 
 import java.util.ArrayList;
 import server.world.Position;
 
 /**
- * The pool of connected players.
+ * The connected players.
  */
-public class ConnectedPlayerPool {
+public class ConnectedPlayers {
 	
 	/**
 	 * Gets the positions of all connected players.

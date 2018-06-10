@@ -1,7 +1,6 @@
 package server.world.tile.placement;
 
 import org.json.JSONObject;
-
 import server.world.container.Container;
 import server.world.tile.placement.state.IPlacementState;
 

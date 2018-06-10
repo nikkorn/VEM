@@ -1,0 +1,23 @@
+What messages would the world/world entities add to the queue?
+
+World
+=====
+- A player position has changed.
+- A player has changed direction.
+- A player has appeared at a position.
+- A player has disappeared from a position.
+- A player has opened a container.
+- A player has closed a container.
+- The item type for a player inventory slot has changed.
+
+Chunk
+=====
+- A chunk has been loaded.
+- The weather has changed for a chunk.
+
+Placement
+=========
+- A placement has been added.
+- A placement has been removed.
+- The state of a placement has changed.
+- The item type for a container slot has changed.
