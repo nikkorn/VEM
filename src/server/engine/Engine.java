@@ -1,6 +1,7 @@
 package server.engine;
 
 import server.world.players.ConnectedPlayers;
+import server.world.players.PlayerRequest;
 import server.world.Position;
 import server.world.World;
 import server.world.chunk.Chunk;
@@ -73,7 +74,13 @@ public class Engine {
 	 * Process all player requests in the player request queue.
 	 */
 	private void processPlayerRequests() {
-		// TODO Process all player requests in the player request queue.
+		// Process all player requests in the player request queue.
+		while(this.playerRequestQueue.hasNext()) {
+			// Grab the next player request.
+			PlayerRequest request = this.playerRequestQueue.next();
+			// Process the request.
+			// TODO Process the request.
+		}
 	}
 
 	/**
