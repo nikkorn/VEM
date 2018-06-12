@@ -4,9 +4,18 @@ import java.util.ArrayList;
 import server.world.Position;
 
 /**
- * The connected players.
+ * The players within a world.
  */
-public class ConnectedPlayers {
+public class Players {
+	
+	/**
+	 * Get the player with the specified player id.
+	 * @param playerId The player id.
+	 * @return The player with the specified player id.
+	 */
+	public Player getPlayer(String playerId) {
+		return null;
+	}
 	
 	/**
 	 * Gets the positions of all connected players.

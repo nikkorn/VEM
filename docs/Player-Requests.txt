@@ -1,0 +1,12 @@
+Player Request Types
+====================
+
+JOIN:            Join the world.
+LEAVE:           Leave the world.
+MOVE:            Move in a direction (Takes a direction).
+FACE_DIRECTION:  Face a direction (Takes a direction).
+USE_ITEM:        Use the active item on the position the player is facing (Takes an inventory slot index).
+PUT_ITEM:        Put the currently selected item (Takes an inventory slot index and a container slot index).
+TAKE_ITEM:       Take the currently selected item (Takes an inventory slot index and a container slot index).
+OPEN_CONTAINER:  Open the container at the position the player is facing.
+CLOSE_CONTAINER: Close the container at the position the player is facing.

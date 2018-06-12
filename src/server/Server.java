@@ -74,6 +74,6 @@ public class Server {
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
 		// Create and return the game engine.
-		return new Engine(world, connectedClientManager.getConnectedPlayers(), connectedClientManager.getPlayerRequestQueue());
+		return new Engine(world);
 	}
 }

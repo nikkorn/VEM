@@ -8,12 +8,17 @@ import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
 import server.world.messaging.WorldMessageQueue;
+import server.world.players.Players;
 import server.world.time.Time;
 
 /**
  * A game world composed of separate chunks.
  */
 public class World {
+	/**
+	 * The players within the world.
+	 */
+	private Players players = new Players();
 	/**
 	 * The world time.
 	 */
@@ -98,6 +103,23 @@ public class World {
      */
 	public void addCachedChunk(Chunk chunk) {
 		this.cachedChunks.put(World.getChunkKey(chunk.getX(), chunk.getY()), chunk);
+	}
+	
+	/**
+	 * Checks whether any connected players are within the vicinity of the specified chunk.
+	 * @param chunk The chunk.
+	 * @return Whether any connected players are within the vicinity of the specified chunk.
+	 */
+	public boolean arePlayersInChunkVicinity(Chunk chunk) {
+		// Check the position of each connected player.
+		for (Position playerPosition : this.players.getPlayerPositions()) {
+			// Is the currently connected player in the vicinity of this chunk?
+			if (chunk.isPositionInVicinity(playerPosition)) {
+				return true;
+			}
+		}
+		// No connected players were in the vicinity of this chunk.
+		return false;
 	}
 	
 	/**

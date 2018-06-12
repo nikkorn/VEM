@@ -2,6 +2,8 @@ package server.world.players;
 
 import java.util.ArrayList;
 
+import server.world.players.requests.PlayerRequest;
+
 /**
  * A queue of requests populated by players.
  */
