@@ -8,6 +8,8 @@ import server.world.container.Container;
 import server.world.container.NoFreeSlotException;
 import server.world.messaging.WorldMessageQueue;
 import server.world.tile.placement.IPlacementAction;
+import server.world.tile.placement.PlacementOverlay;
+import server.world.tile.placement.PlacementUnderlay;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
 import server.world.tile.placement.state.TreeState;
@@ -32,6 +34,16 @@ public class TreeFactory implements IPlacementFactory {
 	@Override
 	public Priority getInitialPriority() {
 		return Priority.MEDIUM;
+	}
+	
+	@Override
+	public PlacementUnderlay getInitialUnderlay() {
+		return PlacementUnderlay.BASIC_TREE;
+	}
+
+	@Override
+	public PlacementOverlay getInitialOverlay() {
+		return PlacementOverlay.NONE;
 	}
 
 	@Override

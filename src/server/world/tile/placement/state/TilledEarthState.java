@@ -12,9 +12,10 @@ public class TilledEarthState implements IPlacementState {
 	public int wateredTicks = 100;
 
 	@Override
-	public JSONObject serialise() {
+	public JSONObject asJSON() {
 		// Create the JSON object that will hold the information about this placement state.
 		JSONObject state = new JSONObject();
+		// Record the number of ticks that the tilled earth is watered for.
 		state.put("watered-ticks", this.wateredTicks);
 		// Return the serialised state.
 		return state;

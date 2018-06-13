@@ -24,7 +24,7 @@ public class TreeState implements IPlacementState {
 	}
 
 	@Override
-	public JSONObject serialise() {
+	public JSONObject asJSON() {
 		return null;
 	}
 }

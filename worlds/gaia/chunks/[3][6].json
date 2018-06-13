@@ -5,6 +5,8 @@
     {
       "type": 1,
       "priority": 3,
+      "underlay": 2,
+      "overlay": 0,
       "state": {
         "watered-ticks": 200
       },

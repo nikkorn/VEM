@@ -29,6 +29,14 @@ public class Placement {
 	 * This could also be done per interaction if the placement priority is LOW.
 	 */
 	private IPlacementAction action;
+	/**
+	 * The placement underlay.
+	 */
+	private PlacementUnderlay underlay = PlacementUnderlay.NONE;
+	/**
+	 * The placement overlay.
+	 */
+	private PlacementOverlay overlay = PlacementOverlay.NONE;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -111,6 +119,47 @@ public class Placement {
 	}
 	
 	/**
+	 * Get the placement underlay.
+	 * @return The placement underlay.
+	 */
+	public PlacementUnderlay getUnderlay() {
+		return this.underlay;
+	}
+	
+	/**
+	 * Set the placement underlay.
+	 * @param underlay The placement underlay.
+	 */
+	public void setUnderlay(PlacementUnderlay underlay) {
+		this.underlay = underlay;
+	}
+	
+	/**
+	 * Get the placement overlay.
+	 * @return The placement overlay.
+	 */
+	public PlacementOverlay getOverlay() {
+		return this.overlay;
+	}
+	
+	/**
+	 * Set the placement overlay.
+	 * @param overlay The placement overlay.
+	 */
+	public void setOverlay(PlacementOverlay overlay) {
+		this.overlay = overlay;
+	}
+	
+	/**
+	 * Get whether the placement is walkable.
+	 * @return Whether the placement is walkable.
+	 */
+	public boolean isWalkable() {
+		// TODO Return whether both underlay/overlay are walkable.
+		return true;
+	}
+	
+	/**
 	 * Serialise the placement to JSON to be persisted to disk.
 	 * @return The serialised placement.
 	 */
@@ -118,14 +167,18 @@ public class Placement {
 		// Create the JSON object that will hold the information about this placement.
 		JSONObject placement = new JSONObject();
 		// Set the type.
-		placement.put("type", this.getType().ordinal());
+		placement.put("type", this.type.ordinal());
+		// Set the underlay.
+		placement.put("underlay", this.underlay.ordinal());
+		// Set the overlay.
+		placement.put("overlay", this.overlay.ordinal());
 		// Set container (if this placement has one).
 		if (this.container != null) {
 			placement.put("container", this.container.serialise());
 		}
 		// Set state (if this placement has any).
 		if (this.state != null) {
-			placement.put("state", this.state.serialise());
+			placement.put("state", this.state.asJSON());
 		}
 		// Set the priority.
 		placement.put("priority", this.priority.ordinal());

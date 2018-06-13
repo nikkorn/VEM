@@ -11,5 +11,5 @@ public interface IPlacementState {
 	 * Serialise the placement state to JSON.
 	 * @return The JSON object representing the placement state.
 	 */
-	JSONObject serialise();
+	public abstract JSONObject asJSON();
 }

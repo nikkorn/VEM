@@ -8,6 +8,8 @@ import server.world.chunk.ChunkFactory;
 import server.world.container.Container;
 import server.world.messaging.WorldMessageQueue;
 import server.world.tile.placement.IPlacementAction;
+import server.world.tile.placement.PlacementOverlay;
+import server.world.tile.placement.PlacementUnderlay;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
 import server.world.tile.placement.state.TilledEarthState;
@@ -53,6 +55,16 @@ public class TilledEarthFactory implements IPlacementFactory {
 	@Override
 	public Priority getInitialPriority() {
 		return Priority.HIGH;
+	}
+	
+	@Override
+	public PlacementUnderlay getInitialUnderlay() {
+		return PlacementUnderlay.TILLED_EARTH;
+	}
+
+	@Override
+	public PlacementOverlay getInitialOverlay() {
+		return PlacementOverlay.NONE;
 	}
 
 	@Override

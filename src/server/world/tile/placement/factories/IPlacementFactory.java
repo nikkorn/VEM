@@ -2,9 +2,10 @@ package server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import server.world.container.Container;
 import server.world.tile.placement.IPlacementAction;
+import server.world.tile.placement.PlacementOverlay;
+import server.world.tile.placement.PlacementUnderlay;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.state.IPlacementState;
 
@@ -32,6 +33,18 @@ public interface IPlacementFactory {
 	 * @return The initial placement priority.
 	 */
 	Priority getInitialPriority();
+	
+	/**
+	 * Get the initial placement underlay.
+	 * @return The initial placement underlay.
+	 */
+	PlacementUnderlay getInitialUnderlay();
+	
+	/**
+	 * Get the initial placement overlay.
+	 * @return The initial placement overlay.
+	 */
+	PlacementOverlay getInitialOverlay();
 	
 	/**
 	 * Get the initial placement container.

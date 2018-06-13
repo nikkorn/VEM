@@ -12,7 +12,9 @@ import server.world.generation.WorldGenerator;
 import server.world.messaging.WorldMessageQueue;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
+import server.world.tile.placement.PlacementOverlay;
 import server.world.tile.placement.PlacementType;
+import server.world.tile.placement.PlacementUnderlay;
 import server.world.tile.placement.Priority;
 import server.world.tile.placement.factories.IPlacementFactory;
 import server.world.tile.placement.factories.TilledEarthFactory;
@@ -160,6 +162,10 @@ public class ChunkFactory {
 		placement.setAction(placementFactory.getAction());
 		// Set the initial priority for this placement.
 		placement.setPriority(placementFactory.getInitialPriority());
+		// Set the initial underlay for this placement.
+		placement.setUnderlay(placementFactory.getInitialUnderlay());
+		// Set the initial overlay for this placement.
+		placement.setOverlay(placementFactory.getInitialOverlay());
 		// Set the initial container for this placement.
 		placement.setContainer(placementFactory.getInitialContainer(chunkRng));
 		// Return the new placement.
@@ -190,6 +196,10 @@ public class ChunkFactory {
 		}
 		// Set the placement priority.
 		placement.setPriority(Priority.values()[placementJSON.getInt("priority")]);
+		// Set the placement underlay.
+		placement.setUnderlay(PlacementUnderlay.values()[placementJSON.getInt("underlay")]);
+		// Set the placement overlay.
+		placement.setOverlay(PlacementOverlay.values()[placementJSON.getInt("overlay")]);
 		// Return the new placement.
 		return placement;
 	}
