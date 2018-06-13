@@ -1,0 +1,30 @@
+package server.world.messaging.messages;
+
+/**
+ * Enumeration of world message types.
+ */
+public enum WorldMessageType {
+	UNKNOWN,
+	
+	/** Player. */
+	PLAYER_POSITION_CHANGED,
+	PLAYER_DIRECTION_CHANGED,
+	PLAYER_SPAWNED,
+	PLAYER_DESPAWNED,
+	PLAYER_INVENTORY_SLOT_CHANGED,
+	
+	/** Chunk. */
+	CHUNK_LOADED,
+	CHUNK_WEATHER_CHANGED,
+	
+	/** Placement. */
+	PLACEMENT_ADDED,
+	PLACEMENT_REMOVED,
+	PLACEMENT_UNDERLAY_CHANGED,
+	PLACEMENT_OVERLAY_CHANGED,
+	
+	/** Container. */
+	CONTAINER_OPENED,
+	CONTAINER_CLOSED,
+	CONTAINER_SLOT_CHANGED
+}

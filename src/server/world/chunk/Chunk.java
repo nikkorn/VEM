@@ -144,20 +144,20 @@ public class Chunk {
 					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 					if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement.getState(), placement.getContainer(), this.worldMessageQueue);
+						placement.getAction().onServerTick(placement, this.worldMessageQueue);
 						// Execute the placement action that is called for a time change if it has.
 						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer(), this.worldMessageQueue);
+							placement.getAction().onTimeUpdate(placement, time, this.worldMessageQueue);
 						}
 					}
 				} else {
 					// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 					if (placement.getPriority() == Priority.HIGH) {
 						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement.getState(), placement.getContainer(), this.worldMessageQueue);
+						placement.getAction().onServerTick(placement, this.worldMessageQueue);
 						// Execute the placement action that is called for a time change if it has.
 						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(time, placement.getState(), placement.getContainer(), this.worldMessageQueue);
+							placement.getAction().onTimeUpdate(placement, time, this.worldMessageQueue);
 						}
 					}
 				}

@@ -7,6 +7,7 @@ import server.world.chunk.ChunkFactory;
 import server.world.container.Container;
 import server.world.container.NoFreeSlotException;
 import server.world.messaging.WorldMessageQueue;
+import server.world.tile.placement.IModifiablePlacement;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.PlacementOverlay;
 import server.world.tile.placement.PlacementUnderlay;
@@ -55,13 +56,15 @@ public class TreeFactory implements IPlacementFactory {
 	public IPlacementAction getAction() {
 		return new IPlacementAction() {
 			@Override
-			public void onServerTick(IPlacementState state, Container container, WorldMessageQueue worldMessageQueue) {
+			public void onServerTick(IModifiablePlacement placement, WorldMessageQueue worldMessageQueue) {
+				// Get the placement container.
+				Container container = placement.getContainer();
 				// We may be producing some wood! But only if the placement container is not full.
 				if (container.isFull()) {
 					return;
 				}
 				// Our tree state holds a lotto that is used to determine whether to produce some wood.
-				ItemType produced = ((TreeState)state).woodProductionLotto.draw();
+				ItemType produced = ((TreeState)placement.getState()).woodProductionLotto.draw();
 				// If we were able to produce some wood then put it in the container of this tree placement.
 				if (produced != ItemType.NONE) {
 					try {
@@ -73,11 +76,11 @@ public class TreeFactory implements IPlacementFactory {
 			}
 
 			@Override
-			public void onTimeUpdate(Time time, IPlacementState state, Container container, WorldMessageQueue worldMessageQueue) {}
+			public void onTimeUpdate(IModifiablePlacement placement, Time time, WorldMessageQueue worldMessageQueue) {}
 
 			@Override
-			public ItemType onInteraction(IPlacementState state, Container container, ItemType item, WorldMessageQueue worldMessageQueue) {
-				return item;
+			public ItemType onInteraction(IModifiablePlacement placement, ItemType item, WorldMessageQueue worldMessageQueue) {
+				return ItemType.NONE;
 			}
 		};
 	}

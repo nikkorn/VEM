@@ -7,7 +7,7 @@ import server.world.tile.placement.state.IPlacementState;
 /**
  * Represents a tile-positioned placement.
  */
-public class Placement {
+public class Placement implements IModifiablePlacement{
 	/**
 	 * The placement type.
 	 */

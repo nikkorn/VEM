@@ -2,6 +2,8 @@ package server.world.messaging;
 
 import java.util.ArrayList;
 
+import server.world.messaging.messages.WorldMessage;
+
 /**
  * A message queue populated by a world or a world entity.
  */

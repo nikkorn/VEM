@@ -19,5 +19,6 @@ Placement
 =========
 - A placement has been added.
 - A placement has been removed.
-- The state of a placement has changed.
+- A placement overlay has changed.
+- A placement underlay has changed.
 - The item type for a container slot has changed.
