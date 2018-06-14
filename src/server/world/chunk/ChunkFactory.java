@@ -189,7 +189,7 @@ public class ChunkFactory {
 		}
 		// Create the placement container if it has one.
 		if (placementJSON.has("container")) {
-			placement.setContainer(createContainer(placementJSON.getJSONObject("container")));
+			placement.setContainer(createContainer(placementJSON.getJSONArray("container")));
 		}
 		// Set the placement priority.
 		placement.setPriority(Priority.values()[placementJSON.getInt("priority")]);
@@ -212,23 +212,18 @@ public class ChunkFactory {
 	
 	/**
 	 * Create a container based on existing world state.
-	 * @param containerJSON The JSON object representing the container.
+	 * @param containerJSON The JSON array representing the container slots.
 	 * @return The container.
 	 */
-	public static Container createContainer(JSONObject containerJSON) {
+	public static Container createContainer(JSONArray containerJSON) {
 		// Get the number of slots that this container has.
-		int numberOfSlots = containerJSON.getInt("size");
+		int numberOfSlots = containerJSON.length();
 		// Create the container with the correct numebr of slots.
 		Container container = new Container(numberOfSlots);
-		// Get the JSON array that holds our populated slot information.
-		JSONArray slotsArray = containerJSON.getJSONArray("slots");
-		// Populate the container slot for each entry in our slot JSON array.
-		for (int slotArrayIndex = 0; slotArrayIndex < slotsArray.length(); slotArrayIndex++) {
-			// Get the JSON object that represents the populated slot.
-			JSONObject slotJSON = slotsArray.getJSONObject(slotArrayIndex);
-			// Grab the index and the item type that the slot holds.
-			int slotIndex         = slotJSON.getInt("index");
-			ItemType slotItemType = ItemType.values()[slotJSON.getInt("item_type")];
+		// Populate the container slot for each entry in our JSON array.
+		for (int slotIndex = 0; slotIndex < numberOfSlots; slotIndex++) {
+			// Grab the item type that the slot holds at the current index.
+			ItemType slotItemType = ItemType.values()[containerJSON.getInt(slotIndex)];
 			// Set the item in the appropriate slot.
 			container.set(slotItemType, slotIndex);
 		}

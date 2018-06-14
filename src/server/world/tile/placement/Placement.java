@@ -172,7 +172,7 @@ public class Placement implements IModifiablePlacement{
 		placement.put("underlay", this.underlay.ordinal());
 		// Set the overlay.
 		placement.put("overlay", this.overlay.ordinal());
-		// Set container (if this placement has one).
+		// Set container array (if this placement has one).
 		if (this.container != null) {
 			placement.put("container", this.container.serialise());
 		}

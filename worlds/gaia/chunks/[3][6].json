@@ -12,15 +12,7 @@
       },
       "x": 12,
       "y": 25,
-      "container": {
-        "size": 3,
-        "slots": [
-          {
-            "index": 0,
-            "item_type": 2
-          }
-        ]
-      }
+      "container": [2, 0, 0]
     }
   ]
 }

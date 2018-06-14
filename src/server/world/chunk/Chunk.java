@@ -3,8 +3,10 @@ package server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
+import server.items.ItemType;
 import server.world.Position;
 import server.world.messaging.WorldMessageQueue;
+import server.world.messaging.messages.ContainerSlotChangedMessage;
 import server.world.messaging.messages.PlacementOverlayChangedMessage;
 import server.world.messaging.messages.PlacementUnderlayChangedMessage;
 import server.world.tile.TileType;
@@ -202,11 +204,13 @@ public class Chunk {
 	private void executePlacementActions(Placement placement, int placementX, int placementY, Time time, boolean hasTimeChanged, WorldMessageQueue worldMessageQueue) {
 		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
-		PlacementUnderlay preActionUnderlay = placement.getUnderlay();
-		PlacementOverlay preActionOverlay   = placement.getOverlay();
-		
-		// TODO Handle changes to the state of the container.
-		
+		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
+		PlacementOverlay preActionOverlay      = placement.getOverlay();
+		ItemType[] preActionContainerItemTypes = null;
+		// The placement may not even have a container.
+		if (placement.getContainer() != null) {
+			preActionContainerItemTypes = placement.getContainer().asItemTypeArray();
+		}
 		// Execute the placement action that is called once per server tick.
 		placement.getAction().onServerTick(placement);
 		// Execute the placement action that is called for a time change if it has.
@@ -227,7 +231,17 @@ public class Chunk {
 			// Add a message to the world message queue to notify of the change.
 			worldMessageQueue.add(new PlacementOverlayChangedMessage(placement.getOverlay(), placementPosition));
 		}
-		
-		// TODO Handle changes to the state of the container.
+		// Handle changes to the state of the container if we have one.
+		if (placement.getContainer() != null) {
+			for (int containerItemIndex = 0; containerItemIndex < placement.getContainer().size(); containerItemIndex++) {
+				// Has the item type at the current container slot changed?
+				if (preActionContainerItemTypes[containerItemIndex] != placement.getContainer().get(containerItemIndex)) {
+					// Get the world position of the placement.
+					Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
+					// Add a message to the world message queue to notify of the change.
+					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, placement.getContainer().get(containerItemIndex), placementPosition));
+				}
+			}
+		}
 	}
 }

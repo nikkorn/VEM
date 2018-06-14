@@ -2,7 +2,6 @@ package server.world.container;
 
 import java.util.ArrayList;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import server.items.ItemType;
 
 /**
@@ -13,6 +12,10 @@ public class Container {
 	 * The slots that this container is composed of.
 	 */
 	private ArrayList<Slot> slots = new ArrayList<Slot>(); 
+	/**
+	 * The container as an array of item types.
+	 */
+	private ItemType[] slotItemTypes;
 	
 	/**
 	 * Creates a new instance of the Container class with the specified number of empty slots.
@@ -23,6 +26,18 @@ public class Container {
 		for (int slotCount = 0; slotCount < numberOfSlots; slotCount++) {
 			slots.add(new Slot());
 		}
+		// Initialise the slot item type array.
+		slotItemTypes = new ItemType[numberOfSlots];
+		// Populate the slot item type array.
+		populateSlotItemTypes();
+	}
+
+	/**
+	 * Get the size of this container, as in number of slots.
+	 * @return The size of this container, as in number of slots.
+	 */
+	public int size() {
+		return this.slots.size();
 	}
 	
 	/**
@@ -89,6 +104,8 @@ public class Container {
 	 */
 	public void set(ItemType type, int index) {
 		this.slots.get(index).set(type);
+		// Repopulate the slot item type array.
+		populateSlotItemTypes();
 	}
 	
 	/**
@@ -108,6 +125,8 @@ public class Container {
 				slot.set(type);
 			}
 		}
+		// Repopulate the slot item type array.
+		populateSlotItemTypes();
 	}
 	
 	/**
@@ -117,6 +136,8 @@ public class Container {
 		for (Slot slot : slots) {
 			slot.set(ItemType.NONE);
 		}
+		// Repopulate the slot item type array.
+		populateSlotItemTypes();
 	}
 	
 	/**
@@ -124,35 +145,39 @@ public class Container {
 	 */
 	public void clear(int index) {
 		set(ItemType.NONE, index);
+		// Repopulate the slot item type array.
+		populateSlotItemTypes();
 	}
 	
 	/**
-	 * Serialise the container to JSON to be persisted to disk.
-	 * @return The serialised container.
+	 * Get this container as an array of item types.
+	 * @return This container as an array of item types.
 	 */
-	public JSONObject serialise() {
-		// Create the JSON object that will hold the information about this container.
-		JSONObject container = new JSONObject();
-		// Set the container size.
-		container.put("size", this.slots.size());
+	public ItemType[] asItemTypeArray() {
+		return this.slotItemTypes;
+	}
+	
+	/**
+	 * Serialise the container to JSON array to be persisted to disk.
+	 * @return The JSON array containing our slot types.
+	 */
+	public JSONArray serialise() {
 		// Create the JSON array to hold our slots that hold an item.
 		JSONArray slotsArray = new JSONArray();
-		// Serialise each slot that holds an item.
+		// Store the ordinal of each slot item type in the array.
 		for (Slot slot : slots) {
-			if (slot.get() != ItemType.NONE) {
-				// Create a JSON object for this slot.
-				JSONObject slotJSON = new JSONObject();
-				// Set the slot index.
-				slotJSON.put("index", slots.indexOf(slot));
-				// Set the item type for the slot.
-				slotJSON.put("item_type", slot.get().ordinal());
-				// Add the slot JSON to our JSON array of slots.
-				slotsArray.put(slotJSON);
-			}
+			slotsArray.put(slot.get().ordinal());
 		}
-		// Add the slots JSON array to our container JSON.
-		container.put("slots", slotsArray);
-		// Return the serialised container.
-		return container;
+		// Return the serialised JSON array.
+		return slotsArray;
+	}
+	
+	/**
+	 * Populate the slot item types array.
+	 */
+	private void populateSlotItemTypes() {
+		for (int slotIndex = 0; slotIndex < this.size(); slotIndex++) {
+			this.slotItemTypes[slotIndex] = this.slots.get(0).get();
+		}
 	}
 }
