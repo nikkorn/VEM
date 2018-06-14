@@ -2,6 +2,8 @@ package server.engine;
 
 import server.world.World;
 import server.world.chunk.Chunk;
+import server.world.messaging.IWorldMessageProcessor;
+import server.world.messaging.WorldMessageQueue;
 import server.world.players.PlayerRequestQueue;
 import server.world.players.requests.PlayerRequest;
 
@@ -14,6 +16,10 @@ public class Engine {
 	 */
 	private World world;
 	/**
+	 * The world message processor.
+	 */
+	private IWorldMessageProcessor worldMessageProcessor;
+	/**
 	 * The player request queue.
 	 * Holds requests for all players, to be processed sequentially.
 	 */
@@ -22,10 +28,11 @@ public class Engine {
 	/**
 	 * Create a new instance of the Engine class.
 	 * @param world The game world.
-	 * @param playerRequestQueue The player request queue.
+	 * @param worldMessageProcessor The world message processor.
 	 */
-	public Engine(World world) {
-		this.world = world;
+	public Engine(World world, IWorldMessageProcessor worldMessageProcessor) {
+		this.world                 = world;
+		this.worldMessageProcessor = worldMessageProcessor;
 	}
 	
 	/**
@@ -56,6 +63,8 @@ public class Engine {
 				chunk.tick(timeChanged, this.world.getTime(), arePlayersNearChunk, this.world.getWorldMessageQueue());
 			}
 		}
+		// Process any messages that were added to the world message queue as part of this engine tick.
+		processWorldMessages();
 	}
 
 	/**
@@ -68,6 +77,19 @@ public class Engine {
 			PlayerRequest request = this.playerRequestQueue.next();
 			// Attempt to satisfy the request.
 			request.satisfy(this.world);
+		}
+	}
+	
+	/**
+	 * Process the world messages in the wolrd message queue.
+	 */
+	private void processWorldMessages() {
+		// Grab the world message queue from the world.
+		WorldMessageQueue worldMessageQueue = this.world.getWorldMessageQueue();
+		// Process all messages in the queue.
+		while(worldMessageQueue.hasNext()) {
+			// It is the responsibility of the world message processor to handle this message.
+			this.worldMessageProcessor.process(worldMessageQueue.next());
 		}
 	}
 }

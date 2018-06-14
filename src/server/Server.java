@@ -4,6 +4,8 @@ import server.engine.Engine;
 import server.networking.ConnectedClientManager;
 import server.world.World;
 import server.world.WorldFactory;
+import server.world.messaging.IWorldMessageProcessor;
+import server.world.messaging.messages.IWorldMessage;
 
 /**
  * The game server.
@@ -64,16 +66,23 @@ public class Server {
 		// TODO Broadcast changes to connected players who care about them.
 		// TODO Check for whether to save world state to disk.
 	}
-	
+
 	/**
 	 * Create the game engine.
 	 * @param worldName The world name.
 	 * @return The game engine.
 	 */
-	public Engine createGameEngine(String worldName) {
+	private Engine createGameEngine(String worldName) {
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
-		// Create and return the game engine.
-		return new Engine(world);
+		// Create the game engine.
+		Engine engine = new Engine(world, new IWorldMessageProcessor() {
+			@Override
+			public void process(IWorldMessage message) {
+				ServerConsole.writeInfo("We are processing a world message of type " + message.getMessageType() + "!");
+			}
+		});
+		// Return the game engine.
+		return engine;
 	}
 }

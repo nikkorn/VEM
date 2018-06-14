@@ -12,10 +12,6 @@ public class Container {
 	 * The slots that this container is composed of.
 	 */
 	private ArrayList<Slot> slots = new ArrayList<Slot>(); 
-	/**
-	 * The container as an array of item types.
-	 */
-	private ItemType[] slotItemTypes;
 	
 	/**
 	 * Creates a new instance of the Container class with the specified number of empty slots.
@@ -26,10 +22,6 @@ public class Container {
 		for (int slotCount = 0; slotCount < numberOfSlots; slotCount++) {
 			slots.add(new Slot());
 		}
-		// Initialise the slot item type array.
-		slotItemTypes = new ItemType[numberOfSlots];
-		// Populate the slot item type array.
-		populateSlotItemTypes();
 	}
 
 	/**
@@ -104,8 +96,6 @@ public class Container {
 	 */
 	public void set(ItemType type, int index) {
 		this.slots.get(index).set(type);
-		// Repopulate the slot item type array.
-		populateSlotItemTypes();
 	}
 	
 	/**
@@ -125,8 +115,6 @@ public class Container {
 				slot.set(type);
 			}
 		}
-		// Repopulate the slot item type array.
-		populateSlotItemTypes();
 	}
 	
 	/**
@@ -136,8 +124,6 @@ public class Container {
 		for (Slot slot : slots) {
 			slot.set(ItemType.NONE);
 		}
-		// Repopulate the slot item type array.
-		populateSlotItemTypes();
 	}
 	
 	/**
@@ -145,8 +131,6 @@ public class Container {
 	 */
 	public void clear(int index) {
 		set(ItemType.NONE, index);
-		// Repopulate the slot item type array.
-		populateSlotItemTypes();
 	}
 	
 	/**
@@ -154,7 +138,14 @@ public class Container {
 	 * @return This container as an array of item types.
 	 */
 	public ItemType[] asItemTypeArray() {
-		return this.slotItemTypes;
+		// Create the array to hold the item types.
+		ItemType[] itemTypes = new ItemType[this.size()];
+		// Populate the item type array.
+		for (int slotIndex = 0; slotIndex < this.size(); slotIndex++) {
+			itemTypes[slotIndex] = this.slots.get(slotIndex).get();
+		}
+		// Return the container as an array of item types.
+		return itemTypes;
 	}
 	
 	/**
@@ -170,14 +161,5 @@ public class Container {
 		}
 		// Return the serialised JSON array.
 		return slotsArray;
-	}
-	
-	/**
-	 * Populate the slot item types array.
-	 */
-	private void populateSlotItemTypes() {
-		for (int slotIndex = 0; slotIndex < this.size(); slotIndex++) {
-			this.slotItemTypes[slotIndex] = this.slots.get(0).get();
-		}
 	}
 }

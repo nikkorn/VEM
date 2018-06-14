@@ -13,11 +13,11 @@ public class WorldMessageQueue {
     private ArrayList<IWorldMessage> messages = new ArrayList<IWorldMessage>();
 
     /**
-     * Get whether the message queue is empty.
-     * @return Whether the message queue is empty.
+     * Get whether the message queue contains a request.
+     * @return Whether the message queue contains a message.
      */
-    public boolean isEmpty() {
-        return this.messages.isEmpty();
+    public boolean hasNext() {
+        return this.messages.size() > 0;
     }
 
     /**
