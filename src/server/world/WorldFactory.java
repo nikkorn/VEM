@@ -85,7 +85,7 @@ public class WorldFactory {
 			// Convert the chunk save file to JSON.
 			JSONObject chunkState = Helpers.readJSONObjectFromFile(chunkFile);
 			// Restore the chunk.
-			Chunk chunk = ChunkFactory.restoreChunk(chunkState, worldGenerator, world.getWorldMessageQueue());
+			Chunk chunk = ChunkFactory.restoreChunk(chunkState, worldGenerator);
 			// Add the chunk to the world.
 			world.addCachedChunk(chunk);
 		}

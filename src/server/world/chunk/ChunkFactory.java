@@ -9,7 +9,6 @@ import server.ServerConsole;
 import server.items.ItemType;
 import server.world.container.Container;
 import server.world.generation.WorldGenerator;
-import server.world.messaging.WorldMessageQueue;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.PlacementOverlay;
@@ -41,12 +40,11 @@ public class ChunkFactory {
 	 * This chunk does not already exist (is not defined in the world save directory)
 	 * so it is the job of the world generator to spawn initial placements.
 	 * @param generator The world generator.
-	 * @param worldMessageQueue The world message queue.
 	 * @param x The x position of the chunk.
 	 * @param y The y position of the chunk.
 	 * @return The created chunk.
 	 */
-	public static Chunk createNewChunk(WorldGenerator generator, WorldMessageQueue worldMessageQueue, int x, int y) {
+	public static Chunk createNewChunk(WorldGenerator generator, int x, int y) {
 		// Write to the console.
 		ServerConsole.writeDebug("creating chunk at x=" + x + " y=" + y);
 		// Firstly, create the static world tiles for the chunk.
@@ -56,7 +54,7 @@ public class ChunkFactory {
 		// generator to create some nice initial naturally-occurring placements.
 		Placement[][] placements = generateChunkPlacements(generator, tiles, x, y);
 		// Create and return the chunk.
-		return new Chunk(x, y, tiles, placements, worldMessageQueue);
+		return new Chunk(x, y, tiles, placements);
 	}
 	
 	/**
@@ -65,10 +63,9 @@ public class ChunkFactory {
 	 * The chunk we create will reflect this saved state state.
 	 * @param chunkJSON The JSON object representing the chunk.
 	 * @param generator The world generator.
-	 * @param worldMessageQueue The world message queue.
 	 * @return The created chunk.
 	 */
-	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator, WorldMessageQueue worldMessageQueue) {
+	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator) {
 		// Get the x/y chunk position.
 		int x = chunkJSON.getInt("x");
 		int y = chunkJSON.getInt("y");
@@ -91,7 +88,7 @@ public class ChunkFactory {
 			placements[placementXPosition][placementYPosition] = createPlacement(placementJSON);
 		}
 		// Create and return the chunk.
-		return new Chunk(x, y, tiles, placements, worldMessageQueue);
+		return new Chunk(x, y, tiles, placements);
 	}
 	
 	/**
@@ -166,8 +163,8 @@ public class ChunkFactory {
 		placement.setUnderlay(placementFactory.getInitialUnderlay());
 		// Set the initial overlay for this placement.
 		placement.setOverlay(placementFactory.getInitialOverlay());
-		// Set the initial container for this placement.
-		placement.setContainer(placementFactory.getInitialContainer(chunkRng));
+		// Set the container for this placement.
+		placement.setContainer(placementFactory.getContainer(chunkRng));
 		// Return the new placement.
 		return placement;
 	}

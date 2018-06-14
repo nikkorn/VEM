@@ -81,7 +81,7 @@ public class World {
 			return this.cachedChunks.get(chunkKey);
 		} else {
 			// Create the new chunk.
-			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, this.worldMessageQueue, x, y);
+			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, x, y);
 			// Cache this chunk so that we don't have to keep generating it.
 			this.cachedChunks.put(chunkKey, chunk);
 			// Return the chunk.

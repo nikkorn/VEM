@@ -6,7 +6,6 @@ import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
 import server.world.container.Container;
 import server.world.container.NoFreeSlotException;
-import server.world.messaging.WorldMessageQueue;
 import server.world.tile.placement.IModifiablePlacement;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.PlacementOverlay;
@@ -48,7 +47,7 @@ public class TreeFactory implements IPlacementFactory {
 	}
 
 	@Override
-	public Container getInitialContainer(Random chunkRng) {
+	public Container getContainer(Random chunkRng) {
 		return ChunkFactory.createContainer(2);
 	}
 
@@ -56,7 +55,7 @@ public class TreeFactory implements IPlacementFactory {
 	public IPlacementAction getAction() {
 		return new IPlacementAction() {
 			@Override
-			public void onServerTick(IModifiablePlacement placement, WorldMessageQueue worldMessageQueue) {
+			public void onServerTick(IModifiablePlacement placement) {
 				// Get the placement container.
 				Container container = placement.getContainer();
 				// We may be producing some wood! But only if the placement container is not full.
@@ -76,10 +75,10 @@ public class TreeFactory implements IPlacementFactory {
 			}
 
 			@Override
-			public void onTimeUpdate(IModifiablePlacement placement, Time time, WorldMessageQueue worldMessageQueue) {}
+			public void onTimeUpdate(IModifiablePlacement placement, Time time) {}
 
 			@Override
-			public ItemType onInteraction(IModifiablePlacement placement, ItemType item, WorldMessageQueue worldMessageQueue) {
+			public ItemType onInteraction(IModifiablePlacement placement, ItemType item) {
 				return ItemType.NONE;
 			}
 		};

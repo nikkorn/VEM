@@ -6,7 +6,6 @@ import server.ServerConsole;
 import server.items.ItemType;
 import server.world.chunk.ChunkFactory;
 import server.world.container.Container;
-import server.world.messaging.WorldMessageQueue;
 import server.world.tile.placement.IModifiablePlacement;
 import server.world.tile.placement.IPlacementAction;
 import server.world.tile.placement.PlacementOverlay;
@@ -36,17 +35,17 @@ public class TilledEarthFactory implements IPlacementFactory {
 	public IPlacementAction getAction() {
 		return new IPlacementAction() {
 			@Override
-			public void onServerTick(IModifiablePlacement placement, WorldMessageQueue worldMessageQueue) {
+			public void onServerTick(IModifiablePlacement placement) {
 				ServerConsole.writeInfo("Just growing some plants at 100% capacity!");
 			}
 
 			@Override
-			public void onTimeUpdate(IModifiablePlacement placement, Time time, WorldMessageQueue worldMessageQueue) {
+			public void onTimeUpdate(IModifiablePlacement placement, Time time) {
 				ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
 			}
 
 			@Override
-			public ItemType onInteraction(IModifiablePlacement placement, ItemType item, WorldMessageQueue worldMessageQueue) {
+			public ItemType onInteraction(IModifiablePlacement placement, ItemType item) {
 				ServerConsole.writeInfo("Just growing some plants, did you use that item on me? I will keep it!");
 				return ItemType.NONE;
 			}
@@ -69,7 +68,7 @@ public class TilledEarthFactory implements IPlacementFactory {
 	}
 
 	@Override
-	public Container getInitialContainer(Random chunkRng) {
+	public Container getContainer(Random chunkRng) {
 		return ChunkFactory.createContainer(3);
 	}
 }

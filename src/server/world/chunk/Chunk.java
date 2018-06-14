@@ -5,8 +5,12 @@ import org.json.JSONObject;
 import server.Constants;
 import server.world.Position;
 import server.world.messaging.WorldMessageQueue;
+import server.world.messaging.messages.PlacementOverlayChangedMessage;
+import server.world.messaging.messages.PlacementUnderlayChangedMessage;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
+import server.world.tile.placement.PlacementOverlay;
+import server.world.tile.placement.PlacementUnderlay;
 import server.world.tile.placement.Priority;
 import server.world.time.Time;
 
@@ -22,10 +26,6 @@ public class Chunk {
 	 * The placements that this chunk is composed of.
 	 */
 	private Placement[][] placements = new Placement[Constants.WORLD_CHUNK_SIZE][Constants.WORLD_CHUNK_SIZE];
-	/**
-	 * The world message queue.
-	 */
-	private WorldMessageQueue worldMessageQueue;
 	/**
 	 * The x/y positions of the chunk.
 	 */
@@ -47,14 +47,12 @@ public class Chunk {
 	 * @param y The y position of this chunk.
 	 * @param tiles The multi-dimensional array holding the tile types for the chunk.
 	 * @param placements The multi-dimensional array holding the placements that this chunk is composed of.
-	 * @param worldMessageQueue The world message queue.
 	 */
-	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements, WorldMessageQueue worldMessageQueue) {
-		this.x                 = x;
-		this.y                 = y;
-		this.tiles             = tiles;
-		this.placements        = placements;
-		this.worldMessageQueue = worldMessageQueue;
+	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements) {
+		this.x          = x;
+		this.y          = y;
+		this.tiles      = tiles;
+		this.placements = placements;
 		// Determine whether any placement is a high priority one.
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
 			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
@@ -125,8 +123,9 @@ public class Chunk {
 	 * @param hasTimeChanged Whether the time has changed in the current server tick.
 	 * @param time The current time.
 	 * @param arePlayersInChunkVicinity Whether any players are in the vicinity of this chunk.
+	 * @param worldMessageQueue The world message queue.
 	 */
-	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity) {
+	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldMessageQueue worldMessageQueue) {
 		boolean highPriorityPlacementFound = false;
 		// Execute placement actions for each placement.
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
@@ -143,22 +142,14 @@ public class Chunk {
 				} else if (arePlayersInChunkVicinity) {
 					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 					if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
-						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement, this.worldMessageQueue);
-						// Execute the placement action that is called for a time change if it has.
-						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(placement, time, this.worldMessageQueue);
-						}
+						// Execute the placement actions.
+						executePlacementActions(placement, placementX, placementY, time, hasTimeChanged, worldMessageQueue);
 					}
 				} else {
 					// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 					if (placement.getPriority() == Priority.HIGH) {
-						// Execute the placement action that is called once per server tick.
-						placement.getAction().onServerTick(placement, this.worldMessageQueue);
-						// Execute the placement action that is called for a time change if it has.
-						if (hasTimeChanged) {
-							placement.getAction().onTimeUpdate(placement, time, this.worldMessageQueue);
-						}
+						// Execute the placement actions.
+						executePlacementActions(placement, placementX, placementY, time, hasTimeChanged, worldMessageQueue);
 					}
 				}
 				// Is this a high priority placement?
@@ -197,5 +188,46 @@ public class Chunk {
 		}
 		// Return the chunk state.
 		return chunkState;
+	}
+	
+	/**
+	 * Execute relevant actions for the specified placement.
+	 * @param placement The placement.
+	 * @param placementX The placement x position within this chunk.
+	 * @param placementY The placement y position within this chunk.
+	 * @param time the time.
+	 * @param hasTimeChanged Whether the time has changed on this server tick.
+	 * @param worldMessageQueue The world message queue.
+	 */
+	private void executePlacementActions(Placement placement, int placementX, int placementY, Time time, boolean hasTimeChanged, WorldMessageQueue worldMessageQueue) {
+		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
+		// We need to respond to any of these changes and add a message to the world message queue to let people know.
+		PlacementUnderlay preActionUnderlay = placement.getUnderlay();
+		PlacementOverlay preActionOverlay   = placement.getOverlay();
+		
+		// TODO Handle changes to the state of the container.
+		
+		// Execute the placement action that is called once per server tick.
+		placement.getAction().onServerTick(placement);
+		// Execute the placement action that is called for a time change if it has.
+		if (hasTimeChanged) {
+			placement.getAction().onTimeUpdate(placement, time);
+		}
+		// Has the underlay changed?
+		if (placement.getUnderlay() != preActionUnderlay) {
+			// Get the world position of the placement.
+			Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
+			// Add a message to the world message queue to notify of the change.
+			worldMessageQueue.add(new PlacementUnderlayChangedMessage(placement.getUnderlay(), placementPosition));
+		}
+		// Has the overlay changed?
+		if (placement.getOverlay() != preActionOverlay) {
+			// Get the world position of the placement.
+			Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
+			// Add a message to the world message queue to notify of the change.
+			worldMessageQueue.add(new PlacementOverlayChangedMessage(placement.getOverlay(), placementPosition));
+		}
+		
+		// TODO Handle changes to the state of the container.
 	}
 }

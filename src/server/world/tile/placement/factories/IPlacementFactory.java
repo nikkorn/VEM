@@ -47,11 +47,11 @@ public interface IPlacementFactory {
 	PlacementOverlay getInitialOverlay();
 	
 	/**
-	 * Get the initial placement container.
+	 * Get the placement container.
 	 * @param chunkRng The rng to use in creating a placement for a chunk.
-	 * @return The initial placement container.
+	 * @return The placement container.
 	 */
-	Container getInitialContainer(Random chunkRng);
+	Container getContainer(Random chunkRng);
 	
 	/**
 	 * Create the placement action for this placement.

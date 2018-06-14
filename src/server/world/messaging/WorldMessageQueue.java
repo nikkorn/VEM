@@ -1,8 +1,7 @@
 package server.world.messaging;
 
 import java.util.ArrayList;
-
-import server.world.messaging.messages.WorldMessage;
+import server.world.messaging.messages.IWorldMessage;
 
 /**
  * A message queue populated by a world or a world entity.
@@ -11,7 +10,7 @@ public class WorldMessageQueue {
     /**
      * The list of world messages.
      */
-    private ArrayList<WorldMessage> messages = new ArrayList<WorldMessage>();
+    private ArrayList<IWorldMessage> messages = new ArrayList<IWorldMessage>();
 
     /**
      * Get whether the message queue is empty.
@@ -25,7 +24,7 @@ public class WorldMessageQueue {
      * Gets the next message from the queue.
      * @return The next message from the queue.
      */
-    public WorldMessage next() {
+    public IWorldMessage next() {
         return this.messages.remove(0);
     }
 
@@ -33,7 +32,7 @@ public class WorldMessageQueue {
      * Add a message to the end of the queue.
      * @param message The message to add.
      */
-    public void add(WorldMessage message) {
+    public void add(IWorldMessage message) {
         this.messages.add(message);
     }
 }
