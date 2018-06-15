@@ -1,5 +1,6 @@
 package server.world.players.requests;
 
+import server.ServerConsole;
 import server.world.World;
 
 /**
@@ -17,6 +18,8 @@ public class JoinRequest extends PlayerRequest {
 
 	@Override
 	public void satisfy(World world) {
-		System.out.println("Add player '" + this.getRequestingPlayerId() + "' to the world!");
+		ServerConsole.writeInfo("Player '" + this.getRequestingPlayerId() + "' is attempting to join.");
+		// Attempt to add the player to the world.
+		world.getPlayers().addPlayer(this.getRequestingPlayerId(), world);
 	}
 }

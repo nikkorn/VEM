@@ -63,6 +63,14 @@ public class World {
 	}
 	
 	/**
+	 * Get the players present in the world.
+	 * @return The players present in the world.
+	 */
+	public Players getPlayers() {
+		return this.players;
+	}
+	
+	/**
 	 * Get the chunk at the x/y position.
 	 * @param x The x position of the chunk.
 	 * @param y The y position of the chunk.
@@ -103,6 +111,15 @@ public class World {
      */
 	public void addCachedChunk(Chunk chunk) {
 		this.cachedChunks.put(World.getChunkKey(chunk.getX(), chunk.getY()), chunk);
+	}
+	
+	/**
+	 * Get a safe spawn position.
+	 * @return A safe spawn position.
+	 */
+	public Position getSafeSpawnPosition() {
+		// TODO Actually return a valid spawn, excluding tiles we have non-walkable placements at.
+		return new Position(12, 12);
 	}
 	
 	/**

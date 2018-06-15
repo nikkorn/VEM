@@ -1,5 +1,7 @@
 {
 	"port": 23445,
 	"save_interval": 10000,
-	"debug_to_console": true
+	"debug_to_console": true,
+	"blacklist": ["voldemort"],
+	"max_players": 5
 }

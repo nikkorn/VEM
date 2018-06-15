@@ -3,9 +3,9 @@ package server.world.messaging.messages;
 import server.world.Position;
 
 /**
- * A message containing the details of a player spawn.
+ * A message containing the details of a successful player spawn.
  */
-public class PlayerSpawnMessage implements IWorldMessage {
+public class PlayerSpawnSuccessMessage implements IWorldMessage {
 	/**
 	 * The id of the spawning player.
 	 */
@@ -16,11 +16,11 @@ public class PlayerSpawnMessage implements IWorldMessage {
 	private Position spawnPosition;
 	
 	/**
-	 * Create a new instance of the PlayerSpawnMessage class.
+	 * Create a new instance of the PlayerSpawnSuccessMessage class.
 	 * @param playerId The id of the player.
 	 * @param position The position of the spawn.
 	 */
-	public PlayerSpawnMessage(String playerId, Position position) {
+	public PlayerSpawnSuccessMessage(String playerId, Position position) {
 		this.playerId      = playerId;
 		this.spawnPosition = position;
 	}
@@ -43,6 +43,6 @@ public class PlayerSpawnMessage implements IWorldMessage {
 
 	@Override
 	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_SPAWNED;
+		return WorldMessageType.PLAYER_SPAWN_SUCCESS;
 	}
 }
