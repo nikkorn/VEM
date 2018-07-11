@@ -1,8 +1,10 @@
 package server.world.players;
 
 import java.util.ArrayList;
+import server.world.Direction;
 import server.world.Position;
 import server.world.World;
+import server.world.messaging.messages.PlayerPositionChangedMessage;
 import server.world.messaging.messages.PlayerSpawnRejectedMessage;
 import server.world.messaging.messages.PlayerSpawnSuccessMessage;
 
@@ -44,6 +46,56 @@ public class Players {
 		world.getWorldMessageQueue().add(new PlayerSpawnSuccessMessage(playerId, new Position(spawn.getX(), spawn.getY())));
 		// We were able to add the player.
 		return true;
+	}
+	
+	/**
+	 * Attempt to move a player in a direction.
+	 * @param playerId The player id.
+	 * @param direction The direction to move in.
+	 * @param world The game world.
+	 */
+	public void movePlayer(String playerId, Direction direction, World world) {
+		// Check to make sure a player with this player id already exists.
+		if (!this.isPlayerPresent(playerId)) {
+			// We didn't find the player.
+			return;
+		}
+		// Get the target player.
+		Player targetPlayer = this.getPlayer(playerId);
+		// Find the position the player is trying to move to based on their current position.
+		int newPositionX = targetPlayer.getPositon().getX();
+		int newPositionY = targetPlayer.getPositon().getY();
+		switch(direction) {
+			case DOWN:
+				newPositionY-=1;
+				break;
+			case LEFT:
+				newPositionX-=1;
+				break;
+			case RIGHT:
+				newPositionX+=1;
+				break;
+			case UP:
+				newPositionY+=1;
+				break;
+		}
+		// Is the position we are trying to move to in the world a valid one?
+		if (!world.isPositionWalkable(newPositionX, newPositionY)) {
+			// We cannot walk on this position.
+			return;
+		}
+		// Lastly, check to make sure that no other players are already at this new position.
+		for(Position playerPosition : this.getPlayerPositions()) {
+			if (playerPosition.getX() == newPositionX && playerPosition.getY() == newPositionY) {
+				// There is already a player at this position.
+				return;
+			}
+		}
+		// The player can move to this new position.
+		targetPlayer.getPositon().setX(newPositionX);
+		targetPlayer.getPositon().setY(newPositionY);
+		// Add a world message to notify of the success.
+		world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(newPositionX, newPositionY)));
 	}
 	
 	/**

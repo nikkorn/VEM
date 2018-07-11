@@ -123,6 +123,17 @@ public class World {
 	}
 	
 	/**
+	 * Get whether the position at x/y is walkable.
+	 * @param newPositionX The x position.
+	 * @param newPositionY The y position.
+	 * @return Whether the position at x/y is walkable.
+	 */
+	public boolean isPositionWalkable(int newPositionX, int newPositionY) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
+	/**
 	 * Checks whether any connected players are within the vicinity of the specified chunk.
 	 * @param chunk The chunk.
 	 * @return Whether any connected players are within the vicinity of the specified chunk.
