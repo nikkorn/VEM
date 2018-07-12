@@ -33,11 +33,6 @@ public class Chunk {
 	 */
 	private int x, y;
 	/**
-	 * Whether the chunk is dirty.
-	 * Dirty chunks need to be persisted back to disk.
-	 */
-	private boolean isDirty = true;
-	/**
 	 * Whether this chunk has at least one high priority placement.
 	 * A chunk with a high priority placement will always be active.
 	 */
@@ -93,31 +88,33 @@ public class Chunk {
 	}
 	
 	/**
-	 * Get whether the chunk is dirty.
-	 * Dirty chunks need to be persisted back to disk.
-	 * @return Whether the chunk is dirty.
-	 */
-	public boolean isDirty() {
-		return this.isDirty;
-	}
-	
-	/**
 	 * Gets whether the specified position is within the vicinity of this chunk.
 	 * @param position The position.
 	 * @return Whether the position is within the vicinity of this chunk.
 	 */
 	public boolean isPositionInVicinity(Position position) {
-		return position.getChunkX() == this.getX() && position.getChunkY() == this.getY();
+		return position.getChunkX() >= (this.getX() - Constants.WORLD_CHUNK_VICINITY_RANGE) &&
+					position.getChunkX() <= (this.getX() + Constants.WORLD_CHUNK_VICINITY_RANGE) && 
+						position.getChunkY() >= (this.getY() - Constants.WORLD_CHUNK_VICINITY_RANGE) && 
+							position.getChunkY() >= (this.getY() + Constants.WORLD_CHUNK_VICINITY_RANGE);
 	}
 	
 	/**
-	 * Get the type of tile at the specified position.
-	 * @param x The x position of the tile.
-	 * @param y The y position of the tile.
-	 * @return The type of tile at the specified position.
+	 * Get whether the specified position is walkable.
+	 * A position is regarded as walkable if there isn't a blocking placement positioned there.
+	 * @param x The x position.
+	 * @param y The y position.
+	 * @return Whether the specified position is walkable.
 	 */
-	public TileType getTileType(int x, int y) {
-		return tiles[x % Constants.WORLD_CHUNK_SIZE][y % Constants.WORLD_CHUNK_SIZE];
+	public boolean isPositionWalkable(int x, int y) {
+		// Get the placement at this position.
+		Placement placement = placements[x][y];
+		// If there is no placement at this position then we can say it is walkable.
+		if (placement == null) {
+			return true;
+		}
+		// A position with a placement is walkable if both the placement overlay and underlay are walkable.
+		return placement.getOverlay().isWalkable() && placement.getUnderlay().isWalkable();
 	}
 	
 	/**
@@ -190,6 +187,16 @@ public class Chunk {
 		}
 		// Return the chunk state.
 		return chunkState;
+	}
+	
+	/**
+	 * Gets a unique hash key for a chunk x/y position.
+	 * @param x The chunk x position.
+	 * @param y The chunk y position.
+	 * @return The key.
+	 */
+	public static String getChunkKey(int x, int y) {
+		return x + "-" + y;
 	}
 	
 	/**

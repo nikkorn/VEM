@@ -151,15 +151,6 @@ public class Placement implements IModifiablePlacement{
 	}
 	
 	/**
-	 * Get whether the placement is walkable.
-	 * @return Whether the placement is walkable.
-	 */
-	public boolean isWalkable() {
-		// TODO Return whether both underlay/overlay are walkable.
-		return true;
-	}
-	
-	/**
 	 * Serialise the placement to JSON to be persisted to disk.
 	 * @return The serialised placement.
 	 */

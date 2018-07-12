@@ -80,7 +80,7 @@ public class Players {
 				break;
 		}
 		// Is the position we are trying to move to in the world a valid one?
-		if (!world.isPositionWalkable(newPositionX, newPositionY)) {
+		if (!world.isPositionWalkable(new Position(newPositionX, newPositionY))) {
 			// We cannot walk on this position.
 			return;
 		}

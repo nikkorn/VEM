@@ -82,7 +82,7 @@ public class World {
 			throw new RuntimeException("error: invalid chunk position: x=" + x + " y=" + y);
 		}
 		// Create the key for the chunk we are looking for.
-		String chunkKey = getChunkKey(x, y);
+		String chunkKey = Chunk.getChunkKey(x, y);
 		// Check whether we have already cached the chunk.
 		if (this.cachedChunks.containsKey(chunkKey)) {
 			// We already have this chunk!
@@ -110,7 +110,7 @@ public class World {
 	 * @param chunk The chunk to add.
      */
 	public void addCachedChunk(Chunk chunk) {
-		this.cachedChunks.put(World.getChunkKey(chunk.getX(), chunk.getY()), chunk);
+		this.cachedChunks.put(Chunk.getChunkKey(chunk.getX(), chunk.getY()), chunk);
 	}
 	
 	/**
@@ -123,14 +123,21 @@ public class World {
 	}
 	
 	/**
-	 * Get whether the position at x/y is walkable.
-	 * @param newPositionX The x position.
-	 * @param newPositionY The y position.
-	 * @return Whether the position at x/y is walkable.
+	 * Get whether the world position is walkable.
+	 * Positions within non-loaded chunks are regarded as not walkable.
+	 * @param position The world position.
+	 * @return Whether the world position is walkable.
 	 */
-	public boolean isPositionWalkable(int newPositionX, int newPositionY) {
-		// TODO Auto-generated method stub
-		return true;
+	public boolean isPositionWalkable(Position position) {
+		// The position can only be walkable if it is an a loaded chunk.
+		if (!this.cachedChunks.containsKey(Chunk.getChunkKey(position.getChunkX(), position.getChunkY()))) {
+			// The chunk that this position is within is not loaded.
+			return false;
+		}
+		// Get the chunk that this position is within.
+		Chunk target = this.cachedChunks.get(Chunk.getChunkKey(position.getChunkX(), position.getChunkY()));
+		// Ask the chunk whether the local position is walkable.
+		return target.isPositionWalkable(position.getX() % Constants.WORLD_CHUNK_SIZE, position.getY() % Constants.WORLD_CHUNK_SIZE);
 	}
 	
 	/**
@@ -176,15 +183,5 @@ public class World {
 		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
 		// Return whether either the x or y positions exceed the world boundaries.
 		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
-	}
-	
-	/**
-	 * Gets a unique hash key for an x/y position.
-	 * @param x The x position.
-	 * @param y The y position.
-	 * @return The key.
-	 */
-	private static String getChunkKey(int x, int y) {
-		return x + "-" + y;
 	}
 }
