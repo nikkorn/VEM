@@ -96,7 +96,7 @@ public class Chunk {
 		return position.getChunkX() >= (this.getX() - Constants.WORLD_CHUNK_VICINITY_RANGE) &&
 					position.getChunkX() <= (this.getX() + Constants.WORLD_CHUNK_VICINITY_RANGE) && 
 						position.getChunkY() >= (this.getY() - Constants.WORLD_CHUNK_VICINITY_RANGE) && 
-							position.getChunkY() >= (this.getY() + Constants.WORLD_CHUNK_VICINITY_RANGE);
+							position.getChunkY() <= (this.getY() + Constants.WORLD_CHUNK_VICINITY_RANGE);
 	}
 	
 	/**
