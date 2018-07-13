@@ -1,5 +1,6 @@
 package server.world.chunk;
 
+import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
@@ -9,6 +10,7 @@ import server.world.messaging.WorldMessageQueue;
 import server.world.messaging.messages.ContainerSlotChangedMessage;
 import server.world.messaging.messages.PlacementOverlayChangedMessage;
 import server.world.messaging.messages.PlacementUnderlayChangedMessage;
+import server.world.players.Player;
 import server.world.tile.TileType;
 import server.world.tile.placement.Placement;
 import server.world.tile.placement.PlacementOverlay;
@@ -19,7 +21,7 @@ import server.world.time.Time;
 /**
  * A world chunk.
  */
-public class Chunk {
+public class Chunk implements IChunkDetails {
 	/**
 	 * The static tiles that this chunk is composed of.
 	 */
@@ -37,6 +39,10 @@ public class Chunk {
 	 * A chunk with a high priority placement will always be active.
 	 */
 	private boolean hasHighPriorityPlacement = false;
+	/**
+	 * The list of player ids of players that have visited (been in the vicinity of) this chunk.
+	 */
+	private ArrayList<String> visitors = new ArrayList<String>();
 	
 	/**
 	 * Creates a new instance of the ChunkInformation class.
@@ -77,6 +83,41 @@ public class Chunk {
 	 */
 	public int getY() {
 		return y;
+	}
+	
+	/**
+	 * Get the tiles array.
+	 * @return The tiles array.
+	 */
+	@Override
+	public TileType[][] getTiles() {
+		return this.tiles;
+	}
+	
+	/**
+	 * Get the placements array.
+	 * @return The placements array.
+	 */
+	@Override
+	public Placement[][] getPlacements() {
+		return this.placements;
+	}
+	
+	/**
+	 * Add a visitor to the chunk.
+	 * Keeping track of chunk visitors helps us determine who has been here.
+	 */
+	public void addVisitor(Player player) {
+		this.visitors.add(player.getPlayerId());
+	}
+	
+	/**
+	 * Get whether the player has visited this chunk before.
+	 * @param player The player.
+	 * @return Whether the player has visited this chunk before.
+	 */
+	public boolean hasBeenVisitedBy(Player player) {
+		return this.visitors.contains(player.getPlayerId());
 	}
 	
 	/**
