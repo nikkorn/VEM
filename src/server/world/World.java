@@ -8,6 +8,8 @@ import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
 import server.world.generation.WorldGenerator;
 import server.world.messaging.WorldMessageQueue;
+import server.world.players.IPlayerEventHandler;
+import server.world.players.Player;
 import server.world.players.Players;
 import server.world.time.Time;
 
@@ -18,7 +20,7 @@ public class World {
 	/**
 	 * The players within the world.
 	 */
-	private Players players = new Players();
+	private Players players;
 	/**
 	 * The world time.
 	 */
@@ -44,6 +46,13 @@ public class World {
 	public World(Time time, WorldGenerator worldGenerator) {
 		this.time           = time;
 		this.worldGenerator = worldGenerator;
+		// Create the Players instance, passing handlers for player events.
+		this.players = new Players(new IPlayerEventHandler() {
+			@Override
+			public void onChunkChange(Player player) {
+				// TODO Handle player chunk change. This could be a spawn.
+			}
+		});
 	}
 	
 	/**
@@ -114,10 +123,10 @@ public class World {
 	}
 	
 	/**
-	 * Get a safe spawn position.
-	 * @return A safe spawn position.
+	 * Get the world spawn position.
+	 * @return The world spawn position.
 	 */
-	public Position getSafeSpawnPosition() {
+	public Position getSpawnPosition() {
 		// TODO Actually return a valid spawn, excluding tiles we have non-walkable placements at.
 		return new Position(12, 12);
 	}

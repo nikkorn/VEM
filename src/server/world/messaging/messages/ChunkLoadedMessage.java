@@ -23,7 +23,7 @@ public class ChunkLoadedMessage implements IWorldMessage {
 	 * @param chunkDetails The details of the loaded chunk.
 	 */
 	public ChunkLoadedMessage(String playerId, IChunkDetails chunkDetails) {
-		this.playerId      = playerId;
+		this.playerId     = playerId;
 		this.chunkDetails = chunkDetails;
 	}
 	
