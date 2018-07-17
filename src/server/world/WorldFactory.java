@@ -40,7 +40,7 @@ public class WorldFactory {
 			// Create the world generator.
 			WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
 			// Create a new world!
-			World world = new World(new Chunks(), initialWorldTime, worldGenerator);
+			World world = new World(new Chunks(worldGenerator), initialWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
 			// Create the map overview image file.
@@ -95,7 +95,7 @@ public class WorldFactory {
 			existingChunks.add(chunk);
 		}
 		// Return the existing chunks.
-		return new Chunks(existingChunks);
+		return new Chunks(worldGenerator, existingChunks);
 	}
 
 	/**

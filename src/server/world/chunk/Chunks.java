@@ -3,6 +3,9 @@ package server.world.chunk;
 import java.util.ArrayList;
 import java.util.HashMap;
 import server.Constants;
+import server.world.generation.WorldGenerator;
+import server.world.messaging.WorldMessageQueue;
+import server.world.messaging.messages.ChunkLoadedMessage;
 import server.world.players.Player;
 
 /**
@@ -13,17 +16,26 @@ public class Chunks {
 	 * The cached chunks.
 	 */
 	private HashMap<String, Chunk> cachedChunks = new HashMap<String, Chunk>();
-	
 	/**
-	 * Create a new instance of the Chunks class.
+	 * The world generator instance to use in building chunks.
 	 */
-	public Chunks() {}
+	private WorldGenerator worldGenerator;
 	
 	/**
 	 * Create a new instance of the Chunks class.
+	 * @param worldGenerator The world generator instance to use in building chunks.
+	 */
+	public Chunks(WorldGenerator worldGenerator) {
+		this.worldGenerator = worldGenerator;
+	}
+	
+	/**
+	 * Create a new instance of the Chunks class.
+	 * @param worldGenerator The world generator instance to use in building chunks.
 	 * @param existingChunks The existing chunks to be added.
 	 */
-	public Chunks(ArrayList<Chunk> existingChunks) {
+	public Chunks(WorldGenerator worldGenerator, ArrayList<Chunk> existingChunks) {
+		this(worldGenerator);
 		for (Chunk chunk : existingChunks) {
 			this.addCachedChunk(chunk);
 		}
@@ -71,41 +83,47 @@ public class Chunks {
 	}
 	
 	/**
-	 * Checks whether the specified position is a valid chunk position.
-	 * @param x The chunk x position.
-	 * @param y The chunk y position.
-	 * @return Whether the specified position is a valid chunk position.
-	 */
-	private boolean isValidChunkPosition(int x, int y) {
-		// Get the number of chunks on either axis from the world origin to edge.
-		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
-		// Return whether either the x or y positions exceed the world boundaries.
-		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
-	}
-	
-	/**
 	 * Called when a player changes chunk positions.
 	 * Any chunks that are in the vicinity of the player will have to be loaded.
 	 * @param player The player that has changed chunk positions.
+	 * @param worldMessageQueue The world message queue.
 	 */
-	public void onPlayerChunkChange(Player player) {
+	public void onPlayerChunkChange(Player player, WorldMessageQueue worldMessageQueue) {
 		// Get the position of the chunk that the player has moved to.
 		int playerChunkX = player.getPositon().getChunkX();
 		int playerChunkY = player.getPositon().getChunkY();
 		// Get the chunk range that we regard as being the 'vicinity' of another chunk.
 		int range = Constants.WORLD_CHUNK_VICINITY_RANGE;
-		// For every chunk position in the vicinity of the player ...
+		// Check every chunk position in the vicinity of the player.
 		for (int chunkX = (playerChunkX - range); chunkX <= (playerChunkX + range); chunkX++) {
 			for (int chunkY = (playerChunkY - range); chunkY <= (playerChunkY + range); chunkY++) {
 				// Check to make sure that we are looking at a valid chunk position as we could be at the world edge.
 				if (!this.isValidChunkPosition(chunkX, chunkY)) {
 					continue;
 				}
-				// Get the chunk key of the current chunk position.
-				// Has the player previously been in the vicinity of the current chunk?
-				
-				// .....
-				
+				// Has this chunk already been cached?
+				if (this.isChunkCached(chunkX, chunkY)) {
+					// Get the cached chunk.
+					Chunk chunk = this.getCachedChunk(chunkX, chunkY);
+					// Has the player previously been in the vicinity of the current chunk?
+					// If not then we will need to notify the player of the chunk details.
+					if (!player.hasVisitedChunk(chunk)) {
+						// Add a world message to notify the player of the chunk details.
+						worldMessageQueue.add(new ChunkLoadedMessage(player.getPlayerId(), chunk));
+						// Now we can say that the player has visited the chunk.
+						player.addVisitedChunk(chunk);
+					}
+				} else {
+					// The player has wandered into the vicinity of chunk that has never
+					// been loaded before. Create the new chunk using the world generator
+					Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY);
+					// Cache this chunk so that we don't have to keep generating it.
+					this.cachedChunks.put(chunk.getKey(), chunk);
+					// Add a world message to notify the player of the chunk details.
+					worldMessageQueue.add(new ChunkLoadedMessage(player.getPlayerId(), chunk));
+					// Now we can say that the player has visited the chunk.
+					player.addVisitedChunk(chunk);
+				}
 			}
 		}
 	}
@@ -116,5 +134,18 @@ public class Chunks {
      */
 	private void addCachedChunk(Chunk chunk) {
 		this.cachedChunks.put(Chunk.getChunkKey(chunk.getX(), chunk.getY()), chunk);
+	}
+	
+	/**
+	 * Checks whether the specified position is a valid chunk position.
+	 * @param x The chunk x position.
+	 * @param y The chunk y position.
+	 * @return Whether the specified position is a valid chunk position.
+	 */
+	private boolean isValidChunkPosition(int x, int y) {
+		// Get the number of chunks on either axis from the world origin to edge.
+		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
+		// Return whether either the x or y positions exceed the world boundaries.
+		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
 	}
 }
