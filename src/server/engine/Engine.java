@@ -53,7 +53,7 @@ public class Engine {
 		// It does not change every server tick, just ever game minute.
 		boolean timeChanged = this.world.getTime().update();
 		// Tick each of our cached chunks.
-		for (Chunk chunk : world.getCachedChunks()) {
+		for (Chunk chunk : world.getChunks().getCachedChunks()) {
 			// Are any players within the vicinity of this chunk?
 			boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
 			// We only want to tick chunks that are active. An active chunk either:

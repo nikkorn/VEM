@@ -16,18 +16,6 @@ public class Players {
 	 * The list of players.
 	 */
 	private ArrayList<Player> players;
-	/**
-	 * The player event handler.
-	 */
-	private IPlayerEventHandler playerEventHandler;
-	
-	/**
-	 * Creates a new instance of the Players class.
-	 * @param playerEventHandler The player event handler.
-	 */
-	public Players(IPlayerEventHandler playerEventHandler) {
-		this.playerEventHandler = playerEventHandler;
-	}
 	
 	/**
 	 * Add a player.
@@ -57,7 +45,7 @@ public class Players {
 		// Add a world message to notify of the success the player had in joining.
 		world.getWorldMessageQueue().add(new PlayerSpawnSuccessMessage(playerId, new Position(player.getPositon().getX(), player.getPositon().getY())));
 		// As the player will be spawning into the world, we regard this as a chunk change.
-		this.playerEventHandler.onChunkChange(player);
+		world.getChunks().onPlayerChunkChange(player);
 		// We were able to add the player.
 		return true;
 	}
@@ -116,7 +104,7 @@ public class Players {
 		// Has the player has moved into a different chunk?
 		if (oldChunkXPosition != targetPlayer.getPositon().getChunkX() || oldChunkYPosition != targetPlayer.getPositon().getChunkY()) {
 			// The player has moved into a different chunk.
-			this.playerEventHandler.onChunkChange(targetPlayer);
+			world.getChunks().onPlayerChunkChange(targetPlayer);
 		}
 	}
 	

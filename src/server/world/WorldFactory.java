@@ -1,11 +1,13 @@
 package server.world;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONObject;
 import server.Helpers;
 import server.world.chunk.Chunk;
 import server.world.chunk.ChunkFactory;
+import server.world.chunk.Chunks;
 import server.world.generation.WorldGenerator;
 import server.world.generation.WorldMapImageCreator;
 import server.world.time.Season;
@@ -38,7 +40,7 @@ public class WorldFactory {
 			// Create the world generator.
 			WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
 			// Create a new world!
-			World world = new World(initialWorldTime, worldGenerator);
+			World world = new World(new Chunks(), initialWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
 			// Create the map overview image file.
@@ -62,11 +64,12 @@ public class WorldFactory {
 		long worldSeed = worldState.getLong("seed");
 		// Get the world time.
 		Time worldTime = Time.fromState(worldState.getJSONObject("time"));
-		// Create the world instance.
+		// Create the world generator.
 		WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
-		World world                   = new World(worldTime, worldGenerator);
-		// Create the world chunks.
-		createExistingChunks(worldName, world, worldGenerator);
+		// Create the world chunks collection, containing any existing chunks read from disk.
+		Chunks existingChunks = createExistingChunks(worldName, worldGenerator);
+		// Create the world instance.
+		World world = new World(existingChunks, worldTime, worldGenerator);
 		// Return the world instance.
 		return world;
 	}
@@ -74,21 +77,25 @@ public class WorldFactory {
 	/**
 	 * Create the world chunks from saved state.
 	 * @param worldName The world name.
-	 * @param world The world.
 	 * @param worldGenerator The world generator.
+	 * @return The existing chunks.
      */
-	private static void createExistingChunks(String worldName, World world, WorldGenerator worldGenerator) {
+	private static Chunks createExistingChunks(String worldName, WorldGenerator worldGenerator) {
 		// Grab a handle to the chunks directory.
 		File chunksDirectory = new File("worlds/" + worldName + "/chunks");
+		// The list to hold the existing chunks.
+		ArrayList<Chunk> existingChunks = new ArrayList<Chunk>();
 		// Create a chunk for each chunk file in the directory.
 		for (File chunkFile : chunksDirectory.listFiles()) {
 			// Convert the chunk save file to JSON.
 			JSONObject chunkState = Helpers.readJSONObjectFromFile(chunkFile);
 			// Restore the chunk.
 			Chunk chunk = ChunkFactory.restoreChunk(chunkState, worldGenerator);
-			// Add the chunk to the world.
-			world.addCachedChunk(chunk);
+			// Add the chunk to the list of existing chunks.
+			existingChunks.add(chunk);
 		}
+		// Return the existing chunks.
+		return new Chunks(existingChunks);
 	}
 
 	/**
