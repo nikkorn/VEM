@@ -22,6 +22,10 @@ public class World {
 	 */
 	private Players players = new Players();
 	/**
+	 * The world player spawn position.
+	 */
+	private Position playerSpawn;
+	/**
 	 * The world time.
 	 */
 	private Time time;
@@ -37,11 +41,13 @@ public class World {
 	/**
 	 * Creates a new instance of the World class.
 	 * @param chunks The chunks that the world is composed of.
+	 * @param spawn The player spawn.
 	 * @param time The world time.
 	 * @param worldGenerator The world generator.
 	 */
-	public World(Chunks chunks, Time time, WorldGenerator worldGenerator) {
+	public World(Chunks chunks, Position spawn, Time time, WorldGenerator worldGenerator) {
 		this.chunks         = chunks;
+		this.playerSpawn    = spawn;
 		this.time           = time;
 		this.worldGenerator = worldGenerator;
 	}
@@ -79,12 +85,11 @@ public class World {
 	}
 	
 	/**
-	 * Get the world spawn position.
-	 * @return The world spawn position.
+	 * Get the player spawn.
+	 * @return The player spawn.
 	 */
-	public Position getSpawnPosition() {
-		// TODO Actually return a valid spawn, excluding tiles we have non-walkable placements at.
-		return new Position(12, 12);
+	public Position getPlayerSpawn() {
+		return this.playerSpawn;
 	}
 	
 	/**
@@ -123,14 +128,16 @@ public class World {
 	}
 	
 	/**
-	 * Get the world state as JSON.
-	 * @return The world state as JSON.
+	 * Get the world state serialised to JSON.
+	 * @return The world state serialised to JSON.
 	 */
-	public JSONObject getState() {
+	public JSONObject serialise() {
 		// Create the JSON object that will represent this world.
 		JSONObject worldState = new JSONObject();
 		// Set the world seed.
 		worldState.put("seed", this.worldGenerator.getSeed());
+		// Set the spawn position.
+		worldState.put("spawn", Position.serialise(this.playerSpawn));
 		// Set the world time.
 		worldState.put("time", this.time.getState());
 		// Return the world state.

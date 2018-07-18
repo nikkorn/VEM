@@ -39,7 +39,7 @@ public class Players {
 			return false;
 		}
 		// Create the new player and place them at the world spawn.
-		Player player = new Player(playerId, world.getSpawnPosition());
+		Player player = new Player(playerId, world.getPlayerSpawn());
 		// We can add our player to the list of active players.
 		this.players.add(player);
 		// Add a world message to notify of the success the player had in joining.

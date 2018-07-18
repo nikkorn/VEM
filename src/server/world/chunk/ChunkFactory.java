@@ -5,7 +5,6 @@ import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import server.Constants;
-import server.ServerConsole;
 import server.items.ItemType;
 import server.world.container.Container;
 import server.world.generation.WorldGenerator;
@@ -45,8 +44,6 @@ public class ChunkFactory {
 	 * @return The created chunk.
 	 */
 	public static Chunk createNewChunk(WorldGenerator generator, int x, int y) {
-		// Write to the console.
-		ServerConsole.writeDebug("creating chunk at x=" + x + " y=" + y);
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// This is the first time we are creating this chunk (there is no 
@@ -69,8 +66,6 @@ public class ChunkFactory {
 		// Get the x/y chunk position.
 		int x = chunkJSON.getInt("x");
 		int y = chunkJSON.getInt("y");
-		// Write to the console.
-		ServerConsole.writeDebug("restoring chunk at x=" + x + " y=" + y);
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// We already have state for this chunk saved so read the existing placement state.

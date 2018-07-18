@@ -1,5 +1,7 @@
 package server.world;
 
+import org.json.JSONObject;
+
 import server.Constants;
 
 /**
@@ -81,6 +83,21 @@ public class Position {
 	 */
 	public int getChunkY() {
 		return this.chunkY;
+	}
+	
+	/**
+	 * Get the position as JSON.
+	 * @return The position as JSON.
+	 */
+	public static JSONObject serialise(Position position) {
+		// Create the JSON object that will represent the position.
+		JSONObject positionState = new JSONObject();
+		// Set the x position.
+		positionState.put("x", position.getX());
+		// Set the y position.
+		positionState.put("y", position.getY());
+		// Return the position state.
+		return positionState;
 	}
 	
 	/**

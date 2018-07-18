@@ -27,11 +27,20 @@ public class WorldFactory {
 		// Check whether a world save directory of this name already exists.
 		File worldSaveDir = new File("worlds/" + name);
 		if (worldSaveDir.exists() && worldSaveDir.isDirectory()) {
+			// Write something sensible to the console.
+			System.out.println("-----------------------------------------------");
+			System.out.print("loading existing world '" + name + "' ...");
 			// A save already exists for this world! Create a world based on the saved state.
 			World world = createExistingWorld(name);
+			// Write something sensible to the console.
+			System.out.println(" done!");
+			System.out.println("-----------------------------------------------");
 			// Return the world.
 			return world;
 		} else {
+			// Write something sensible to the console.
+			System.out.println("-----------------------------------------------");
+			System.out.print("creating new world '" + name + "' ...");
 			// We are creating a new world save!
 			// Create a brand new world seed.
 			long worldSeed = new Random().nextLong();
@@ -39,17 +48,31 @@ public class WorldFactory {
 			Time initialWorldTime = new Time(Season.SPRING, 1, 9, 0);
 			// Create the world generator.
 			WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
+			// Find a world position for players to spawn at.
+			Position spawn = findWorldSpawn();
 			// Create a new world!
-			World world = new World(new Chunks(worldGenerator), initialWorldTime, worldGenerator);
+			World world = new World(new Chunks(worldGenerator), spawn, initialWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
 			// Create the map overview image file.
 			WorldMapImageCreator.create(worldGenerator, "map", "worlds/" + name + "/");
+			// Write something sensible to the console.
+			System.out.println(" done!");
+			System.out.println("-----------------------------------------------");
 			// Return the new world.
 			return world;
 		}
 	}
 	
+	/**
+	 * Find a valid world spawn position for players.
+	 * @return A valid world spawn position for players.
+	 */
+	private static Position findWorldSpawn() {
+		// TODO Check world tiles for valid position.
+		return new Position(123, 234);
+	}
+
 	/**
 	 * Create a world instance based on an existing world save.
 	 * @param worldName The name of the existing world.
@@ -68,8 +91,10 @@ public class WorldFactory {
 		WorldGenerator worldGenerator = new WorldGenerator(worldSeed);
 		// Create the world chunks collection, containing any existing chunks read from disk.
 		Chunks existingChunks = createExistingChunks(worldName, worldGenerator);
+		// Get the player spawn.
+		Position spawn = new Position(worldState.getJSONObject("spawn").getInt("x"), worldState.getJSONObject("spawn").getInt("y"));
 		// Create the world instance.
-		World world = new World(existingChunks, worldTime, worldGenerator);
+		World world = new World(existingChunks, spawn, worldTime, worldGenerator);
 		// Return the world instance.
 		return world;
 	}
@@ -114,6 +139,6 @@ public class WorldFactory {
 		// Create the world JSON file.
 		File worldSaveFile = new File("worlds/" + worldName + "/world.json");
 		// Get the world state as JSON (excluding chunk information) and write it to the world save file.
-		Helpers.writeStringToFile(worldSaveFile, world.getState().toString());
+		Helpers.writeStringToFile(worldSaveFile, world.serialise().toString());
 	}
 }
