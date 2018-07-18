@@ -1,7 +1,6 @@
 package server.world;
 
 import org.json.JSONObject;
-
 import server.Constants;
 
 /**

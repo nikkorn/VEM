@@ -57,7 +57,7 @@ public class Chunks {
 	 */
 	public Chunk getCachedChunk(int x, int y) {
 		// Check to make sure that we are not trying to get a chunk for an invalid position.
-		if (!this.isValidChunkPosition(x, y)) {
+		if (!isValidChunkPosition(x, y)) {
 			throw new RuntimeException("error: invalid chunk position: x=" + x + " y=" + y);
 		}
 		// Create the key for the chunk we are looking for.
@@ -83,6 +83,19 @@ public class Chunks {
 	}
 	
 	/**
+	 * Checks whether the specified position is a valid chunk position.
+	 * @param x The chunk x position.
+	 * @param y The chunk y position.
+	 * @return Whether the specified position is a valid chunk position.
+	 */
+	public static boolean isValidChunkPosition(int x, int y) {
+		// Get the number of chunks on either axis from the world origin to edge.
+		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
+		// Return whether either the x or y positions exceed the world boundaries.
+		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
+	}
+	
+	/**
 	 * Called when a player changes chunk positions.
 	 * Any chunks that are in the vicinity of the player will have to be loaded.
 	 * @param player The player that has changed chunk positions.
@@ -98,7 +111,7 @@ public class Chunks {
 		for (int chunkX = (playerChunkX - range); chunkX <= (playerChunkX + range); chunkX++) {
 			for (int chunkY = (playerChunkY - range); chunkY <= (playerChunkY + range); chunkY++) {
 				// Check to make sure that we are looking at a valid chunk position as we could be at the world edge.
-				if (!this.isValidChunkPosition(chunkX, chunkY)) {
+				if (!isValidChunkPosition(chunkX, chunkY)) {
 					continue;
 				}
 				// Has this chunk already been cached?
@@ -134,18 +147,5 @@ public class Chunks {
      */
 	private void addCachedChunk(Chunk chunk) {
 		this.cachedChunks.put(Chunk.getChunkKey(chunk.getX(), chunk.getY()), chunk);
-	}
-	
-	/**
-	 * Checks whether the specified position is a valid chunk position.
-	 * @param x The chunk x position.
-	 * @param y The chunk y position.
-	 * @return Whether the specified position is a valid chunk position.
-	 */
-	private boolean isValidChunkPosition(int x, int y) {
-		// Get the number of chunks on either axis from the world origin to edge.
-		int chunksToWorldEdge = Constants.WORLD_CHUNKS_PER_AXIS / 2;
-		// Return whether either the x or y positions exceed the world boundaries.
-		return x > -chunksToWorldEdge && x < chunksToWorldEdge && y > -chunksToWorldEdge && y < chunksToWorldEdge;
 	}
 }
