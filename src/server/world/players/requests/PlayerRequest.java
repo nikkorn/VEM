@@ -1,11 +1,11 @@
 package server.world.players.requests;
 
-import server.world.World;
+import server.engine.Request;
 
 /**
  * A request from a player.
  */
-public abstract class PlayerRequest {
+public abstract class PlayerRequest extends Request {
 	/**
 	 * The player id.
 	 */
@@ -26,11 +26,4 @@ public abstract class PlayerRequest {
 	protected String getRequestingPlayerId() {
 		return this.playerId;
 	}
-	
-	/**
-	 * Satisfy the request.
-	 * @param playerId The id of the requesting player.
-	 * @param world The world to interact with in order to satisfy the request.
-	 */
-	public abstract void satisfy(World world);
 }

@@ -4,8 +4,6 @@ import server.world.World;
 import server.world.chunk.Chunk;
 import server.world.messaging.IWorldMessageProcessor;
 import server.world.messaging.WorldMessageQueue;
-import server.world.players.PlayerRequestQueue;
-import server.world.players.requests.PlayerRequest;
 
 /**
  * The server-side game engine.
@@ -20,35 +18,28 @@ public class Engine {
 	 */
 	private IWorldMessageProcessor worldMessageProcessor;
 	/**
-	 * The player request queue.
-	 * Holds requests for all players, to be processed sequentially.
+	 * The request queue holding requests to be processed sequentially.
 	 */
-	private PlayerRequestQueue playerRequestQueue = new PlayerRequestQueue();
+	private RequestQueue requestQueue;
 	
 	/**
 	 * Create a new instance of the Engine class.
 	 * @param world The game world.
 	 * @param worldMessageProcessor The world message processor.
+	 * @param requestQueue The request queue.
 	 */
-	public Engine(World world, IWorldMessageProcessor worldMessageProcessor) {
+	public Engine(World world, IWorldMessageProcessor worldMessageProcessor, RequestQueue requestQueue) {
 		this.world                 = world;
 		this.worldMessageProcessor = worldMessageProcessor;
-	}
-	
-	/**
-	 * Add a player request to a queue to be processed.
-	 * @param request The request to add.
-	 */
-	public void addPlayerRequest(PlayerRequest request) {
-		this.playerRequestQueue.add(request);
+		this.requestQueue          = requestQueue;
 	}
 	
 	/**
 	 * Tick the game engine.
 	 */
 	public void tick() {
-		// Process any player requests.
-		processPlayerRequests();
+		// Process any requests.
+		processRequests();
 		// Update the world time and get whether it has changed.
 		// It does not change every server tick, just ever game minute.
 		boolean timeChanged = this.world.getTime().update();
@@ -68,13 +59,13 @@ public class Engine {
 	}
 
 	/**
-	 * Process all player requests in the player request queue.
+	 * Process all requests in the request queue.
 	 */
-	private void processPlayerRequests() {
+	private void processRequests() {
 		// Process all player requests in the player request queue.
-		while(this.playerRequestQueue.hasNext()) {
-			// Grab the next player request.
-			PlayerRequest request = this.playerRequestQueue.next();
+		while(this.requestQueue.hasNext()) {
+			// Grab the next request.
+			Request request = this.requestQueue.next();
 			// Attempt to satisfy the request.
 			request.satisfy(this.world);
 		}

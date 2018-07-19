@@ -1,11 +1,12 @@
 package server;
 
 import server.engine.Engine;
+import server.engine.RequestQueue;
+import server.networking.ClientWorldMessageProcessor;
 import server.networking.ConnectedClientManager;
+import server.networking.IClientEventHandlers;
 import server.world.World;
 import server.world.WorldFactory;
-import server.world.messaging.IWorldMessageProcessor;
-import server.world.messaging.messages.IWorldMessage;
 
 /**
  * The game server.
@@ -33,10 +34,12 @@ public class Server {
 		this.configuration = Configuration.loadFromDisk();
 		// Set whether we are going to output debug info to the console.
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
+		// Create the engine request queue.
+		RequestQueue requestQueue = new RequestQueue();
 		// Create the connected client manager.
-		this.connectedClientManager = new ConnectedClientManager();
+		this.connectedClientManager = this.createConnectedClientManager(requestQueue);
 		// Create the game engine.
-		this.engine = createGameEngine(worldName);
+		this.engine = createGameEngine(worldName, requestQueue);
 	}
 	
 	/**
@@ -70,19 +73,34 @@ public class Server {
 	/**
 	 * Create the game engine.
 	 * @param worldName The world name.
+	 * @param requestQueue The engine request queue.
 	 * @return The game engine.
 	 */
-	private Engine createGameEngine(String worldName) {
+	private Engine createGameEngine(String worldName, RequestQueue requestQueue) {
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
-		// Create the game engine.
-		Engine engine = new Engine(world, new IWorldMessageProcessor() {
-			@Override
-			public void process(IWorldMessage message) {
-				ServerConsole.writeInfo("We are processing a world message of type " + message.getMessageType() + "!");
-			}
-		});
+		// Create the game engine, passing the processor used to handle world messages for clients as well as the request queue.
+		Engine engine = new Engine(world, new ClientWorldMessageProcessor(this.connectedClientManager), requestQueue);
 		// Return the game engine.
 		return engine;
+	}
+	
+	/**
+	 * Create the connected client manager.
+	 * @param requestQueue The engine request queue.
+	 * @return The connected client manager.
+	 */
+	private ConnectedClientManager createConnectedClientManager(RequestQueue requestQueue) {
+		return new ConnectedClientManager(new IClientEventHandlers() {
+			@Override
+			public void onConnect(String clientId) {
+				System.out.println("The client '" + clientId + "' has connected!");
+			}
+
+			@Override
+			public void onDisconnect(String clientId) {
+				System.out.println("The client '" + clientId + "' has disconnected!");
+			}
+		}, requestQueue);
 	}
 }
