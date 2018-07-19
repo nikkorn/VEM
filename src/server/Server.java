@@ -4,7 +4,6 @@ import server.engine.Engine;
 import server.engine.RequestQueue;
 import server.networking.ClientWorldMessageProcessor;
 import server.networking.ConnectedClientManager;
-import server.networking.IClientEventHandlers;
 import server.world.World;
 import server.world.WorldFactory;
 
@@ -36,10 +35,12 @@ public class Server {
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
 		// Create the engine request queue.
 		RequestQueue requestQueue = new RequestQueue();
-		// Create the connected client manager.
-		this.connectedClientManager = this.createConnectedClientManager(requestQueue);
+		// Create the connected client manager, passing the engine request queue and the port for client connections.
+		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue);
 		// Create the game engine.
 		this.engine = createGameEngine(worldName, requestQueue);
+		// Now that everything is set up we should start listening for client connection requests.
+		this.connectedClientManager.startListeningForConnections();
 	}
 	
 	/**
@@ -83,24 +84,5 @@ public class Server {
 		Engine engine = new Engine(world, new ClientWorldMessageProcessor(this.connectedClientManager), requestQueue);
 		// Return the game engine.
 		return engine;
-	}
-	
-	/**
-	 * Create the connected client manager.
-	 * @param requestQueue The engine request queue.
-	 * @return The connected client manager.
-	 */
-	private ConnectedClientManager createConnectedClientManager(RequestQueue requestQueue) {
-		return new ConnectedClientManager(new IClientEventHandlers() {
-			@Override
-			public void onConnect(String clientId) {
-				System.out.println("The client '" + clientId + "' has connected!");
-			}
-
-			@Override
-			public void onDisconnect(String clientId) {
-				System.out.println("The client '" + clientId + "' has disconnected!");
-			}
-		}, requestQueue);
 	}
 }
