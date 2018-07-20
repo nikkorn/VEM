@@ -9,18 +9,18 @@ import java.io.InputStream;
  */
 public class MessageInputStream extends DataInputStream {
 	/**
-	 * The message factory provider.
+	 * The message reader provider.
 	 */
-	private MessageFactoryProvider messageFactoryProvider;
+	private MessageReaderProvider messageReaderProvider;
 
 	/**
 	 * Create a new instance of the MessageInputStream class.
 	 * @param inputStream The input stream from which to read messages.
-	 * @param messageFactoryProvider The provider of message factories.
+	 * @param messageReaderProvider The provider of message readers.
 	 */
-	public MessageInputStream(InputStream inputStream, MessageFactoryProvider messageFactoryProvider) {
+	public MessageInputStream(InputStream inputStream, MessageReaderProvider messageReaderProvider) {
 		super(inputStream);
-		this.messageFactoryProvider = messageFactoryProvider;
+		this.messageReaderProvider = messageReaderProvider;
 	}
 	
 	/**
@@ -29,12 +29,12 @@ public class MessageInputStream extends DataInputStream {
 	 * @return The next message.
 	 * @throws IOException 
 	 */
-	public Message readMessage() throws IOException {
+	public IMessage readMessage() throws IOException {
 		// Each transmitted message will start with a message type identifier integer.
 		// This call will block until we get this identifier.
 		int messageTypeId = this.readInt();
 		// A message type identifier was received over the stream.
-		// Create and return the message using the relevant factory.
-		return this.messageFactoryProvider.getFactory(messageTypeId).read(this);
+		// Create and return the message using the relevant reader.
+		return this.messageReaderProvider.getReader(messageTypeId).read(this);
 	}
 }
