@@ -31,8 +31,10 @@ public class MessageOutputStream extends DataOutputStream {
 		// Get the message writer with which to write this message.
 		IMessageWriter<TMessage> writer = (IMessageWriter<TMessage>) this.messageWriterProvider.getWriter(message.getTypeId());
 		// We will ALWAYS write the message type id to the stream first, the message writer will handle the rest.
-		this.write(message.getTypeId());
+		this.writeInt(message.getTypeId());
 		// Use the message writer to write the rest of the message.
 		writer.write(message, this);
+		// We should always flush the stream after writing a message.
+		this.flush();
 	}
 }

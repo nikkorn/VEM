@@ -1,6 +1,7 @@
 package gaia.networking;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 /**
  * Reader of a specific message type from a stream.
@@ -12,7 +13,7 @@ public interface IMessageReader {
 	 * @param dataInputStream The input stream to read the message from.
 	 * @return The read message.
 	 */
-	IMessage read(DataInputStream dataInputStream);
+	IMessage read(DataInputStream dataInputStream) throws IOException;
 	
 	/**
 	 * Get the id of the message type that this reader deals with.
