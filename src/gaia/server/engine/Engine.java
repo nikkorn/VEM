@@ -4,6 +4,7 @@ import gaia.server.world.World;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.players.PlayerJoinRequestResult;
 
 /**
  * The server-side game engine.
@@ -21,41 +22,81 @@ public class Engine {
 	 * The request queue holding requests to be processed sequentially.
 	 */
 	private RequestQueue requestQueue;
+	/**
+	 * The join request processor.
+	 */
+	private IJoinRequestProcessor joinRequestProcessor;
 	
 	/**
 	 * Create a new instance of the Engine class.
 	 * @param world The game world.
-	 * @param worldMessageProcessor The world message processor.
 	 * @param requestQueue The request queue.
 	 */
-	public Engine(World world, IWorldMessageProcessor worldMessageProcessor, RequestQueue requestQueue) {
+	public Engine(World world, RequestQueue requestQueue) {
 		this.world                 = world;
-		this.worldMessageProcessor = worldMessageProcessor;
 		this.requestQueue          = requestQueue;
+		this.joinRequestProcessor  = createJoinRequestProcessor(world);
+	}
+	
+	/**
+	 * Get the join request processor that handles join requests in a synchronized way.
+	 * @return The join request processor.
+	 */
+	public IJoinRequestProcessor getJoinRequestProcessor() {
+		return this.joinRequestProcessor;
+	}
+	
+	/**
+	 * Set the world message processor.
+	 * @param worldMessageProcessor The world message processor.
+	 */
+	public void setWorldMessageProcessor(IWorldMessageProcessor worldMessageProcessor) {
+		this.worldMessageProcessor = worldMessageProcessor;
 	}
 	
 	/**
 	 * Tick the game engine.
 	 */
 	public void tick() {
-		// Process any requests.
-		processRequests();
-		// Update the world time and get whether it has changed.
-		// It does not change every server tick, just ever game minute.
-		boolean timeChanged = this.world.getTime().update();
-		// Tick each of our cached chunks.
-		for (Chunk chunk : world.getChunks().getCachedChunks()) {
-			// Are any players within the vicinity of this chunk?
-			boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
-			// We only want to tick chunks that are active. An active chunk either:
-			// - Contains a high priority placement.
-			// - Has any players in the vicinity.
-			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
-				chunk.tick(timeChanged, this.world.getTime(), arePlayersNearChunk, this.world.getWorldMessageQueue());
+		// We need to synchronize the engine tick as players can join via a different thread.
+		synchronized (world.getPlayers()) {
+			// Process any requests.
+			processRequests();
+			// Update the world time and get whether it has changed.
+			// It does not change every server tick, just ever game minute.
+			boolean timeChanged = this.world.getTime().update();
+			// Tick each of our cached chunks.
+			for (Chunk chunk : world.getChunks().getCachedChunks()) {
+				// Are any players within the vicinity of this chunk?
+				boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
+				// We only want to tick chunks that are active. An active chunk either:
+				// - Contains a high priority placement.
+				// - Has any players in the vicinity.
+				if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
+					chunk.tick(timeChanged, this.world.getTime(), arePlayersNearChunk, this.world.getWorldMessageQueue());
+				}
 			}
+			// Process any messages that were added to the world message queue as part of this engine tick.
+			processWorldMessages();
 		}
-		// Process any messages that were added to the world message queue as part of this engine tick.
-		processWorldMessages();
+	}
+	
+	/**
+	 * Create the join request processor that handles join requests in a synchronized way.
+	 * @param world The world.
+	 * @return The join request processor that handles join requests in a synchronized way.
+	 */
+	private static IJoinRequestProcessor createJoinRequestProcessor(World world) {
+		return new IJoinRequestProcessor() {
+			@Override
+			public PlayerJoinRequestResult join(String playerId) {
+				// We need to attempt the join in a synchronized way as this will be called
+				// on a different thread to the one on which the engine is ticked.
+				synchronized (world.getPlayers()) {
+					return world.getPlayers().addPlayer(playerId, world);
+				}
+			}
+		};
 	}
 
 	/**
@@ -72,9 +113,14 @@ public class Engine {
 	}
 	
 	/**
-	 * Process the world messages in the wolrd message queue.
+	 * Process the world messages in the world message queue.
+	 * World messages in the queue will only be processed if a world message processor has been set.
 	 */
 	private void processWorldMessages() {
+		// We cannot do anything if a world message processor has not been set.
+		if (this.worldMessageProcessor == null) {
+			return;
+		}
 		// Grab the world message queue from the world.
 		WorldMessageQueue worldMessageQueue = this.world.getWorldMessageQueue();
 		// Process all messages in the queue.

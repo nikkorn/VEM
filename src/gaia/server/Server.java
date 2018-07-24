@@ -37,10 +37,13 @@ public class Server {
 		RequestQueue requestQueue = new RequestQueue();
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
-		// Create the connected client manager, passing the engine request queue and the port for client connections.
-		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue, world);
 		// Create the game engine.
-		this.engine = createGameEngine(world, requestQueue);
+		this.engine = new Engine(world, requestQueue);
+		// Create the connected client manager, passing the engine request queue and the port for client connections.
+		// We also pass the processor provided by the engine for making synchronized join requests.
+		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue, this.engine.getJoinRequestProcessor());
+		// In order to be able to process messages output by the engine we need to specify a world message processor.
+		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.connectedClientManager));
 		// Now that everything is set up we should start listening for client connection requests.
 		this.connectedClientManager.startListeningForConnections();
 	}
@@ -63,7 +66,6 @@ public class Server {
 	 * This is called at a consistent rate by the server clock.
 	 */
 	public void loop() {
-		// TODO Handle new player connections.
 		// TODO Handle player disconnects.
 		
 		// Tick the game engine.
@@ -71,18 +73,5 @@ public class Server {
 		
 		// TODO Broadcast changes to connected players who care about them.
 		// TODO Check for whether to save world state to disk.
-	}
-
-	/**
-	 * Create the game engine.
-	 * @param world The world.
-	 * @param requestQueue The engine request queue.
-	 * @return The game engine.
-	 */
-	private Engine createGameEngine(World world, RequestQueue requestQueue) {
-		// Create the game engine, passing the processor used to handle world messages for clients as well as the request queue.
-		Engine engine = new Engine(world, new ClientWorldMessageProcessor(this.connectedClientManager), requestQueue);
-		// Return the game engine.
-		return engine;
 	}
 }

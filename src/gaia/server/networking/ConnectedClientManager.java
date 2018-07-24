@@ -12,8 +12,8 @@ import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
+import gaia.server.engine.IJoinRequestProcessor;
 import gaia.server.engine.RequestQueue;
-import gaia.server.world.IJoinableWorld;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -28,9 +28,9 @@ public class ConnectedClientManager {
 	 */
 	private RequestQueue requestQueue;
 	/**
-	 * The world that clients will join as players.
+	 * The processor for join requests.
 	 */
-	private IJoinableWorld world;
+	private IJoinRequestProcessor joinRequestProcessor;
 	/**
 	 * The port on which client connections are made.
 	 */
@@ -40,12 +40,12 @@ public class ConnectedClientManager {
 	 * Creates a new instance of the ConnectedClientManager class.
 	 * @param port The port on which client connections are made.
 	 * @param requestQueue The queue of requests to be processed by the engine.
-	 * @param world The world that clients will join as players.
+	 * @param joinRequestProcessor The processor for join requests.
 	 */
-	public ConnectedClientManager(int port, RequestQueue requestQueue, IJoinableWorld world) {
-		this.port         = port;
-		this.requestQueue = requestQueue;
-		this.world        = world;
+	public ConnectedClientManager(int port, RequestQueue requestQueue, IJoinRequestProcessor joinRequestProcessor) {
+		this.port                 = port;
+		this.requestQueue         = requestQueue;
+		this.joinRequestProcessor = joinRequestProcessor;
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class ConnectedClientManager {
 		// Get the player id from the handshake.
 		String playerId = handshake.getPlayerId();
 		// Attempt to join the world using the player id and handle the result.
-		switch (this.world.join(playerId)) {
+		switch (this.joinRequestProcessor.join(playerId)) {
 			case ALREADY_JOINED:
 				// Return failure message over output stream!
 				messageOutputStream.writeMessage(new JoinFailure("You have already joined!"));
@@ -124,7 +124,7 @@ public class ConnectedClientManager {
 				break;
 			case SUCCESS:
 				// Return success message over output stream!
-				messageOutputStream.writeMessage(new JoinSuccess(this.world.getSeed()));
+				messageOutputStream.writeMessage(new JoinSuccess(123456789));
 				// Create the new client.
 				Client client = new Client(messageInputStream, messageOutputStream, clientSocket, playerId);
 				// Add the client to our client list.

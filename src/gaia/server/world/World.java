@@ -6,14 +6,13 @@ import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.players.PlayerJoinRequestResult;
 import gaia.server.world.players.Players;
 import gaia.server.world.time.Time;
 
 /**
  * A game world composed of separate chunks.
  */
-public class World implements IJoinableWorld {
+public class World {
 	/**
 	 * The chunks that the world is composed of.
 	 */
@@ -94,23 +93,6 @@ public class World implements IJoinableWorld {
 	}
 	
 	/**
-	 * Get the world seed.
-	 * @return The world seed.
-	 */
-	public long getSeed() {
-		return this.worldGenerator.getSeed();
-	}
-	
-	/**
-	 * Attempt to join the world.
-	 * @param playerId The id of the player requesting to join.
-	 * @return The result of the attempt to join.
-	 */
-	public PlayerJoinRequestResult join(String playerId) {
-		return this.players.addPlayer(playerId, this);
-	}
-	
-	/**
 	 * Get whether the world position is walkable.
 	 * Positions within non-loaded chunks are regarded as not walkable.
 	 * @param position The world position.
@@ -153,7 +135,7 @@ public class World implements IJoinableWorld {
 		// Create the JSON object that will represent this world.
 		JSONObject worldState = new JSONObject();
 		// Set the world seed.
-		worldState.put("seed", this.getSeed());
+		worldState.put("seed", this.worldGenerator.getSeed());
 		// Set the spawn position.
 		worldState.put("spawn", Position.serialise(this.playerSpawn));
 		// Set the world time.

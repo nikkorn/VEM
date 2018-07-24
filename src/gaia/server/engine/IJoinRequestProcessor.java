@@ -1,11 +1,11 @@
-package gaia.server.world;
+package gaia.server.engine;
 
 import gaia.server.world.players.PlayerJoinRequestResult;
 
 /**
- * Represents a joinable world.
+ * Processor for join requests.
  */
-public interface IJoinableWorld {
+public interface IJoinRequestProcessor {
 	
 	/**
 	 * Attempt to join the world.
@@ -13,10 +13,4 @@ public interface IJoinableWorld {
 	 * @return The result of the attempt.
 	 */
 	public PlayerJoinRequestResult join(String playerId);
-	
-	/**
-	 * Get the world seed.
-	 * @return The world seed.
-	 */
-	public long getSeed();
 }
