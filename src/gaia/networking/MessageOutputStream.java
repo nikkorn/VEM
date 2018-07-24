@@ -9,27 +9,28 @@ import java.io.OutputStream;
  */
 public class MessageOutputStream extends DataOutputStream {
 	/**
-	 * The message writer provider.
+	 * The message marshaller provider.
 	 */
-	private MessageWriterProvider messageWriterProvider;
+	private MessageMarshallerProvider messageMarshallerProvider;
 
 	/**
 	 * Create a new instance of the MessageOutputStream class.
 	 * @param outputStream The output stream to write messages to.
-	 * @param messageWriterProvider The provider of message writers.
+	 * @param messageMarshallerProvider The provider of message marshallers.
 	 */
-	public MessageOutputStream(OutputStream outputStream, MessageWriterProvider messageWriterProvider) {
+	public MessageOutputStream(OutputStream outputStream, MessageMarshallerProvider messageMarshallerProvider) {
 		super(outputStream);
-		this.messageWriterProvider = messageWriterProvider;
+		this.messageMarshallerProvider = messageMarshallerProvider;
 	}
 	
 	/**
 	 * Write the message to the output stream.
-	 * @throws IOException 
+	 * @param message The message to write.
+	 * @throws IOException
 	 */
 	public <TMessage extends IMessage> void writeMessage(TMessage message) throws IOException {
-		// Get the message writer with which to write this message.
-		IMessageWriter<TMessage> writer = (IMessageWriter<TMessage>) this.messageWriterProvider.getWriter(message.getTypeId());
+		// Get the message marshaller with which to write this message.
+		IMessageMarshaller<TMessage> writer = (IMessageMarshaller<TMessage>) this.messageMarshallerProvider.get(message.getTypeId());
 		// We will ALWAYS write the message type id to the stream first, the message writer will handle the rest.
 		this.writeInt(message.getTypeId());
 		// Use the message writer to write the rest of the message.

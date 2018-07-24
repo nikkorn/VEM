@@ -2,6 +2,7 @@ package gaia.server.networking;
 
 import java.net.Socket;
 import gaia.networking.MessageInputStream;
+import gaia.networking.MessageOutputStream;
 
 /**
  * Represents a connected client.
@@ -11,6 +12,10 @@ public class Client {
 	 * The input stream used to read messages from the client. 
 	 */
 	private MessageInputStream messageInputStream;
+	/**
+	 * The output stream used to write messages to the client. 
+	 */
+	private MessageOutputStream messageOutputStream;
 	/**
 	 * The client socket.
 	 */
@@ -27,13 +32,15 @@ public class Client {
 	/**
 	 * Create a new instance of the Client class.
 	 * @param messageInputStream The input stream used to read messages from the client. 
+	 * @param messageOutputStream The output stream used to write messages to the client. 
 	 * @param socket The client socket.
 	 * @param id The player id.
 	 */
-	public Client(MessageInputStream messageInputStream, Socket socket, String playerId) {
-		this.messageInputStream = messageInputStream;
-		this.socket             = socket;
-		this.playerId           = playerId;
+	public Client(MessageInputStream messageInputStream, MessageOutputStream messageOutputStream, Socket socket, String playerId) {
+		this.messageInputStream  = messageInputStream;
+		this.messageOutputStream = messageOutputStream;
+		this.socket              = socket;
+		this.playerId            = playerId;
 	}
 	
 	/**

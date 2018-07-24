@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
-import gaia.networking.MessageReaderProvider;
+import gaia.networking.MessageMarshallerProvider;
+import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.Handshake;
 import gaia.server.engine.RequestQueue;
-import gaia.server.networking.readers.HandshakeReader;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -85,8 +86,12 @@ public class ConnectedClientManager {
 	 */
 	private void processHandshake(Socket clientSocket) {
 		try {
+			// Create the message marshaller provider for our message stream.
+			MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
 			// Create a message input stream for the new client.
-			MessageInputStream messageInputStream = new MessageInputStream(clientSocket.getInputStream(), createClientMessageReaderProvider());
+			MessageInputStream messageInputStream = new MessageInputStream(clientSocket.getInputStream(), marshallerProvider);
+			// Create a message input stream for the new client.
+			MessageOutputStream messageOutputStream = new MessageOutputStream(clientSocket.getOutputStream(), marshallerProvider);
 			// We expect a handshake to be sent by the client wishing to connect.
 			IMessage initalMessage = messageInputStream.readMessage();
 			// We got a message from the client! Check that it was the handshake.
@@ -94,7 +99,7 @@ public class ConnectedClientManager {
 				throw new RuntimeException("Failed to get handshake from client");
 			}
 			// We got our handshake! Create the new client.
-			Client client = new Client(messageInputStream, clientSocket, ((Handshake)initalMessage).getPlayerId());
+			Client client = new Client(messageInputStream, messageOutputStream, clientSocket, ((Handshake)initalMessage).getPlayerId());
 			// Add the client to our client list.
 			synchronized(this) {
 				this.clients.add(client);
@@ -103,18 +108,5 @@ public class ConnectedClientManager {
 			// An IO exception was thrown in accepting a handshake.
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Create and populate the message reader provider that will be used to read messages sent from a connected client.
-	 * @return The message reader provider that will be used to read messages sent from a connected client.
-	 */
-	private MessageReaderProvider createClientMessageReaderProvider() {
-		// Create the reader provider.
-		MessageReaderProvider readerProvider = new MessageReaderProvider();
-		// Add the readers.
-		readerProvider.addReader(new HandshakeReader());
-		// Return the reader provider.
-		return readerProvider;
 	}
 }

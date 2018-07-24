@@ -9,18 +9,18 @@ import java.io.InputStream;
  */
 public class MessageInputStream extends DataInputStream {
 	/**
-	 * The message reader provider.
+	 * The message marshaller provider.
 	 */
-	private MessageReaderProvider messageReaderProvider;
+	private MessageMarshallerProvider messageMarshallerProvider;
 
 	/**
 	 * Create a new instance of the MessageInputStream class.
 	 * @param inputStream The input stream from which to read messages.
-	 * @param messageReaderProvider The provider of message readers.
+	 * @param messageMarshallerProvider The provider of message marshallers.
 	 */
-	public MessageInputStream(InputStream inputStream, MessageReaderProvider messageReaderProvider) {
+	public MessageInputStream(InputStream inputStream, MessageMarshallerProvider messageMarshallerProvider) {
 		super(inputStream);
-		this.messageReaderProvider = messageReaderProvider;
+		this.messageMarshallerProvider = messageMarshallerProvider;
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public class MessageInputStream extends DataInputStream {
 		// This call will block until we get this identifier.
 		int messageTypeId = this.readInt();
 		// A message type identifier was received over the stream.
-		// Create and return the message using the relevant reader.
-		return this.messageReaderProvider.getReader(messageTypeId).read(this);
+		// Create and return the message using the relevant marshaller.
+		return this.messageMarshallerProvider.get(messageTypeId).read(this);
 	}
 }
