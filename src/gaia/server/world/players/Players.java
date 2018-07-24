@@ -1,13 +1,11 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
-
 import gaia.server.world.Direction;
 import gaia.server.world.Position;
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
-import gaia.server.world.messaging.messages.PlayerSpawnRejectedMessage;
-import gaia.server.world.messaging.messages.PlayerSpawnSuccessMessage;
+import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 
 /**
  * The players within a world.
@@ -16,39 +14,33 @@ public class Players {
 	/**
 	 * The list of players.
 	 */
-	private ArrayList<Player> players;
+	private ArrayList<Player> players = new ArrayList<Player>();
 	
 	/**
-	 * Add a player.
+	 * Attempt to add a player.
 	 * @param playerId The player id.
 	 * @param world The game world.
-	 * @return Whether the player was added to the world.
+	 * @return The result of attempting to add the player.
 	 */
-	public boolean addPlayer(String playerId, World world) {
+	public PlayerJoinRequestResult addPlayer(String playerId, World world) {
 		// Check to make sure a player with this player id doesn't already exist.
 		if (this.isPlayerPresent(playerId)) {
-			// Add a world message to notify of the rejection.
-			world.getWorldMessageQueue().add(new PlayerSpawnRejectedMessage(playerId, "Player with id " + playerId + " is already present!"));
-			// Return false as we didn't add the player.
-			return false;
+			return PlayerJoinRequestResult.ALREADY_JOINED;
 		}
 		// Check to make sure a player with this player id is not blacklisted.
 		if (this.isPlayerBlacklisted(playerId)) {
-			// Add a world message to notify of the rejection.
-			world.getWorldMessageQueue().add(new PlayerSpawnRejectedMessage(playerId, "Player with id " + playerId + " is blacklisted!"));
-			// Return false as we didn't add the player.
-			return false;
+			return PlayerJoinRequestResult.BLACKLISTED;
 		}
 		// Create the new player and place them at the world spawn.
 		Player player = new Player(playerId, world.getPlayerSpawn());
 		// We can add our player to the list of active players.
 		this.players.add(player);
 		// Add a world message to notify of the success the player had in joining.
-		world.getWorldMessageQueue().add(new PlayerSpawnSuccessMessage(playerId, new Position(player.getPositon().getX(), player.getPositon().getY())));
+		world.getWorldMessageQueue().add(new PlayerSpawnedMessage(playerId, new Position(player.getPositon().getX(), player.getPositon().getY())));
 		// As the player will be spawning into the world, we regard this as a chunk change.
 		world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
 		// We were able to add the player.
-		return true;
+		return PlayerJoinRequestResult.SUCCESS;
 	}
 	
 	/**

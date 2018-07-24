@@ -3,9 +3,9 @@ package gaia.server.world.messaging.messages;
 import gaia.server.world.Position;
 
 /**
- * A message containing the details of a successful player spawn.
+ * A message containing the details of a player spawn.
  */
-public class PlayerSpawnSuccessMessage implements IWorldMessage {
+public class PlayerSpawnedMessage implements IWorldMessage {
 	/**
 	 * The id of the spawning player.
 	 */
@@ -16,11 +16,11 @@ public class PlayerSpawnSuccessMessage implements IWorldMessage {
 	private Position spawnPosition;
 	
 	/**
-	 * Create a new instance of the PlayerSpawnSuccessMessage class.
+	 * Create a new instance of the PlayerSpawnMessage class.
 	 * @param playerId The id of the player.
 	 * @param position The position of the spawn.
 	 */
-	public PlayerSpawnSuccessMessage(String playerId, Position position) {
+	public PlayerSpawnedMessage(String playerId, Position position) {
 		this.playerId      = playerId;
 		this.spawnPosition = position;
 	}
@@ -43,6 +43,6 @@ public class PlayerSpawnSuccessMessage implements IWorldMessage {
 
 	@Override
 	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_SPAWN_SUCCESS;
+		return WorldMessageType.PLAYER_SPAWN;
 	}
 }

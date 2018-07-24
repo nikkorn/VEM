@@ -35,10 +35,12 @@ public class Server {
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
 		// Create the engine request queue.
 		RequestQueue requestQueue = new RequestQueue();
+		// Create the world.
+		World world = WorldFactory.createWorld(worldName);
 		// Create the connected client manager, passing the engine request queue and the port for client connections.
-		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue);
+		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue, world);
 		// Create the game engine.
-		this.engine = createGameEngine(worldName, requestQueue);
+		this.engine = createGameEngine(world, requestQueue);
 		// Now that everything is set up we should start listening for client connection requests.
 		this.connectedClientManager.startListeningForConnections();
 	}
@@ -73,13 +75,11 @@ public class Server {
 
 	/**
 	 * Create the game engine.
-	 * @param worldName The world name.
+	 * @param world The world.
 	 * @param requestQueue The engine request queue.
 	 * @return The game engine.
 	 */
-	private Engine createGameEngine(String worldName, RequestQueue requestQueue) {
-		// Create the world.
-		World world = WorldFactory.createWorld(worldName);
+	private Engine createGameEngine(World world, RequestQueue requestQueue) {
 		// Create the game engine, passing the processor used to handle world messages for clients as well as the request queue.
 		Engine engine = new Engine(world, new ClientWorldMessageProcessor(this.connectedClientManager), requestQueue);
 		// Return the game engine.

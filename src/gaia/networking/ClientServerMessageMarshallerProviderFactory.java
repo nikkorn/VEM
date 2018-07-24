@@ -1,6 +1,7 @@
 package gaia.networking;
 
 import gaia.networking.marshallers.HandshakeMarshaller;
+import gaia.networking.marshallers.JoinSuccessMarshaller;
 
 /**
  * Factory for creating MessageMarshallerProvider instances.
@@ -16,6 +17,8 @@ public class ClientServerMessageMarshallerProviderFactory {
 		MessageMarshallerProvider provider = new MessageMarshallerProvider();
 		// Add the marshaller used for reading/writing handshake messages.
 		provider.addMarshaller(new HandshakeMarshaller());
+		// Add the marshaller used for reading/writing join success messages.
+		provider.addMarshaller(new JoinSuccessMarshaller());
 		// Return the provider.
 		return provider;
 	}

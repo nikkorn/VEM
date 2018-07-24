@@ -10,7 +10,10 @@ import gaia.networking.MessageInputStream;
 import gaia.networking.MessageMarshallerProvider;
 import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.Handshake;
+import gaia.networking.messages.JoinFailure;
+import gaia.networking.messages.JoinSuccess;
 import gaia.server.engine.RequestQueue;
+import gaia.server.world.IJoinableWorld;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -25,6 +28,10 @@ public class ConnectedClientManager {
 	 */
 	private RequestQueue requestQueue;
 	/**
+	 * The world that clients will join as players.
+	 */
+	private IJoinableWorld world;
+	/**
 	 * The port on which client connections are made.
 	 */
 	private int port;
@@ -33,10 +40,12 @@ public class ConnectedClientManager {
 	 * Creates a new instance of the ConnectedClientManager class.
 	 * @param port The port on which client connections are made.
 	 * @param requestQueue The queue of requests to be processed by the engine.
+	 * @param world The world that clients will join as players.
 	 */
-	public ConnectedClientManager(int port, RequestQueue requestQueue) {
+	public ConnectedClientManager(int port, RequestQueue requestQueue, IJoinableWorld world) {
 		this.port         = port;
 		this.requestQueue = requestQueue;
+		this.world        = world;
 	}
 	
 	/**
@@ -61,7 +70,20 @@ public class ConnectedClientManager {
 					while(true) {
 						// Sit here and listen here for a connection attempt.
 						try {
-							processHandshake(serverSocket.accept());
+							Socket clientSocket = serverSocket.accept();
+							// Create the message marshaller provider for our message stream.
+							MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
+							// Create a message input stream for the new client.
+							MessageInputStream messageInputStream = new MessageInputStream(clientSocket.getInputStream(), marshallerProvider);
+							// We expect a handshake to be sent by the client wishing to connect.
+							IMessage initalMessage = messageInputStream.readMessage();
+							// We got a message from the client! Check that it was the handshake.
+							if (initalMessage.getTypeId() != 0) {
+								throw new RuntimeException("Failed to get handshake from client");
+							}
+							// We got a handshake! Process it!
+							processHandshake((Handshake)initalMessage, clientSocket, 
+									messageInputStream, new MessageOutputStream(clientSocket.getOutputStream(), marshallerProvider));
 						} catch (IOException e) {
 							// An IO exception was thrown in accepting a new client connection.
 							// In this case just give up and go back to listening for new connections.
@@ -81,32 +103,37 @@ public class ConnectedClientManager {
 	}
 	
 	/**
-	 * Handle a new client connection.
-	 * @param clientSocket The socket for the connecting client.
+	 * Handle a handshake sent from a client attempting to connect.
+	 * @param handshake The handshake sent from the client.
+	 * @param clientSocket The client socket.
+	 * @param messageInputStream The message input stream.
+	 * @param messageOutputStream The message output stream.
 	 */
-	private void processHandshake(Socket clientSocket) {
-		try {
-			// Create the message marshaller provider for our message stream.
-			MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
-			// Create a message input stream for the new client.
-			MessageInputStream messageInputStream = new MessageInputStream(clientSocket.getInputStream(), marshallerProvider);
-			// Create a message input stream for the new client.
-			MessageOutputStream messageOutputStream = new MessageOutputStream(clientSocket.getOutputStream(), marshallerProvider);
-			// We expect a handshake to be sent by the client wishing to connect.
-			IMessage initalMessage = messageInputStream.readMessage();
-			// We got a message from the client! Check that it was the handshake.
-			if (initalMessage.getTypeId() != 0) {
-				throw new RuntimeException("Failed to get handshake from client");
-			}
-			// We got our handshake! Create the new client.
-			Client client = new Client(messageInputStream, messageOutputStream, clientSocket, ((Handshake)initalMessage).getPlayerId());
-			// Add the client to our client list.
-			synchronized(this) {
-				this.clients.add(client);
-			}
-		} catch (IOException e) {
-			// An IO exception was thrown in accepting a handshake.
-			e.printStackTrace();
+	private void processHandshake(Handshake handshake, Socket clientSocket, MessageInputStream messageInputStream, MessageOutputStream messageOutputStream) throws IOException {
+		// Get the player id from the handshake.
+		String playerId = handshake.getPlayerId();
+		// Attempt to join the world using the player id and handle the result.
+		switch (this.world.join(playerId)) {
+			case ALREADY_JOINED:
+				// Return failure message over output stream!
+				messageOutputStream.writeMessage(new JoinFailure("You have already joined!"));
+				break;
+			case BLACKLISTED:
+				// Return failure message over output stream!
+				messageOutputStream.writeMessage(new JoinFailure("You are on the blacklist!"));
+				break;
+			case SUCCESS:
+				// Return success message over output stream!
+				messageOutputStream.writeMessage(new JoinSuccess(this.world.getSeed()));
+				// Create the new client.
+				Client client = new Client(messageInputStream, messageOutputStream, clientSocket, playerId);
+				// Add the client to our client list.
+				synchronized(this) {
+					this.clients.add(client);
+				}
+				break;
+			default:
+				throw new RuntimeException("Unexpected join request result");
 		}
 	}
 }
