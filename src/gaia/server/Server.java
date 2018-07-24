@@ -3,7 +3,7 @@ package gaia.server;
 import gaia.server.engine.Engine;
 import gaia.server.engine.RequestQueue;
 import gaia.server.networking.ClientWorldMessageProcessor;
-import gaia.server.networking.ConnectedClientManager;
+import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
 import gaia.server.world.WorldFactory;
 
@@ -22,7 +22,7 @@ public class Server {
 	/**
 	 * The connected client manager.
 	 */
-	private ConnectedClientManager connectedClientManager;
+	private ClientProxyManager connectedClientManager;
 	
 	/**
 	 * Create a new instance of the server class.
@@ -41,7 +41,7 @@ public class Server {
 		this.engine = new Engine(world, requestQueue);
 		// Create the connected client manager, passing the engine request queue and the port for client connections.
 		// We also pass the processor provided by the engine for making synchronized join requests.
-		this.connectedClientManager = new ConnectedClientManager(this.configuration.getPort(), requestQueue, this.engine.getJoinRequestProcessor());
+		this.connectedClientManager = new ClientProxyManager(this.configuration.getPort(), requestQueue, this.engine.getJoinRequestProcessor());
 		// In order to be able to process messages output by the engine we need to specify a world message processor.
 		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.connectedClientManager));
 		// Now that everything is set up we should start listening for client connection requests.

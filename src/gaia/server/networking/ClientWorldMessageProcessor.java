@@ -11,13 +11,13 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 	/**
 	 * The connected client manager.
 	 */
-	private ConnectedClientManager connectedClientManager;
+	private ClientProxyManager connectedClientManager;
 	
 	/**
 	 * Create a new instance of the ClientWorldMessageProcessor class.
 	 * @param connectedClientManager The connected client manager.
 	 */
-	public ClientWorldMessageProcessor(ConnectedClientManager connectedClientManager) {
+	public ClientWorldMessageProcessor(ClientProxyManager connectedClientManager) {
 		this.connectedClientManager = connectedClientManager;
 	}
 

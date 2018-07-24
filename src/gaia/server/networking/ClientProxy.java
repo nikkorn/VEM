@@ -5,9 +5,9 @@ import gaia.networking.MessageInputStream;
 import gaia.networking.MessageOutputStream;
 
 /**
- * Represents a connected client.
+ * A server-side representation of a connected client.
  */
-public class Client {
+public class ClientProxy {
 	/**
 	 * The input stream used to read messages from the client. 
 	 */
@@ -36,7 +36,7 @@ public class Client {
 	 * @param socket The client socket.
 	 * @param id The player id.
 	 */
-	public Client(MessageInputStream messageInputStream, MessageOutputStream messageOutputStream, Socket socket, String playerId) {
+	public ClientProxy(MessageInputStream messageInputStream, MessageOutputStream messageOutputStream, Socket socket, String playerId) {
 		this.messageInputStream  = messageInputStream;
 		this.messageOutputStream = messageOutputStream;
 		this.socket              = socket;

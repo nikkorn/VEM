@@ -18,11 +18,11 @@ import gaia.server.engine.RequestQueue;
 /**
  * Manages connected clients and listens for client handshakes.
  */
-public class ConnectedClientManager {
+public class ClientProxyManager {
 	/**
 	 * The clients.
 	 */
-	private ArrayList<Client> clients = new ArrayList<Client>();
+	private ArrayList<ClientProxy> clients = new ArrayList<ClientProxy>();
 	/**
 	 * The queue of requests to be processed by the engine.
 	 */
@@ -37,12 +37,12 @@ public class ConnectedClientManager {
 	private int port;
 	
 	/**
-	 * Creates a new instance of the ConnectedClientManager class.
+	 * Creates a new instance of the ClientProxyManager class.
 	 * @param port The port on which client connections are made.
 	 * @param requestQueue The queue of requests to be processed by the engine.
 	 * @param joinRequestProcessor The processor for join requests.
 	 */
-	public ConnectedClientManager(int port, RequestQueue requestQueue, IJoinRequestProcessor joinRequestProcessor) {
+	public ClientProxyManager(int port, RequestQueue requestQueue, IJoinRequestProcessor joinRequestProcessor) {
 		this.port                 = port;
 		this.requestQueue         = requestQueue;
 		this.joinRequestProcessor = joinRequestProcessor;
@@ -126,7 +126,7 @@ public class ConnectedClientManager {
 				// Return success message over output stream!
 				messageOutputStream.writeMessage(new JoinSuccess(123456789));
 				// Create the new client.
-				Client client = new Client(messageInputStream, messageOutputStream, clientSocket, playerId);
+				ClientProxy client = new ClientProxy(messageInputStream, messageOutputStream, clientSocket, playerId);
 				// Add the client to our client list.
 				synchronized(this) {
 					this.clients.add(client);
