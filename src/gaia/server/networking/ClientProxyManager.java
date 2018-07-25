@@ -9,6 +9,7 @@ import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
 import gaia.networking.MessageMarshallerProvider;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
@@ -124,9 +125,9 @@ public class ClientProxyManager {
 				break;
 			case SUCCESS:
 				// Return success message over output stream!
-				messageOutputStream.writeMessage(new JoinSuccess(123456789));
+				messageOutputStream.writeMessage(new JoinSuccess());
 				// Create the new client.
-				ClientProxy client = new ClientProxy(messageInputStream, messageOutputStream, clientSocket, playerId);
+				ClientProxy client = new ClientProxy(new QueuedMessageReader(messageInputStream), messageOutputStream, playerId);
 				// Add the client to our client list.
 				synchronized(this) {
 					this.clients.add(client);

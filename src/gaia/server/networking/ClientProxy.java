@@ -1,25 +1,22 @@
 package gaia.server.networking;
 
-import java.net.Socket;
-import gaia.networking.MessageInputStream;
+import java.io.IOException;
+import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.QueuedMessageReader;
 
 /**
  * A server-side representation of a connected client.
  */
 public class ClientProxy {
 	/**
-	 * The input stream used to read messages from the client. 
+	 * The message reader used to read messages from a message input stream into a queue.
 	 */
-	private MessageInputStream messageInputStream;
+	private QueuedMessageReader queuedMessageReader;
 	/**
-	 * The output stream used to write messages to the client. 
+	 * The message output stream used to write messages to the client.
 	 */
 	private MessageOutputStream messageOutputStream;
-	/**
-	 * The client socket.
-	 */
-	private Socket socket;
 	/**
 	 * The player id.
 	 */
@@ -30,17 +27,28 @@ public class ClientProxy {
 	private ClientRequestQueue requestQueue = new ClientRequestQueue();
 	
 	/**
-	 * Create a new instance of the Client class.
-	 * @param messageInputStream The input stream used to read messages from the client. 
+	 * Create a new instance of the ClientProxy class.
+	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue.
 	 * @param messageOutputStream The output stream used to write messages to the client. 
-	 * @param socket The client socket.
 	 * @param id The player id.
 	 */
-	public ClientProxy(MessageInputStream messageInputStream, MessageOutputStream messageOutputStream, Socket socket, String playerId) {
-		this.messageInputStream  = messageInputStream;
-		this.messageOutputStream = messageOutputStream;
-		this.socket              = socket;
-		this.playerId            = playerId;
+	public ClientProxy(QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, String playerId) {
+		this.queuedMessageReader  = queuedMessageReader;
+		this.messageOutputStream  = messageOutputStream;
+		this.playerId             = playerId;
+		// Our queued message reader needs to start reading incoming messages.
+		Thread messageReaderThread = new Thread(queuedMessageReader);
+		messageReaderThread.setDaemon(true);
+		messageReaderThread.start();
+	}
+	
+	/**
+	 * Get whether the client is still connected.
+	 * @return Whether the client is still connected.
+	 */
+	public boolean isConnected() {
+		// For now, we will check whether the client is connected by checking if our reader is still connected.
+		return this.queuedMessageReader.isConnected();
 	}
 	
 	/**
@@ -57,5 +65,14 @@ public class ClientProxy {
 	 */
 	public ClientRequestQueue getClientRequestQueue() {
 		return requestQueue;
+	}
+	
+	/**
+	 * Send a message to the client.
+	 * @param message The message to send.
+	 * @throws IOException 
+	 */
+	public void sendMessage(IMessage message) throws IOException {
+		this.messageOutputStream.writeMessage(message);
 	}
 }

@@ -8,6 +8,8 @@ import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
 import gaia.networking.MessageMarshallerProvider;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.MessageQueue;
+import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 
@@ -15,14 +17,50 @@ import gaia.networking.messages.JoinFailure;
  * A client-side representation of a server instance.
  */
 public class ServerProxy {
+	/**
+	 * The message reader used to read messages from a message input stream into a queue.
+	 */
+	private QueuedMessageReader queuedMessageReader;
+	/**
+	 * The message output stream used to write messages to the server.
+	 */
+	private MessageOutputStream messageOutputStream;
 	
 	/**
 	 * Create a new instance of the ServerProxy class.
-	 * @param socket The socket.
-	 * @param in The message input stream used to read messages from the server. 
-	 * @param out The message output stream used to write messages to the server.
+	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue. 
+	 * @param messageOutputStream The message output stream used to write messages to the server.
 	 */
-	private ServerProxy(Socket socket, MessageInputStream in, MessageOutputStream out) {}
+	private ServerProxy(QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream) {
+		this.queuedMessageReader = queuedMessageReader;
+		this.messageOutputStream = messageOutputStream;
+	}
+	
+	/**
+	 * Get a queue of any messages received from the server.
+	 * @return A queue of any messages received from the server.
+	 */
+	public MessageQueue getReceivedMessageQueue() {
+		return this.queuedMessageReader.getQueuedMessages();
+	}
+	
+	/**
+	 * Send a message to the server.
+	 * @param message The message to send.
+	 * @throws IOException 
+	 */
+	public void sendMessage(IMessage message) throws IOException {
+		this.messageOutputStream.writeMessage(message);
+	}
+	
+	/**
+	 * Get whether we are still connected with the server.
+	 * @return Whether we are still connected with the server.
+	 */
+	public boolean isConnected() {
+		// For now, we will check whether we are still connected by checking if our reader is still connected.
+		return this.queuedMessageReader.isConnected();
+	}
 	
 	/**
 	 * Connect to a remote server instance and return a server proxy that represents that server instance.
@@ -34,9 +72,9 @@ public class ServerProxy {
 	 * @throws UnknownHostException 
 	 * @throws ServerJoinRequestRejectedException 
 	 */
-	public ServerProxy create(String host, int port, String playerId) throws UnknownHostException, IOException, ServerJoinRequestRejectedException  {
+	public static ServerProxy create(String host, int port, String playerId) throws UnknownHostException, IOException, ServerJoinRequestRejectedException  {
 		// Create the socket on which to connect to the server.
-		Socket connectionsocket = new Socket("localhost", 23445);
+		Socket connectionsocket = new Socket(host, port);
 		// Create the message marshaller provider for our message stream.
 		MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
 		// Create the message output stream used to write messages to the server.
@@ -52,7 +90,16 @@ public class ServerProxy {
 		switch (response.getTypeId()) {
 			case 1:
 				// The server sent us a message to let us know we successfully joined!
-				return new ServerProxy(connectionsocket, messageInputStream, messageOutputStream);
+				// Firstly, create the queued message reader that will be used by the server proxy.
+				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
+				// Next, create the server proxy instance.
+				ServerProxy serverProxy = new ServerProxy(queuedMessageReader, messageOutputStream);
+				// Lastly, our queued message reader needs to start reading incoming messages.
+				Thread messageReaderThread = new Thread(queuedMessageReader);
+				messageReaderThread.setDaemon(true);
+				messageReaderThread.start();
+				// We are finished, return the successfully created server proxy.
+				return serverProxy;
 			case 2:
 				// The server sent us a message to let us know we failed to join!
 				throw new ServerJoinRequestRejectedException(((JoinFailure)response).getReason());
