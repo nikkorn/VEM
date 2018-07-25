@@ -9,6 +9,6 @@ public class JoinSuccess implements IMessage {
 
 	@Override
 	public int getTypeId() {
-		return 1;
+		return MessageIdentifier.JOIN_SUCCESS;
 	}
 }

@@ -29,6 +29,6 @@ public class JoinFailure implements IMessage {
 
 	@Override
 	public int getTypeId() {
-		return 2;
+		return MessageIdentifier.JOIN_FAIL;
 	}
 }

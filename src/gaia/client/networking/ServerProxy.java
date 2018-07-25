@@ -12,6 +12,7 @@ import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
+import gaia.networking.messages.MessageIdentifier;
 
 /**
  * A client-side representation of a server instance.
@@ -88,7 +89,7 @@ public class ServerProxy {
 		IMessage response = messageInputStream.readMessage();
 		// We got a response from the server!
 		switch (response.getTypeId()) {
-			case 1:
+			case MessageIdentifier.JOIN_SUCCESS:
 				// The server sent us a message to let us know we successfully joined!
 				// Firstly, create the queued message reader that will be used by the server proxy.
 				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
@@ -100,7 +101,7 @@ public class ServerProxy {
 				messageReaderThread.start();
 				// We are finished, return the successfully created server proxy.
 				return serverProxy;
-			case 2:
+			case MessageIdentifier.JOIN_FAIL:
 				// The server sent us a message to let us know we failed to join!
 				throw new ServerJoinRequestRejectedException(((JoinFailure)response).getReason());
 			default:

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import gaia.networking.IMessageMarshaller;
 import gaia.networking.messages.JoinFailure;
+import gaia.networking.messages.MessageIdentifier;
 
 /**
  * The marshaller responsible for reading/writing JoinFailure messages.
@@ -24,6 +25,6 @@ public class JoinFailureMarshaller implements IMessageMarshaller<JoinFailure> {
 
 	@Override
 	public int getMessageTypeId() {
-		return 2;
+		return MessageIdentifier.JOIN_FAIL;
 	}
 }

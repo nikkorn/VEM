@@ -33,6 +33,6 @@ public class Handshake implements IMessage {
 	 */
 	@Override
 	public int getTypeId() {
-		return 0;
+		return MessageIdentifier.HANDSHAKE;
 	}
 }

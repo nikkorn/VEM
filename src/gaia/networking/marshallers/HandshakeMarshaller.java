@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import gaia.networking.IMessageMarshaller;
 import gaia.networking.messages.Handshake;
+import gaia.networking.messages.MessageIdentifier;
 
 /**
  * The marshaller responsible for reading/writing handshake messages.
@@ -25,6 +26,6 @@ public class HandshakeMarshaller implements IMessageMarshaller<Handshake> {
 
 	@Override
 	public int getMessageTypeId() {
-		return 0;
+		return MessageIdentifier.HANDSHAKE;
 	}
 }
