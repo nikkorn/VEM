@@ -1,10 +1,10 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
-
 import gaia.Direction;
 import gaia.server.world.Position;
 import gaia.server.world.World;
+import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 
@@ -42,6 +42,22 @@ public class Players {
 		world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
 		// We were able to add the player.
 		return PlayerJoinRequestResult.SUCCESS;
+	}
+	
+	/**
+	 * Remove a player if they exist.
+	 * @param playerId The id of the player to remove.
+	 * @param world The game world.
+	 */
+	public void removePlayer(String playerId, World world) {
+		// Do nothing if this player does not exist.
+		if (!this.isPlayerPresent(playerId)) {
+			return;
+		}
+		// Remove the player.
+		this.players.remove(this.getPlayer(playerId));
+		// Add a world message to notify of the player leaving the world.
+		world.getWorldMessageQueue().add(new PlayerDespawnedMessage(playerId));
 	}
 	
 	/**

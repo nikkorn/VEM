@@ -8,6 +8,7 @@ import gaia.server.networking.ClientMessageQueue;
 import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
 import gaia.server.world.WorldFactory;
+import gaia.server.world.players.requests.LeaveRequest;
 
 /**
  * The game server.
@@ -84,8 +85,8 @@ public class Server {
 		// Ask the client proxy manager to check for any disconnections, in
 		// return we will get a list of the player ids of any disconnected clients.
 		for (String disconnectedPlayerId : this.clientProxyManager.processDisconnections()) {
-			// TODO Handle this properly (add player despawn engine request)
-			ServerConsole.writeInfo("The player '" + disconnectedPlayerId + "' has disconnected");
+			// We will have to request that the player be removed from the game world.
+			engine.getRequestQueue().add(new LeaveRequest(disconnectedPlayerId));
 		}
 	}
 
