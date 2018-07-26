@@ -1,10 +1,10 @@
 package gaia.server;
 
-import gaia.networking.IMessage;
-import gaia.networking.MessageQueue;
 import gaia.server.engine.Engine;
 import gaia.server.engine.Request;
 import gaia.server.networking.ClientWorldMessageProcessor;
+import gaia.server.networking.ClientMessageConverter;
+import gaia.server.networking.ClientMessageQueue;
 import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
 import gaia.server.world.WorldFactory;
@@ -66,28 +66,41 @@ public class Server {
 	 * This is called at a consistent rate by the server clock.
 	 */
 	public void loop() {
-		// TODO Handle player disconnects.
-		
-		// Get any messages sent to the server from any connected clients.
-		MessageQueue receivedMessages = this.clientProxyManager.getReceivedMessageQueue();
-		// Convert the messages into engine requests and queue them up to be processed.
-		while (receivedMessages.hasNext()) {
-			engine.getRequestQueue().add(convertMessageToEngineRequest(receivedMessages.next()));
-		}
+		// Handle any client disconnections.
+		handleClientDisconnections();
+		// Process any messages received from the connected clients.
+		processReceivedClientMessages();
 		// Tick the game engine.
 		engine.tick();
 		
 		// TODO Broadcast changes to connected players who care about them.
 		// TODO Check for whether to save world state to disk.
 	}
+	
+	/**
+	 * Handle client disconnections.
+	 */
+	private void handleClientDisconnections() {
+		// Ask the client proxy manager to check for any disconnections, in
+		// return we will get a list of the player ids of any disconnected clients.
+		for (String disconnectedPlayerId : this.clientProxyManager.processDisconnections()) {
+			// TODO Handle this properly (add player despawn engine request)
+			ServerConsole.writeInfo("The player '" + disconnectedPlayerId + "' has disconnected");
+		}
+	}
 
 	/**
-	 * Convert a message sent from a client into a request to be processed by the engine.
-	 * @param message The message sent from a client.
-	 * @return The message as a request to be processed by the engine.
+	 * Process any messages received from the connected clients.
 	 */
-	private static Request convertMessageToEngineRequest(IMessage message) {
-		// TODO Auto-generated method stub
-		return null;
+	private void processReceivedClientMessages() {
+		// Get any messages sent to the server from any connected clients.
+		ClientMessageQueue receivedMessages = this.clientProxyManager.getReceivedMessageQueue();
+		// Convert the client messages into engine requests and queue them up to be processed.
+		while (receivedMessages.hasNext()) {
+			// Convert the client message into an engine request.
+			Request request = ClientMessageConverter.toEngineRequest(receivedMessages.next());
+			// Queue up the request to be processed by the engine later on.
+			engine.getRequestQueue().add(request);
+		}
 	}
 }

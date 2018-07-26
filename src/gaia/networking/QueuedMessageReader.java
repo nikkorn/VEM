@@ -44,10 +44,7 @@ public class QueuedMessageReader implements Runnable {
 		MessageQueue newMessageQueue = new MessageQueue();
 		// Modifying the message queue has to be done in a thread-safe way.
 		synchronized (messageQueue) {
-			// Copy our messages into our new queue.
-			while (this.messageQueue.hasNext()) {
-				newMessageQueue.add(this.messageQueue.next());
-			}
+			newMessageQueue.add(this.messageQueue);
 		}
 		// Return the queued messages.
 		return newMessageQueue;

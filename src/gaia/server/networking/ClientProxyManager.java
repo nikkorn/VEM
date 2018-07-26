@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
@@ -14,6 +15,7 @@ import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
+import gaia.server.ServerConsole;
 import gaia.server.engine.IJoinRequestProcessor;
 
 /**
@@ -44,21 +46,53 @@ public class ClientProxyManager {
 	}
 	
 	/**
-	 * Get a message queue populated with any messages received from any clients.
-	 * @return A message queue populated with any messages received from any clients.
+	 * Get a client message queue populated with any messages received from any clients.
+	 * Each of the queued messages defines the player id of the client that sent the message.
+	 * @return A client message queue populated with any messages received from any clients.
 	 */
-	public MessageQueue getReceivedMessageQueue() {
-		// Create a new queue to hold the queued messages.
-		MessageQueue messageQueue = new MessageQueue();
+	public ClientMessageQueue getReceivedMessageQueue() {
+		// Create a new queue to hold the queued client messages.
+		ClientMessageQueue clientMessages = new ClientMessageQueue();
 		// Populate the message queue with any messages sent from the connected clients.
 		// We will need to synchronize this as clients can be added/removed on separate threads.
 		synchronized(this.clients) {
 			for (ClientProxy client : this.clients) {
-				messageQueue.add(client.getReceivedMessageQueue());
+				// Get the messages received from the current client.
+				MessageQueue clientMessageQueue = client.getReceivedMessageQueue();
+				// Add the message to our client message queue, defining the player id of the client.
+				while (clientMessageQueue.hasNext()) {
+					clientMessages.add(new ClientMessage(client.getPlayerId(), clientMessageQueue.next()));
+				}
 			}
 		}
-		// Return the queued messages.
-		return messageQueue;
+		// Return the queued client messages.
+		return clientMessages;
+	}
+	
+	/**
+	 * Check for client disconnections and remove them.
+	 * @return A list of the player ids of any clients that have disconnected. 
+	 */
+	public ArrayList<String> processDisconnections() {
+		// Create a list to store the disconnected player ids.
+		ArrayList<String> disconnected = new ArrayList<String>();
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			Iterator<ClientProxy> iterator = this.clients.iterator();
+			while (iterator.hasNext()) {
+				// Get the next client.
+				ClientProxy client = iterator.next();
+				// Remove the client if they have disconnected.
+				if (!client.isConnected()) {
+					// Store the id of the disconnected player.
+					disconnected.add(client.getPlayerId());
+					// Remove the client.
+					iterator.remove();
+				}
+			}
+		}
+		// Return the list of any disconnectd player ids.
+		return disconnected;
 	}
 	
 	/**
@@ -85,7 +119,10 @@ public class ClientProxyManager {
 							IMessage initalMessage = messageInputStream.readMessage();
 							// We got a message from the client! Check that it was the handshake.
 							if (initalMessage.getTypeId() != 0) {
-								throw new RuntimeException("Failed to get handshake from client");
+								// Close the socket to kill the connection with the client, the client will know it is not wanted.
+								serverSocket.close();
+								// Spit out some some sensible output to the server console.
+								ServerConsole.writeDebug("Client attempted connection but failed to send handshake.");
 							}
 							// We got a handshake! Process it!
 							processHandshake((Handshake)initalMessage, clientSocket, 
@@ -131,6 +168,8 @@ public class ClientProxyManager {
 			case SUCCESS:
 				// Return success message over output stream!
 				messageOutputStream.writeMessage(new JoinSuccess());
+				// Write the connection details to the server console.
+				ServerConsole.writeInfo("The player '" + playerId + "' has connected");
 				// Create the new client.
 				ClientProxy client = new ClientProxy(new QueuedMessageReader(messageInputStream), messageOutputStream, playerId);
 				// Add the client to our client list.
