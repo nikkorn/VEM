@@ -21,7 +21,7 @@ public class Engine {
 	/**
 	 * The request queue holding requests to be processed sequentially.
 	 */
-	private RequestQueue requestQueue;
+	private RequestQueue requestQueue = new RequestQueue();
 	/**
 	 * The join request processor.
 	 */
@@ -30,12 +30,18 @@ public class Engine {
 	/**
 	 * Create a new instance of the Engine class.
 	 * @param world The game world.
-	 * @param requestQueue The request queue.
 	 */
-	public Engine(World world, RequestQueue requestQueue) {
-		this.world                 = world;
-		this.requestQueue          = requestQueue;
-		this.joinRequestProcessor  = createJoinRequestProcessor(world);
+	public Engine(World world) {
+		this.world                = world;
+		this.joinRequestProcessor = createJoinRequestProcessor(world);
+	}
+	
+	/**
+	 * Get the request queue.
+	 * @return The request queue.
+	 */
+	public RequestQueue getRequestQueue() {
+		return this.requestQueue;
 	}
 	
 	/**

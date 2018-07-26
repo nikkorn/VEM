@@ -1,4 +1,4 @@
-package gaia.server.world;
+package gaia;
 
 /**
  * Enumeration of direction types.

@@ -1,6 +1,6 @@
 package gaia.server.world.players.requests;
 
-import gaia.server.world.Direction;
+import gaia.Direction;
 import gaia.server.world.World;
 
 /**

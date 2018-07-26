@@ -34,4 +34,14 @@ public class MessageQueue {
     public void add(IMessage message) {
         this.messages.add(message);
     }
+    
+    /**
+     * Add all messages from another queue to the end of the queue.
+     * @param queue The message queue to pull messages from.
+     */
+    public void add(MessageQueue queue) {
+    	while (queue.hasNext()) {
+			this.add(queue.next());
+		}
+    }
 }

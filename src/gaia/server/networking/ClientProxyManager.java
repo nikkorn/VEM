@@ -9,12 +9,12 @@ import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
 import gaia.networking.MessageMarshallerProvider;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
 import gaia.server.engine.IJoinRequestProcessor;
-import gaia.server.engine.RequestQueue;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -24,10 +24,6 @@ public class ClientProxyManager {
 	 * The clients.
 	 */
 	private ArrayList<ClientProxy> clients = new ArrayList<ClientProxy>();
-	/**
-	 * The queue of requests to be processed by the engine.
-	 */
-	private RequestQueue requestQueue;
 	/**
 	 * The processor for join requests.
 	 */
@@ -40,20 +36,29 @@ public class ClientProxyManager {
 	/**
 	 * Creates a new instance of the ClientProxyManager class.
 	 * @param port The port on which client connections are made.
-	 * @param requestQueue The queue of requests to be processed by the engine.
 	 * @param joinRequestProcessor The processor for join requests.
 	 */
-	public ClientProxyManager(int port, RequestQueue requestQueue, IJoinRequestProcessor joinRequestProcessor) {
+	public ClientProxyManager(int port, IJoinRequestProcessor joinRequestProcessor) {
 		this.port                 = port;
-		this.requestQueue         = requestQueue;
 		this.joinRequestProcessor = joinRequestProcessor;
 	}
 	
 	/**
-	 * Process any requests that connected clients have made.
+	 * Get a message queue populated with any messages received from any clients.
+	 * @return A message queue populated with any messages received from any clients.
 	 */
-	public void processRequestsFromClients() {
-		// TODO Process any requests that connected clients have made.
+	public MessageQueue getReceivedMessageQueue() {
+		// Create a new queue to hold the queued messages.
+		MessageQueue messageQueue = new MessageQueue();
+		// Populate the message queue with any messages sent from the connected clients.
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			for (ClientProxy client : this.clients) {
+				messageQueue.add(client.getReceivedMessageQueue());
+			}
+		}
+		// Return the queued messages.
+		return messageQueue;
 	}
 	
 	/**
@@ -129,7 +134,7 @@ public class ClientProxyManager {
 				// Create the new client.
 				ClientProxy client = new ClientProxy(new QueuedMessageReader(messageInputStream), messageOutputStream, playerId);
 				// Add the client to our client list.
-				synchronized(this) {
+				synchronized(this.clients) {
 					this.clients.add(client);
 				}
 				break;

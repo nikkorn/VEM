@@ -3,6 +3,7 @@ package gaia.server.networking;
 import java.io.IOException;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 
 /**
@@ -21,10 +22,6 @@ public class ClientProxy {
 	 * The player id.
 	 */
 	private String playerId;
-	/**
-	 * The client request queue.
-	 */
-	private ClientRequestQueue requestQueue = new ClientRequestQueue();
 	
 	/**
 	 * Create a new instance of the ClientProxy class.
@@ -60,11 +57,11 @@ public class ClientProxy {
 	}
 	
 	/**
-	 * Get the client request queue.
-	 * @return The client request queue.
+	 * Get a queue of any messages received from the client.
+	 * @return A queue of any messages received from the client.
 	 */
-	public ClientRequestQueue getClientRequestQueue() {
-		return requestQueue;
+	public MessageQueue getReceivedMessageQueue() {
+		return this.queuedMessageReader.getQueuedMessages();
 	}
 	
 	/**

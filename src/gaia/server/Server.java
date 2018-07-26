@@ -1,7 +1,9 @@
 package gaia.server;
 
+import gaia.networking.IMessage;
+import gaia.networking.MessageQueue;
 import gaia.server.engine.Engine;
-import gaia.server.engine.RequestQueue;
+import gaia.server.engine.Request;
 import gaia.server.networking.ClientWorldMessageProcessor;
 import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
@@ -22,7 +24,7 @@ public class Server {
 	/**
 	 * The connected client manager.
 	 */
-	private ClientProxyManager connectedClientManager;
+	private ClientProxyManager clientProxyManager;
 	
 	/**
 	 * Create a new instance of the server class.
@@ -33,19 +35,17 @@ public class Server {
 		this.configuration = Configuration.loadFromDisk();
 		// Set whether we are going to output debug info to the console.
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
-		// Create the engine request queue.
-		RequestQueue requestQueue = new RequestQueue();
 		// Create the world.
 		World world = WorldFactory.createWorld(worldName);
 		// Create the game engine.
-		this.engine = new Engine(world, requestQueue);
-		// Create the connected client manager, passing the engine request queue and the port for client connections.
-		// We also pass the processor provided by the engine for making synchronized join requests.
-		this.connectedClientManager = new ClientProxyManager(this.configuration.getPort(), requestQueue, this.engine.getJoinRequestProcessor());
+		this.engine = new Engine(world);
+		// Create the client proxy manager, passing  the port for client connections
+		// and the processor provided by the engine for making synchronized join requests.
+		this.clientProxyManager = new ClientProxyManager(this.configuration.getPort(), this.engine.getJoinRequestProcessor());
 		// In order to be able to process messages output by the engine we need to specify a world message processor.
-		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.connectedClientManager));
+		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.clientProxyManager));
 		// Now that everything is set up we should start listening for client connection requests.
-		this.connectedClientManager.startListeningForConnections();
+		this.clientProxyManager.startListeningForConnections();
 	}
 	
 	/**
@@ -68,10 +68,26 @@ public class Server {
 	public void loop() {
 		// TODO Handle player disconnects.
 		
+		// Get any messages sent to the server from any connected clients.
+		MessageQueue receivedMessages = this.clientProxyManager.getReceivedMessageQueue();
+		// Convert the messages into engine requests and queue them up to be processed.
+		while (receivedMessages.hasNext()) {
+			engine.getRequestQueue().add(convertMessageToEngineRequest(receivedMessages.next()));
+		}
 		// Tick the game engine.
 		engine.tick();
 		
 		// TODO Broadcast changes to connected players who care about them.
 		// TODO Check for whether to save world state to disk.
+	}
+
+	/**
+	 * Convert a message sent from a client into a request to be processed by the engine.
+	 * @param message The message sent from a client.
+	 * @return The message as a request to be processed by the engine.
+	 */
+	private static Request convertMessageToEngineRequest(IMessage message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
