@@ -2,7 +2,6 @@ package gaia.server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.ServerConsole;
 import gaia.server.items.ItemType;
 import gaia.server.world.chunk.ChunkFactory;
@@ -37,17 +36,17 @@ public class TilledEarthFactory implements IPlacementFactory {
 		return new IPlacementAction() {
 			@Override
 			public void onServerTick(IModifiablePlacement placement) {
-				ServerConsole.writeInfo("Just growing some plants at 100% capacity!");
+				// ServerConsole.writeInfo("Just growing some plants at 100% capacity!");
 			}
 
 			@Override
 			public void onTimeUpdate(IModifiablePlacement placement, Time time) {
-				ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
+				// ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
 			}
 
 			@Override
 			public ItemType onInteraction(IModifiablePlacement placement, ItemType item) {
-				ServerConsole.writeInfo("Just growing some plants, did you use that item on me? I will keep it!");
+				// ServerConsole.writeInfo("Just growing some plants, did you use that item on me? I will keep it!");
 				return ItemType.NONE;
 			}
 		};

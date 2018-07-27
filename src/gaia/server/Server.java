@@ -1,5 +1,6 @@
 package gaia.server;
 
+import gaia.Constants;
 import gaia.server.engine.Engine;
 import gaia.server.engine.Request;
 import gaia.server.networking.ClientWorldMessageProcessor;
@@ -32,6 +33,10 @@ public class Server {
 	 * @param worldName The world name.
 	 */
 	public Server(String worldName) {
+		System.out.println("###################### Gaia Server #######################");
+		System.out.println("##########################################################");
+		System.out.println("version: " + Constants.VERSION);
+		System.out.println("##########################################################");
 		// Read the server configuration from disk.
 		this.configuration = Configuration.loadFromDisk();
 		// Set whether we are going to output debug info to the console.

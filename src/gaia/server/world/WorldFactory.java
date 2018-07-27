@@ -30,18 +30,18 @@ public class WorldFactory {
 		File worldSaveDir = new File("worlds/" + name);
 		if (worldSaveDir.exists() && worldSaveDir.isDirectory()) {
 			// Write something sensible to the console.
-			System.out.println("-----------------------------------------------");
+			System.out.println("##########################################################");
 			System.out.print("loading existing world '" + name + "' ...");
 			// A save already exists for this world! Create a world based on the saved state.
 			World world = createExistingWorld(name);
 			// Write something sensible to the console.
 			System.out.println(" done!");
-			System.out.println("-----------------------------------------------");
+			System.out.println("##########################################################");
 			// Return the world.
 			return world;
 		} else {
 			// Write something sensible to the console.
-			System.out.println("-----------------------------------------------");
+			System.out.println("##########################################################");
 			System.out.print("creating new world '" + name + "' ...");
 			// We are creating a new world save!
 			// Create a brand new world seed.
@@ -62,7 +62,7 @@ public class WorldFactory {
 			WorldMapImageCreator.create(worldGenerator, "map", "worlds/" + name + "/");
 			// Write something sensible to the console.
 			System.out.println(" done!");
-			System.out.println("-----------------------------------------------");
+			System.out.println("##########################################################");
 			// Return the new world.
 			return world;
 		}
