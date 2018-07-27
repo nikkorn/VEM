@@ -6,10 +6,11 @@ import java.util.Scanner;
 import java.util.Stack;
 import gaia.Constants;
 import gaia.Direction;
+import gaia.Position;
+import gaia.client.networking.IServerEventProcessor;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
-import gaia.networking.MessageQueue;
-import gaia.networking.messages.MovePlayer;
+import gaia.client.players.Player;
 
 /**
  * A command line based client to test server functionality.
@@ -34,23 +35,18 @@ public class CLIClient {
 		String playerId = inputScanner.nextLine();
 		try {
 			System.out.print("attempting to connect... ");
+
 			// Create a connection with the server.
-			ServerProxy server = ServerProxy.create("localhost", 23445, playerId);
-			
-			// Listen for messages from the server on another thread and spit them out to the console.
-			new Thread(new Runnable() {
+			final ServerProxy server = ServerProxy.create("localhost", 23445, playerId, new IServerEventProcessor() {
 				@Override
-				public void run() {
-					while (true) {
-						// Get any received messages.
-						MessageQueue received = server.getReceivedMessageQueue();
-						// Write out details of the message to the console.
-						while (received.hasNext()) {
-							System.out.println("-> id:" + received.next().getTypeId());
-						}
-					}
-				}
-			}).start();
+				public void onPlayerSpawn(Player player) {}
+
+				@Override
+				public void onPlayerDespawn(Player player) {}
+
+				@Override
+				public void onPlayerMove(Player player, Position previous) {}
+			});
 			
 			// We managed to connect to the server.
 			System.out.println("connected!");
@@ -132,16 +128,16 @@ public class CLIClient {
 	private static void movePlayer(String direction, ServerProxy server) throws IOException {
 		switch (direction) {
 			case "up":
-				server.sendMessage(new MovePlayer(Direction.UP));
+				server.getPlayerActions().move(Direction.UP);
 				break;
 			case "down":
-				server.sendMessage(new MovePlayer(Direction.DOWN));
+				server.getPlayerActions().move(Direction.DOWN);
 				break;
 			case "left":
-				server.sendMessage(new MovePlayer(Direction.LEFT));
+				server.getPlayerActions().move(Direction.LEFT);
 				break;
 			case "right":
-				server.sendMessage(new MovePlayer(Direction.RIGHT));
+				server.getPlayerActions().move(Direction.RIGHT);
 				break;
 			default:
 				System.out.println("unknown direction: " + direction);

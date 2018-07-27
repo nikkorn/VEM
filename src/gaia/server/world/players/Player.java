@@ -16,7 +16,7 @@ public class Player {
 	/**
 	 * The player position.
 	 */
-	private Position positon;
+	private Position position;
 	/**
 	 * The list of id's of chunks that this player has visited (been in the vicinity of).
 	 */
@@ -28,8 +28,8 @@ public class Player {
 	 * @param position The initial player position.
 	 */
 	public Player(String id, Position position) {
-		this.id      = id;
-		this.positon = position;
+		this.id       = id;
+		this.position = position;
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Player {
 	 * @return The player position.
 	 */
 	public Position getPositon() {
-		return positon;
+		return position;
 	}
 	
 	/**

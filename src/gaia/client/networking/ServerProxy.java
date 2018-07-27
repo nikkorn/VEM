@@ -2,13 +2,11 @@ package gaia.client.networking;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
 import gaia.networking.MessageMarshallerProvider;
 import gaia.networking.MessageOutputStream;
-import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
@@ -19,6 +17,10 @@ import gaia.networking.messages.MessageIdentifier;
  */
 public class ServerProxy {
 	/**
+	 * The processor of server events.
+	 */
+	private IServerEventProcessor serverEventProcessor;
+	/**
 	 * The message reader used to read messages from a message input stream into a queue.
 	 */
 	private QueuedMessageReader queuedMessageReader;
@@ -26,32 +28,52 @@ public class ServerProxy {
 	 * The message output stream used to write messages to the server.
 	 */
 	private MessageOutputStream messageOutputStream;
+	/**
+	 * The actions that can be taken by the player.
+	 */
+	private PlayerActions playerActions;
 	
 	/**
 	 * Create a new instance of the ServerProxy class.
+	 * @param serverEventProcessor The processor of server events.
 	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue. 
 	 * @param messageOutputStream The message output stream used to write messages to the server.
 	 */
-	private ServerProxy(QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream) {
-		this.queuedMessageReader = queuedMessageReader;
-		this.messageOutputStream = messageOutputStream;
+	private ServerProxy(IServerEventProcessor serverEventProcessor, final QueuedMessageReader queuedMessageReader, final MessageOutputStream messageOutputStream) {
+		this.serverEventProcessor = serverEventProcessor;
+		this.queuedMessageReader  = queuedMessageReader;
+		this.messageOutputStream  = messageOutputStream;
+		this.playerActions        = new PlayerActions(new IMessageSender() {
+			@Override
+			public void send(IMessage message) {
+				// We should not be trying to send messages if we are not connected to the server.
+				if (!queuedMessageReader.isConnected()) {
+					throw new NotConnectedException();
+				}
+				try {
+					messageOutputStream.writeMessage(message);
+				} catch (IOException e) {
+					// TODO Should we do this?
+					throw new NotConnectedException();
+				}
+			}
+		});
 	}
-	
+
 	/**
-	 * Get a queue of any messages received from the server.
-	 * @return A queue of any messages received from the server.
-	 */
-	public MessageQueue getReceivedMessageQueue() {
-		return this.queuedMessageReader.getQueuedMessages();
+	 * Get a snapshot of the server state.
+	 * @return A snapshot of the server state.
+     */
+	public ServerState getServerState() {
+		return null;
 	}
-	
+
 	/**
-	 * Send a message to the server.
-	 * @param message The message to send.
-	 * @throws IOException 
-	 */
-	public void sendMessage(IMessage message) throws IOException {
-		this.messageOutputStream.writeMessage(message);
+	 * Get the actions that can be taken by the player.
+	 * @return The actions that can be taken by the player.
+     */
+	public PlayerActions getPlayerActions() {
+		return this.playerActions;
 	}
 	
 	/**
@@ -68,23 +90,23 @@ public class ServerProxy {
 	 * @param host The host on which the server is running.
 	 * @param port The port on which the server is listening for client connections.
 	 * @param playerId The player id.
+	 * @param serverEventProcessor The processor of server events.
 	 * @return A server proxy that represents that server instance.
-	 * @throws IOException 
-	 * @throws UnknownHostException 
+	 * @throws IOException
 	 * @throws ServerJoinRequestRejectedException 
 	 */
-	public static ServerProxy create(String host, int port, String playerId) throws UnknownHostException, IOException, ServerJoinRequestRejectedException  {
+	public static ServerProxy create(String host, int port, String playerId, IServerEventProcessor serverEventProcessor) throws  IOException, ServerJoinRequestRejectedException  {
 		// Create the socket on which to connect to the server.
-		Socket connectionsocket = new Socket(host, port);
+		Socket connectionSocket = new Socket(host, port);
 		// Create the message marshaller provider for our message stream.
 		MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
 		// Create the message output stream used to write messages to the server.
-		MessageOutputStream messageOutputStream = new MessageOutputStream(connectionsocket.getOutputStream(), marshallerProvider);
+		MessageOutputStream messageOutputStream = new MessageOutputStream(connectionSocket.getOutputStream(), marshallerProvider);
 		// Send a handshake!
 		messageOutputStream.writeMessage(new Handshake(playerId));
 		// Wait for the response form the server. We are expecting either a join success or failure.
 		// Firstly, we need to create our message input stream in order to grab the server response.
-		MessageInputStream messageInputStream = new MessageInputStream(connectionsocket.getInputStream(), marshallerProvider);
+		MessageInputStream messageInputStream = new MessageInputStream(connectionSocket.getInputStream(), marshallerProvider);
 		// Read the server response message. This operation blocks until we get it.
 		IMessage response = messageInputStream.readMessage();
 		// We got a response from the server!
@@ -94,7 +116,7 @@ public class ServerProxy {
 				// Firstly, create the queued message reader that will be used by the server proxy.
 				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
 				// Next, create the server proxy instance.
-				ServerProxy serverProxy = new ServerProxy(queuedMessageReader, messageOutputStream);
+				ServerProxy serverProxy = new ServerProxy(serverEventProcessor, queuedMessageReader, messageOutputStream);
 				// Lastly, our queued message reader needs to start reading incoming messages.
 				Thread messageReaderThread = new Thread(queuedMessageReader);
 				messageReaderThread.setDaemon(true);
