@@ -4,7 +4,7 @@ import gaia.Constants;
 import gaia.server.engine.Engine;
 import gaia.server.engine.Request;
 import gaia.server.networking.ClientWorldMessageProcessor;
-import gaia.server.networking.ClientMessageConverter;
+import gaia.server.networking.ClientMessage;
 import gaia.server.networking.ClientMessageQueue;
 import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
@@ -79,7 +79,6 @@ public class Server {
 		// Tick the game engine.
 		engine.tick();
 		
-		// TODO Broadcast changes to connected players who care about them.
 		// TODO Check for whether to save world state to disk.
 	}
 	
@@ -104,7 +103,7 @@ public class Server {
 		// Convert the client messages into engine requests and queue them up to be processed.
 		while (receivedMessages.hasNext()) {
 			// Convert the client message into an engine request.
-			Request request = ClientMessageConverter.toEngineRequest(receivedMessages.next());
+			Request request = ClientMessage.toEngineRequest(receivedMessages.next());
 			// Queue up the request to be processed by the engine later on.
 			engine.getRequestQueue().add(request);
 		}

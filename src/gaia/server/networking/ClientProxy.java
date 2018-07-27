@@ -67,9 +67,12 @@ public class ClientProxy {
 	/**
 	 * Send a message to the client.
 	 * @param message The message to send.
-	 * @throws IOException 
 	 */
-	public void sendMessage(IMessage message) throws IOException {
-		this.messageOutputStream.writeMessage(message);
+	public void sendMessage(IMessage message) {
+		try {
+			this.messageOutputStream.writeMessage(message);
+		} catch (IOException e) {
+			// We failed to send the message to the client, do nothing here as disconnected clients will be removed.
+		}
 	}
 }

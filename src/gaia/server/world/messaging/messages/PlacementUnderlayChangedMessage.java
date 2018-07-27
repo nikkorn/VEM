@@ -1,6 +1,6 @@
 package gaia.server.world.messaging.messages;
 
-import gaia.server.world.Position;
+import gaia.Position;
 import gaia.server.world.tile.placement.PlacementUnderlay;
 
 /**

@@ -1,11 +1,12 @@
-package gaia.server.world.messaging.messages;
+package gaia.networking.messages;
 
 import gaia.Position;
+import gaia.networking.IMessage;
 
 /**
- * A message containing the details of a player spawn.
+ * The message sent to all clients when a player spawns.
  */
-public class PlayerSpawnedMessage implements IWorldMessage {
+public class PlayerSpawned implements IMessage {
 	/**
 	 * The id of the spawning player.
 	 */
@@ -16,11 +17,11 @@ public class PlayerSpawnedMessage implements IWorldMessage {
 	private Position spawnPosition;
 	
 	/**
-	 * Create a new instance of the PlayerSpawnMessage class.
+	 * Create a new instance of the PlayerSpawned class.
 	 * @param playerId The id of the player.
 	 * @param position The position of the spawn.
 	 */
-	public PlayerSpawnedMessage(String playerId, Position position) {
+	public PlayerSpawned(String playerId, Position position) {
 		this.playerId      = playerId;
 		this.spawnPosition = position;
 	}
@@ -40,9 +41,9 @@ public class PlayerSpawnedMessage implements IWorldMessage {
 	public Position getSpawnPosition() {
 		return spawnPosition;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_SPAWN;
+	public int getTypeId() {
+		return MessageIdentifier.PLAYER_SPAWNED;
 	}
 }

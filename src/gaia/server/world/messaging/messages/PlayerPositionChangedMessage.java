@@ -1,6 +1,6 @@
 package gaia.server.world.messaging.messages;
 
-import gaia.server.world.Position;
+import gaia.Position;
 
 /**
  * A message containing the details of a successful player move.

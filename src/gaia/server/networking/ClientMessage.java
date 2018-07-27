@@ -1,6 +1,10 @@
 package gaia.server.networking;
 
 import gaia.networking.IMessage;
+import gaia.networking.messages.MessageIdentifier;
+import gaia.networking.messages.MovePlayer;
+import gaia.server.engine.Request;
+import gaia.server.world.players.requests.MoveRequest;
 
 /**
  * Represents a message sent from a client that includes the player id of the client.
@@ -39,5 +43,21 @@ public class ClientMessage {
 	 */
 	public IMessage getMessage() {
 		return this.message;
+	}
+	
+	/**
+	 * Convert a client message into a request to be processed by an engine.
+	 * @param message The client message to convert into a request.
+	 * @return The request to be processed by an engine.
+	 */
+	public static Request toEngineRequest(ClientMessage message) {
+		switch (message.getMessage().getTypeId()) {
+
+			case MessageIdentifier.MOVE_PLAYER:
+				return new MoveRequest(message.getPlayerId(), ((MovePlayer)message.getMessage()).getDirection());
+
+			default:
+				throw new RuntimeException("error: cannot convert client message with id '" + message.getMessage().getTypeId() + "' to engine request.");
+		}
 	}
 }

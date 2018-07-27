@@ -2,7 +2,7 @@ package gaia.server.world.players;
 
 import java.util.ArrayList;
 
-import gaia.server.world.Position;
+import gaia.Position;
 import gaia.server.world.chunk.Chunk;
 
 /**

@@ -70,6 +70,38 @@ public class ClientProxyManager {
 	}
 	
 	/**
+	 * Send a message to a client.
+	 * @param playerId The id of the player to send the message to.
+	 * @param message The message to send.
+	 */
+	public void sendMessage(String playerId, IMessage message) {
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			for (ClientProxy client : this.clients) {
+				// Is this the client we are looking for?
+				if (client.getPlayerId().equals(playerId)) {
+					// We found the client that we want to send the message to.
+					client.sendMessage(message);
+					return;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Send a message to all clients.
+	 * @param message The message to send.
+	 */
+	public void broadcastMessage(IMessage message) {
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			for (ClientProxy client : this.clients) {
+				client.sendMessage(message);
+			}
+		}
+	}
+	
+	/**
 	 * Check for client disconnections and remove them.
 	 * @return A list of the player ids of any clients that have disconnected. 
 	 */

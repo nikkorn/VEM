@@ -1,6 +1,8 @@
 package gaia.server.world;
 
 import org.json.JSONObject;
+
+import gaia.Position;
 import gaia.server.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
