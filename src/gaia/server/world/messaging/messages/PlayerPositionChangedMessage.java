@@ -26,8 +26,8 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	}
 	
 	/**
-	 * Get the id of the spawning player.
-	 * @return The id of the spawning player.
+	 * Get the id of the moving player.
+	 * @return The id of the moving player.
 	 */
 	public String getPlayerId() {
 		return playerId;

@@ -1,9 +1,11 @@
 package gaia.server.networking;
 
 import gaia.Position;
+import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.messages.IWorldMessage;
+import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 
 /**
@@ -57,6 +59,12 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 			case PLAYER_INVENTORY_SLOT_CHANGED:
 				break;
 			case PLAYER_POSITION_CHANGED:
+				// Get the id of the moving player.
+				String movingPlayerId = ((PlayerPositionChangedMessage)message).getPlayerId();
+				// Get the new positino of the player.
+				Position newPosition = ((PlayerPositionChangedMessage)message).getNewPosition();
+				// Broadcast the player moved detials.
+				this.clientProxyManager.broadcastMessage(new PlayerMoved(movingPlayerId, newPosition));
 				break;
 			case PLAYER_SPAWN:
 				// Get the id of the spawning player.
