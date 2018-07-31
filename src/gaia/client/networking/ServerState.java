@@ -21,10 +21,6 @@ public class ServerState {
      * The players.
      */
     private ArrayList<Player> players = new ArrayList<Player>();
-    /**
-	 * Whether the server state is stale.
-	 */
-	private boolean isStale = false;
 	
 	/**
 	 * Create a new instance of the ServerState class.
@@ -57,7 +53,7 @@ public class ServerState {
      */
     public void refresh() {
     	// There is no point in doing anything if the server has not told us about any changes.
-    	if (!this.isStale) {
+    	if (!this.isStale()) {
     		return;
     	}
     	// We have some messages from the server to process.
@@ -66,7 +62,5 @@ public class ServerState {
     	while (receivedMessages.hasNext()) {
     		serverMessageProcessor.process(receivedMessages.next());
     	}
-    	// We are now up-to-date.
-    	this.isStale = false;
     }
 }
