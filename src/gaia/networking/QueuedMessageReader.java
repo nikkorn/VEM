@@ -36,6 +36,17 @@ public class QueuedMessageReader implements Runnable {
 	}
 	
 	/**
+	 * Get whether there are any queued messages.
+	 * @return Whether there are any queued messages.
+	 */
+	public boolean hasQueuedMessages() {
+		// Checking the message queue has to be done in a thread-safe way.
+		synchronized (messageQueue) {
+			return this.messageQueue.hasNext();
+		}
+	}
+	
+	/**
 	 * Get any queued messages in a thread-safe way.
 	 * @return Any queued messages.
 	 */

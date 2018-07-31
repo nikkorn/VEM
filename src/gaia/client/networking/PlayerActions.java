@@ -1,6 +1,9 @@
 package gaia.client.networking;
 
+import java.io.IOException;
 import gaia.Direction;
+import gaia.networking.IMessage;
+import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.MovePlayer;
 
 /**
@@ -8,16 +11,16 @@ import gaia.networking.messages.MovePlayer;
  */
 public class PlayerActions {
     /**
-     * The message sender.
+     * The message output stream.
      */
-    private IMessageSender messageSender;
+    private MessageOutputStream messageOutputStream;
 
     /**
      * Create a new instance of the PlayerActions class.
-     * @param messageSender The message sender.
+     * @param messageOutputStream The message output stream.
      */
-    public PlayerActions(IMessageSender messageSender) {
-        this.messageSender = messageSender;
+    public PlayerActions(MessageOutputStream messageOutputStream) {
+        this.messageOutputStream = messageOutputStream;
     }
 
     /**
@@ -25,6 +28,19 @@ public class PlayerActions {
      * @param direction The direction to move in.
      */
     public void move(Direction direction) {
-        this.messageSender.send(new MovePlayer(direction));
+        send(new MovePlayer(direction));
     }
+    
+    /**
+     * Send a message to the server.
+     * @param message The message to send
+     */
+    private void send(IMessage message) {
+		try {
+			messageOutputStream.writeMessage(message);
+		} catch (IOException e) {
+			// TODO Should we do this?
+			throw new NotConnectedException();
+		}
+	}
 }

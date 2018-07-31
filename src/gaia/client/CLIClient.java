@@ -6,11 +6,8 @@ import java.util.Scanner;
 import java.util.Stack;
 import gaia.Constants;
 import gaia.Direction;
-import gaia.Position;
-import gaia.client.networking.IServerEventProcessor;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
-import gaia.client.players.Player;
 
 /**
  * A command line based client to test server functionality.
@@ -35,19 +32,8 @@ public class CLIClient {
 		String playerId = inputScanner.nextLine();
 		try {
 			System.out.print("attempting to connect... ");
-
 			// Create a connection with the server.
-			final ServerProxy server = ServerProxy.create("localhost", 23445, playerId, new IServerEventProcessor() {
-				@Override
-				public void onPlayerSpawn(Player player) {}
-
-				@Override
-				public void onPlayerDespawn(Player player) {}
-
-				@Override
-				public void onPlayerMove(Player player, Position previous) {}
-			});
-			
+			final ServerProxy server = ServerProxy.create("localhost", 23445, playerId);
 			// We managed to connect to the server.
 			System.out.println("connected!");
 			System.out.println("Type 'help' for the command list.");
@@ -102,6 +88,10 @@ public class CLIClient {
 					}
 				}
 				break;
+			case "refresh":
+				// We are refreshing the server state.
+				server.getServerState().refresh();
+				break;
 			default:
 				System.out.println(initialCommandToken);
 		}
@@ -114,6 +104,7 @@ public class CLIClient {
 		System.out.println("##########################################################");
 		System.out.println("commands:");
 		System.out.println("move [up|down|left|right]     Move in a direction");
+		System.out.println("refresh                       Refresh the server state");
 		System.out.println("help                          Print the command list");
 		System.out.println("exit                          Close the client");
 		System.out.println("##########################################################");
