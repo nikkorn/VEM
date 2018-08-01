@@ -5,6 +5,7 @@ import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.PlayerJoinRequestResult;
+import gaia.server.world.time.Time;
 
 /**
  * The server-side game engine.
@@ -70,7 +71,9 @@ public class Engine {
 			processRequests();
 			// Update the world time and get whether it has changed.
 			// It does not change every server tick, just ever game minute.
-			boolean timeChanged = this.world.getTime().update();
+			boolean timeChanged = this.world.getClock().update();
+			// Get the current time.
+			Time currentTime = this.world.getClock().getCurrentTime();
 			// Tick each of our cached chunks.
 			for (Chunk chunk : world.getChunks().getCachedChunks()) {
 				// Are any players within the vicinity of this chunk?
@@ -79,7 +82,7 @@ public class Engine {
 				// - Contains a high priority placement.
 				// - Has any players in the vicinity.
 				if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
-					chunk.tick(timeChanged, this.world.getTime(), arePlayersNearChunk, this.world.getWorldMessageQueue());
+					chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.world.getWorldMessageQueue());
 				}
 			}
 			// Process any messages that were added to the world message queue as part of this engine tick.
@@ -101,6 +104,12 @@ public class Engine {
 				synchronized (world.getPlayers()) {
 					return world.getPlayers().addPlayer(playerId, world);
 				}
+			}
+
+			@Override
+			public WelcomePackage getWelcomePackage() {
+				// Get a welcome package for a joining player.
+				return new WelcomePackage(world.getSeed(), world.getClock().getCurrentTime());
 			}
 		};
 	}

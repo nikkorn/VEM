@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.Position;
 import gaia.server.Constants;
 import gaia.server.Helpers;

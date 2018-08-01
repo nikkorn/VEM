@@ -199,6 +199,7 @@ public class ClientProxyManager {
 				break;
 			case SUCCESS:
 				// Return success message over output stream!
+				// TODO Add stuff from joinRequestProcessor.getWelcomePackage()
 				messageOutputStream.writeMessage(new JoinSuccess());
 				// Write the connection details to the server console.
 				ServerConsole.writeInfo("The player '" + playerId + "' has connected");

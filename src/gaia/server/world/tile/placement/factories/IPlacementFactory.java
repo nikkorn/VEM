@@ -2,7 +2,6 @@ package gaia.server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.world.container.Container;
 import gaia.server.world.tile.placement.IPlacementAction;
 import gaia.server.world.tile.placement.PlacementOverlay;

@@ -1,7 +1,6 @@
 package gaia.server.world;
 
 import org.json.JSONObject;
-
 import gaia.Position;
 import gaia.server.Constants;
 import gaia.server.world.chunk.Chunk;
@@ -9,6 +8,7 @@ import gaia.server.world.chunk.Chunks;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.Players;
+import gaia.server.world.time.Clock;
 import gaia.server.world.time.Time;
 
 /**
@@ -28,9 +28,9 @@ public class World {
 	 */
 	private Position playerSpawn;
 	/**
-	 * The world time.
+	 * The world clock.
 	 */
-	private Time time;
+	private Clock clock;
 	/**
 	 * The world generator.
 	 */
@@ -50,7 +50,7 @@ public class World {
 	public World(Chunks chunks, Position spawn, Time time, WorldGenerator worldGenerator) {
 		this.chunks         = chunks;
 		this.playerSpawn    = spawn;
-		this.time           = time;
+		this.clock          = new Clock(time);
 		this.worldGenerator = worldGenerator;
 	}
 	
@@ -66,8 +66,8 @@ public class World {
 	 * Get the world time.
 	 * @return The world time.
 	 */
-	public Time getTime() {
-		return this.time;
+	public Clock getClock() {
+		return this.clock;
 	}
 
 	/**
@@ -92,6 +92,14 @@ public class World {
 	 */
 	public Position getPlayerSpawn() {
 		return this.playerSpawn;
+	}
+	
+	/**
+	 * Get the world seed.
+	 * @return the world seed.
+	 */
+	public long getSeed() {
+		return this.worldGenerator.getSeed();
 	}
 	
 	/**
@@ -141,7 +149,7 @@ public class World {
 		// Set the spawn position.
 		worldState.put("spawn", Position.serialise(this.playerSpawn));
 		// Set the world time.
-		worldState.put("time", this.time.getState());
+		worldState.put("time", this.clock.getCurrentTime().getState());
 		// Return the world state.
 		return worldState;
 	}

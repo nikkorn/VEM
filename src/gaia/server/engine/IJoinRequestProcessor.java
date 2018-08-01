@@ -13,4 +13,10 @@ public interface IJoinRequestProcessor {
 	 * @return The result of the attempt.
 	 */
 	public PlayerJoinRequestResult join(String playerId);
+	
+	/**
+	 * Get the welcome package containing details to be passed to joining players.
+	 * @return The welcome package containing details to be passed to joining players.
+	 */
+	public WelcomePackage getWelcomePackage();
 }

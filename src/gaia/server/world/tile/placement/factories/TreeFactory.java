@@ -2,7 +2,6 @@ package gaia.server.world.tile.placement.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.items.ItemType;
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.container.Container;
