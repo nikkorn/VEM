@@ -1,9 +1,9 @@
 package gaia.server.world.tile.placement;
 
 import org.json.JSONObject;
-
 import gaia.server.world.container.Container;
 import gaia.server.world.tile.placement.state.IPlacementState;
+import gaia.utils.BitPacker;
 
 /**
  * Represents a tile-positioned placement.
@@ -149,6 +149,26 @@ public class Placement implements IModifiablePlacement{
 	 */
 	public void setOverlay(PlacementOverlay overlay) {
 		this.overlay = overlay;
+	}
+	
+	/**
+	 * Get the placement as a packed integer.
+	 * bit 0 - ?
+	 * bit 1 - ?
+	 * bits 2-11 - Placement Type
+	 * bits 12-21 - Overlay Type
+	 * bits 22-31 - Underlay Type
+	 * @return The placement as a packed integer.
+	 */
+	public int asPackedInt() {
+		// Pack the placement type.
+		int packed = BitPacker.pack(0, this.type.ordinal(), 2, 10);
+		// Pack the overlay type.
+		packed = BitPacker.pack(packed, this.overlay.ordinal(), 12, 10);
+		// Pack the underlay type.
+		packed = BitPacker.pack(packed, this.underlay.ordinal(), 22, 10);
+		// Return the packed value.
+		return packed;
 	}
 	
 	/**

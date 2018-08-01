@@ -1,6 +1,6 @@
 package gaia.networking;
 
-import gaia.Queue;
+import gaia.utils.Queue;
 
 /**
  * A queue of messages.
