@@ -1,6 +1,6 @@
 package gaia.server.engine;
 
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * Contains details to be sent to joining players.

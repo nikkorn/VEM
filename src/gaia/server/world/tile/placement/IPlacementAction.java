@@ -1,7 +1,7 @@
 package gaia.server.world.tile.placement;
 
 import gaia.server.items.ItemType;
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * Represents an action to be taken by a placement.

@@ -17,6 +17,10 @@ public class ServerState {
 	 * The server message processor.
 	 */
 	private ServerMessageProcessor serverMessageProcessor;
+	/**
+	 * The world seed.
+	 */
+	private long worldSeed;
     /**
      * The players.
      */
@@ -25,10 +29,12 @@ public class ServerState {
 	/**
 	 * Create a new instance of the ServerState class.
 	 * @param queuedMessageReader The reader of messages sent form the server.
+	 * @param worldSeed The world seed.
 	 */
-	public ServerState(QueuedMessageReader queuedMessageReader) {
+	public ServerState(QueuedMessageReader queuedMessageReader, long worldSeed) {
 		this.queuedMessageReader    = queuedMessageReader;
 		this.serverMessageProcessor = new ServerMessageProcessor(this);
+		this.worldSeed              = worldSeed;
 	}
 	
 	/**
@@ -37,6 +43,14 @@ public class ServerState {
 	 */
 	public ArrayList<Player> getPlayers() {
 		return this.players;
+	}
+	
+	/**
+	 * Get the world seed.
+	 * @return the world seed.
+	 */
+	public long getWorldSeed() {
+		return this.worldSeed;
 	}
     
     /**

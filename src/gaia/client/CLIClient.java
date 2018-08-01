@@ -36,6 +36,7 @@ public class CLIClient {
 			final ServerProxy server = ServerProxy.create("localhost", 23445, playerId);
 			// We managed to connect to the server.
 			System.out.println("connected!");
+			System.out.println("world seed: " + server.getServerState().getWorldSeed());
 			System.out.println("Type 'help' for the command list.");
 			// Read the first command.
 			String commandString = inputScanner.nextLine();

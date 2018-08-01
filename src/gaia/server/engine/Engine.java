@@ -5,7 +5,7 @@ import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.PlayerJoinRequestResult;
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * The server-side game engine.

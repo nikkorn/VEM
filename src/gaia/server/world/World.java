@@ -8,8 +8,7 @@ import gaia.server.world.chunk.Chunks;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.Players;
-import gaia.server.world.time.Clock;
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * A game world composed of separate chunks.

@@ -14,7 +14,7 @@ import gaia.server.world.tile.placement.Placement;
 import gaia.server.world.tile.placement.PlacementOverlay;
 import gaia.server.world.tile.placement.PlacementUnderlay;
 import gaia.server.world.tile.placement.Priority;
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * A world chunk.

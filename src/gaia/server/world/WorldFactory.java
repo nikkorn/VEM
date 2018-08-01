@@ -12,8 +12,8 @@ import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.generation.WorldMapImageCreator;
-import gaia.server.world.time.Season;
-import gaia.server.world.time.Time;
+import gaia.time.Season;
+import gaia.time.Time;
 
 /**
  * A factory for world entities.

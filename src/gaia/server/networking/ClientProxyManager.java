@@ -17,6 +17,7 @@ import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
 import gaia.server.ServerConsole;
 import gaia.server.engine.IJoinRequestProcessor;
+import gaia.server.engine.WelcomePackage;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -198,9 +199,10 @@ public class ClientProxyManager {
 				messageOutputStream.writeMessage(new JoinFailure("You are on the blacklist!"));
 				break;
 			case SUCCESS:
+				// Get a welcome package for the client.
+				WelcomePackage welcomePackage = joinRequestProcessor.getWelcomePackage();
 				// Return success message over output stream!
-				// TODO Add stuff from joinRequestProcessor.getWelcomePackage()
-				messageOutputStream.writeMessage(new JoinSuccess());
+				messageOutputStream.writeMessage(new JoinSuccess(welcomePackage.getWorldSeed(), welcomePackage.getWorldTime()));
 				// Write the connection details to the server console.
 				ServerConsole.writeInfo("The player '" + playerId + "' has connected");
 				// Create the new client.

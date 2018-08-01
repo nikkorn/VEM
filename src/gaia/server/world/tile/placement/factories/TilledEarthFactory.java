@@ -12,7 +12,7 @@ import gaia.server.world.tile.placement.PlacementUnderlay;
 import gaia.server.world.tile.placement.Priority;
 import gaia.server.world.tile.placement.state.IPlacementState;
 import gaia.server.world.tile.placement.state.TilledEarthState;
-import gaia.server.world.time.Time;
+import gaia.time.Time;
 
 /**
  * Factory for creating a tilled earth placement.

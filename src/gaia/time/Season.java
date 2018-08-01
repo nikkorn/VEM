@@ -1,4 +1,4 @@
-package gaia.server.world.time;
+package gaia.time;
 
 /**
  * The game time seasons.

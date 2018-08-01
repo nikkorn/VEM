@@ -10,6 +10,7 @@ import gaia.networking.MessageOutputStream;
 import gaia.networking.QueuedMessageReader;
 import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
+import gaia.networking.messages.JoinSuccess;
 import gaia.networking.messages.MessageIdentifier;
 
 /**
@@ -33,10 +34,11 @@ public class ServerProxy {
 	 * Create a new instance of the ServerProxy class.
 	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue. 
 	 * @param messageOutputStream The message output stream used to write messages to the server.
+	 * @param worldSeed The world seed.
 	 */
-	private ServerProxy(final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream) {
+	private ServerProxy(final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, long worldSeed) {
 		this.queuedMessageReader = queuedMessageReader;
-		this.serverState         = new ServerState(queuedMessageReader);
+		this.serverState         = new ServerState(queuedMessageReader, worldSeed);
 		this.playerActions       = new PlayerActions(messageOutputStream);
 	}
 
@@ -92,10 +94,11 @@ public class ServerProxy {
 		switch (response.getTypeId()) {
 			case MessageIdentifier.JOIN_SUCCESS:
 				// The server sent us a message to let us know we successfully joined!
+				JoinSuccess joinSuccessMessage = (JoinSuccess)response;
 				// Firstly, create the queued message reader that will be used by the server proxy.
 				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
 				// Next, create the server proxy instance.
-				ServerProxy serverProxy = new ServerProxy(queuedMessageReader, messageOutputStream);
+				ServerProxy serverProxy = new ServerProxy(queuedMessageReader, messageOutputStream, joinSuccessMessage.getWorldSeed());
 				// Lastly, our queued message reader needs to start reading incoming messages.
 				Thread messageReaderThread = new Thread(queuedMessageReader);
 				messageReaderThread.setDaemon(true);

@@ -1,6 +1,8 @@
-package gaia.server.world.time;
+package gaia.server.world;
 
 import gaia.server.Constants;
+import gaia.time.Season;
+import gaia.time.Time;
 
 /**
  * Represents game world clock.
