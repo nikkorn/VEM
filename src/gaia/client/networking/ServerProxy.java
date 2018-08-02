@@ -2,6 +2,8 @@ package gaia.client.networking;
 
 import java.io.IOException;
 import java.net.Socket;
+
+import gaia.client.gamestate.ServerState;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;

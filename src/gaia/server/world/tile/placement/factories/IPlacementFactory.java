@@ -4,10 +4,10 @@ import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.container.Container;
 import gaia.server.world.tile.placement.IPlacementAction;
-import gaia.server.world.tile.placement.PlacementOverlay;
-import gaia.server.world.tile.placement.PlacementUnderlay;
 import gaia.server.world.tile.placement.Priority;
 import gaia.server.world.tile.placement.state.IPlacementState;
+import gaia.world.PlacementOverlay;
+import gaia.world.PlacementUnderlay;
 
 /**
  * Represents a placement factory.

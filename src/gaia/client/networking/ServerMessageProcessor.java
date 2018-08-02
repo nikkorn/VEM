@@ -1,6 +1,7 @@
 package gaia.client.networking;
 
 import gaia.Position;
+import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.PlayerMoved;

@@ -5,7 +5,7 @@ import java.util.Random;
 
 import gaia.lotto.Lotto;
 import gaia.server.world.tile.TileType;
-import gaia.server.world.tile.placement.PlacementType;
+import gaia.world.PlacementType;
 
 /**
  * Represents a map of lottos are used in determining whether any placmements should be placed at a tile position.

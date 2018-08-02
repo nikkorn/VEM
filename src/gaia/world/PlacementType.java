@@ -1,4 +1,4 @@
-package gaia.server.world.tile.placement;
+package gaia.world;
 
 /**
  * Enumeration of placement types.

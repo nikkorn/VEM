@@ -11,13 +11,13 @@ import gaia.server.world.container.Container;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.tile.TileType;
 import gaia.server.world.tile.placement.Placement;
-import gaia.server.world.tile.placement.PlacementOverlay;
-import gaia.server.world.tile.placement.PlacementType;
-import gaia.server.world.tile.placement.PlacementUnderlay;
 import gaia.server.world.tile.placement.Priority;
 import gaia.server.world.tile.placement.factories.IPlacementFactory;
 import gaia.server.world.tile.placement.factories.TilledEarthFactory;
 import gaia.server.world.tile.placement.factories.TreeFactory;
+import gaia.world.PlacementOverlay;
+import gaia.world.PlacementType;
+import gaia.world.PlacementUnderlay;
 
 /**
  * A factory for chunk entities.

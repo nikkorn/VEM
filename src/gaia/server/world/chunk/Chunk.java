@@ -11,10 +11,10 @@ import gaia.server.world.messaging.messages.PlacementOverlayChangedMessage;
 import gaia.server.world.messaging.messages.PlacementUnderlayChangedMessage;
 import gaia.server.world.tile.TileType;
 import gaia.server.world.tile.placement.Placement;
-import gaia.server.world.tile.placement.PlacementOverlay;
-import gaia.server.world.tile.placement.PlacementUnderlay;
 import gaia.server.world.tile.placement.Priority;
 import gaia.time.Time;
+import gaia.world.PlacementOverlay;
+import gaia.world.PlacementUnderlay;
 
 /**
  * A world chunk.

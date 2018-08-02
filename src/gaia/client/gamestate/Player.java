@@ -1,4 +1,4 @@
-package gaia.client.players;
+package gaia.client.gamestate;
 
 import gaia.Position;
 

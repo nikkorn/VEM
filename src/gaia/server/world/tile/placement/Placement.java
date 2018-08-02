@@ -4,11 +4,14 @@ import org.json.JSONObject;
 import gaia.server.world.container.Container;
 import gaia.server.world.tile.placement.state.IPlacementState;
 import gaia.utils.BitPacker;
+import gaia.world.PlacementOverlay;
+import gaia.world.PlacementType;
+import gaia.world.PlacementUnderlay;
 
 /**
  * Represents a tile-positioned placement.
  */
-public class Placement implements IModifiablePlacement{
+public class Placement implements IModifiablePlacement {
 	/**
 	 * The placement type.
 	 */

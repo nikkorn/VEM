@@ -1,7 +1,7 @@
 package gaia.server.world.messaging.messages;
 
 import gaia.Position;
-import gaia.server.world.tile.placement.PlacementOverlay;
+import gaia.world.PlacementOverlay;
 
 /**
  * A message containing the details of a placement overlay change.

@@ -1,6 +1,6 @@
-package gaia.client.networking;
+package gaia.client.gamestate;
 
-import gaia.client.players.Player;
+import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import java.util.ArrayList;
