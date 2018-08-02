@@ -1,7 +1,7 @@
 package gaia.server.world.messaging.messages;
 
-import gaia.Position;
 import gaia.server.items.ItemType;
+import gaia.world.Position;
 
 /**
  * A message containing the details of a container slot change.

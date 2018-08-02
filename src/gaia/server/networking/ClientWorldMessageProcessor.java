@@ -1,12 +1,12 @@
 package gaia.server.networking;
 
-import gaia.Position;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.messages.IWorldMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
+import gaia.world.Position;
 
 /**
  * Processes world messages.

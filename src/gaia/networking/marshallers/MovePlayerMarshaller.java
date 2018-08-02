@@ -3,10 +3,11 @@ package gaia.networking.marshallers;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import gaia.Direction;
+
 import gaia.networking.IMessageMarshaller;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.MovePlayer;
+import gaia.world.Direction;
 
 /**
  * The marshaller responsible for reading/writing MovePlayer messages.

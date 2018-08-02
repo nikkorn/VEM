@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.Position;
+
 import gaia.server.Constants;
 import gaia.server.Helpers;
 import gaia.server.world.chunk.Chunk;
@@ -14,6 +14,7 @@ import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.generation.WorldMapImageCreator;
 import gaia.time.Season;
 import gaia.time.Time;
+import gaia.world.Position;
 
 /**
  * A factory for world entities.

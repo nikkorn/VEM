@@ -1,4 +1,4 @@
-package gaia;
+package gaia.world;
 
 import org.json.JSONObject;
 

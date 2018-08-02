@@ -5,9 +5,9 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Stack;
 import gaia.Constants;
-import gaia.Direction;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
+import gaia.world.Direction;
 
 /**
  * A command line based client to test server functionality.

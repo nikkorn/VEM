@@ -1,12 +1,13 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
-import gaia.Direction;
-import gaia.Position;
+
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
+import gaia.world.Direction;
+import gaia.world.Position;
 
 /**
  * The players within a world.

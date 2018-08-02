@@ -1,6 +1,6 @@
 package gaia.client.gamestate;
 
-import gaia.Position;
+import gaia.world.Position;
 
 /**
  * Represents a player.

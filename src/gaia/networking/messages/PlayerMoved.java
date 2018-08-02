@@ -1,7 +1,7 @@
 package gaia.networking.messages;
 
-import gaia.Position;
 import gaia.networking.IMessage;
+import gaia.world.Position;
 
 /**
  * A message sent to a client ot notify of a player that has changed positions.

@@ -1,7 +1,7 @@
 package gaia.server.world;
 
 import org.json.JSONObject;
-import gaia.Position;
+
 import gaia.server.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
@@ -9,6 +9,7 @@ import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
+import gaia.world.Position;
 
 /**
  * A game world composed of separate chunks.

@@ -1,7 +1,7 @@
 package gaia.networking.messages;
 
-import gaia.Position;
 import gaia.networking.IMessage;
+import gaia.world.Position;
 
 /**
  * The message sent to all clients when a player spawns.

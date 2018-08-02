@@ -1,10 +1,11 @@
 package gaia.client.networking;
 
 import java.io.IOException;
-import gaia.Direction;
+
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.MovePlayer;
+import gaia.world.Direction;
 
 /**
  * Player actions.

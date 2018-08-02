@@ -1,7 +1,7 @@
 package gaia.networking.messages;
 
-import gaia.Direction;
 import gaia.networking.IMessage;
+import gaia.world.Direction;
 
 /**
  * A message sent to the server requesting to move a player in a direction.

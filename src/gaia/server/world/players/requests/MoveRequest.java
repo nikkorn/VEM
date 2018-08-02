@@ -1,7 +1,7 @@
 package gaia.server.world.players.requests;
 
-import gaia.Direction;
 import gaia.server.world.World;
+import gaia.world.Direction;
 
 /**
  * A request to move in a world.

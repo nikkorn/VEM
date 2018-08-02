@@ -2,8 +2,8 @@ package gaia.server.world.players;
 
 import java.util.ArrayList;
 
-import gaia.Position;
 import gaia.server.world.chunk.Chunk;
+import gaia.world.Position;
 
 /**
  * Represents a player in the world.
