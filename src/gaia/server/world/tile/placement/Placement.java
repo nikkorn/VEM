@@ -153,20 +153,19 @@ public class Placement implements IModifiablePlacement{
 	
 	/**
 	 * Get the placement as a packed integer.
-	 * bit 0 - ?
-	 * bit 1 - ?
-	 * bits 2-11 - Placement Type
-	 * bits 12-21 - Overlay Type
-	 * bits 22-31 - Underlay Type
+	 *   bits 0-9   - Underlay Type
+	 *   bits 10-19 - Overlay Type
+	 *   bits 20-29 - Placement Type
+	 *   bits 30-31 - ?
 	 * @return The placement as a packed integer.
 	 */
 	public int asPackedInt() {
-		// Pack the placement type.
-		int packed = BitPacker.pack(0, this.type.ordinal(), 2, 10);
-		// Pack the overlay type.
-		packed = BitPacker.pack(packed, this.overlay.ordinal(), 12, 10);
 		// Pack the underlay type.
-		packed = BitPacker.pack(packed, this.underlay.ordinal(), 22, 10);
+		int packed = BitPacker.pack(0, this.underlay.ordinal(), 0, 10);
+		// Pack the overlay type.
+		packed = BitPacker.pack(packed, this.overlay.ordinal(), 10, 10);
+		// Pack the placement type.
+		packed = BitPacker.pack(packed, this.type.ordinal(), 20, 10);
 		// Return the packed value.
 		return packed;
 	}
