@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.Constants;
 import gaia.server.Helpers;
 import gaia.server.world.chunk.Chunk;
@@ -75,7 +74,7 @@ public class WorldFactory {
 	 */
 	private static Position findWorldSpawn() {
 		// TODO Check world tiles for valid position.
-		return new Position(123, 234);
+		return new Position((short)100, (short)100);
 	}
 	
 	/**
@@ -90,8 +89,8 @@ public class WorldFactory {
 		// Get the chunk range that we regard as being the 'vicinity' of another chunk.
 		int range = Constants.WORLD_CHUNK_VICINITY_RANGE;
 		// Load every chunk position in the vicinity of the spawn.
-		for (int chunkX = (spawn.getChunkX() - range); chunkX <= (spawn.getChunkX() + range); chunkX++) {
-			for (int chunkY = (spawn.getChunkY() - range); chunkY <= (spawn.getChunkY() + range); chunkY++) {
+		for (short chunkX = (short)(spawn.getChunkX() - range); chunkX <= (spawn.getChunkX() + range); chunkX++) {
+			for (short chunkY = (short)(spawn.getChunkY() - range); chunkY <= (spawn.getChunkY() + range); chunkY++) {
 				// Do not attempt to load a chunk at an invalid chunk position.
 				if (!Chunks.isValidChunkPosition(chunkX, chunkY)) {
 					continue;
@@ -126,7 +125,7 @@ public class WorldFactory {
 		// Create the world chunks collection, containing any existing chunks read from disk.
 		Chunks existingChunks = createExistingChunks(worldName, worldGenerator);
 		// Get the player spawn.
-		Position spawn = new Position(worldState.getJSONObject("spawn").getInt("x"), worldState.getJSONObject("spawn").getInt("y"));
+		Position spawn = new Position((short)worldState.getJSONObject("spawn").getInt("x"), (short)worldState.getJSONObject("spawn").getInt("y"));
 		// Create the world instance.
 		World world = new World(existingChunks, spawn, worldTime, worldGenerator);
 		// Return the world instance.

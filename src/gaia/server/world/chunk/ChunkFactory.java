@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import gaia.server.Constants;
 import gaia.server.items.ItemType;
 import gaia.server.world.container.Container;
@@ -44,7 +43,7 @@ public class ChunkFactory {
 	 * @param y The y position of the chunk.
 	 * @return The created chunk.
 	 */
-	public static Chunk createNewChunk(WorldGenerator generator, int x, int y) {
+	public static Chunk createNewChunk(WorldGenerator generator, short x, short y) {
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// This is the first time we are creating this chunk (there is no 
@@ -65,8 +64,8 @@ public class ChunkFactory {
 	 */
 	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator) {
 		// Get the x/y chunk position.
-		int x = chunkJSON.getInt("x");
-		int y = chunkJSON.getInt("y");
+		short x = (short)chunkJSON.getInt("x");
+		short y = (short)chunkJSON.getInt("y");
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// We already have state for this chunk saved so read the existing placement state.

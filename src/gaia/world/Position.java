@@ -1,8 +1,8 @@
 package gaia.world;
 
 import org.json.JSONObject;
-
 import gaia.server.Constants;
+import gaia.utils.BitPacker;
 
 /**
  * Represents a world position.
@@ -11,26 +11,26 @@ public class Position {
 	/**
 	 * The x position.
 	 */
-	private int x;
+	private short x;
 	/**
 	 * The y position.
 	 */
-	private int y;
+	private short y;
 	/**
 	 * The chunk x position.
 	 */
-	private int chunkX;
+	private short chunkX;
 	/**
 	 * The chunk y position.
 	 */
-	private int chunkY;
+	private short chunkY;
 	
 	/**
 	 * Creates a new instance of the Position class.
 	 * @param x The x position.
 	 * @param y The y position.
 	 */
-	public Position(int x, int y) {
+	public Position(short x, short y) {
 		this.setX(x);
 		this.setY(y);
 	}
@@ -39,7 +39,7 @@ public class Position {
 	 * Get the x position.
 	 * @return The x position.
 	 */
-	public int getX() {
+	public short getX() {
 		return x;
 	}
 
@@ -47,7 +47,7 @@ public class Position {
 	 * Set the x position.
 	 * @param x The x position.
 	 */
-	public void setX(int x) {
+	public void setX(short x) {
 		this.x      = x;
 		this.chunkX = convertWorldToChunkPosition(x);
 	}
@@ -56,7 +56,7 @@ public class Position {
 	 * Get the y position.
 	 * @return The y position.
 	 */
-	public int getY() {
+	public short getY() {
 		return y;
 	}
 
@@ -64,7 +64,7 @@ public class Position {
 	 * Set the y position.
 	 * @param y The y position.
 	 */
-	public void setY(int y) {
+	public void setY(short y) {
 		this.y      = y;
 		this.chunkY = convertWorldToChunkPosition(y);
 	}
@@ -73,7 +73,7 @@ public class Position {
 	 * Gets the x position of the chunk that this position is within.
 	 * @return The x position of the chunk that this position is within. 
 	 */
-	public int getChunkX() {
+	public short getChunkX() {
 		return this.chunkX;
 	}
 	
@@ -81,8 +81,34 @@ public class Position {
 	 * Gets the y position of the chunk that this position is within.
 	 * @return The y position of the chunk that this position is within. 
 	 */
-	public int getChunkY() {
+	public short getChunkY() {
 		return this.chunkY;
+	}
+	
+	/**
+	 * Get the position as a packed integer.
+	 *   bits 0-15  - X position
+	 *   bits 16-31 - Y position
+	 * @return The position as a packed integer.
+	 */
+	public int asPackedInt() {
+		// Pack the x position.
+		int packed = BitPacker.pack(0, (int)this.x, 0, 16);
+		// Pack the y position.
+		packed = BitPacker.pack(packed, (int)this.y, 16, 16);
+		// Return the packed value.
+		return packed;
+	}
+	
+	/**
+	 * Create a position based on information parsed from a packed integer.
+	 * @param packed The packed integer.
+	 * @return The position.
+	 */
+	public static Position fromPackedInt(int packed) {
+		short unpackedX = (short)BitPacker.unpack(packed, 0, 16);
+		short unpackedY = (short)BitPacker.unpack(packed, 16, 16);
+		return new Position(unpackedX, unpackedY);
 	}
 	
 	/**
@@ -105,7 +131,7 @@ public class Position {
 	 * @param position The world position.
 	 * @return The chunk position.
 	 */
-	private static int convertWorldToChunkPosition(int position) {
-		return (position / Constants.WORLD_CHUNK_SIZE) - (position < 0 ? 1 : 0);
+	private static short convertWorldToChunkPosition(short position) {
+		return (short) ((position / Constants.WORLD_CHUNK_SIZE) - (position < 0 ? 1 : 0));
 	}
 }

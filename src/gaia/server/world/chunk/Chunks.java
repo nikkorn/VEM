@@ -2,7 +2,6 @@ package gaia.server.world.chunk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import gaia.server.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
@@ -104,13 +103,13 @@ public class Chunks {
 	 */
 	public void onPlayerChunkChange(Player player, WorldMessageQueue worldMessageQueue) {
 		// Get the position of the chunk that the player has moved to.
-		int playerChunkX = player.getPositon().getChunkX();
-		int playerChunkY = player.getPositon().getChunkY();
+		short playerChunkX = player.getPositon().getChunkX();
+		short playerChunkY = player.getPositon().getChunkY();
 		// Get the chunk range that we regard as being the 'vicinity' of another chunk.
-		int range = Constants.WORLD_CHUNK_VICINITY_RANGE;
+		short range = Constants.WORLD_CHUNK_VICINITY_RANGE;
 		// Check every chunk position in the vicinity of the player.
-		for (int chunkX = (playerChunkX - range); chunkX <= (playerChunkX + range); chunkX++) {
-			for (int chunkY = (playerChunkY - range); chunkY <= (playerChunkY + range); chunkY++) {
+		for (short chunkX = (short)(playerChunkX - range); chunkX <= (playerChunkX + range); chunkX++) {
+			for (short chunkY = (short)(playerChunkY - range); chunkY <= (playerChunkY + range); chunkY++) {
 				// Check to make sure that we are looking at a valid chunk position as we could be at the world edge.
 				if (!isValidChunkPosition(chunkX, chunkY)) {
 					continue;

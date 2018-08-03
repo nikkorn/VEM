@@ -1,7 +1,6 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
-
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
@@ -76,8 +75,8 @@ public class Players {
 		// Get the target player.
 		Player targetPlayer = this.getPlayer(playerId);
 		// Find the position the player is trying to move to based on their current position.
-		int newPositionX = targetPlayer.getPositon().getX();
-		int newPositionY = targetPlayer.getPositon().getY();
+		short newPositionX = targetPlayer.getPositon().getX();
+		short newPositionY = targetPlayer.getPositon().getY();
 		switch(direction) {
 			case DOWN:
 				newPositionY-=1;
@@ -105,8 +104,8 @@ public class Players {
 			}
 		}
 		// Get the x/y position of the chunk that the player was in before the move.
-		int oldChunkXPosition = targetPlayer.getPositon().getChunkX();
-		int oldChunkYPosition = targetPlayer.getPositon().getChunkY();
+		short oldChunkXPosition = targetPlayer.getPositon().getChunkX();
+		short oldChunkYPosition = targetPlayer.getPositon().getChunkY();
 		// The player can move to this new position.
 		targetPlayer.getPositon().setX(newPositionX);
 		targetPlayer.getPositon().setY(newPositionY);

@@ -2,7 +2,6 @@ package gaia.server.world.chunk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import gaia.server.Constants;
 import gaia.server.items.ItemType;
 import gaia.server.world.messaging.WorldMessageQueue;
@@ -32,7 +31,7 @@ public class Chunk implements IChunkDetails {
 	/**
 	 * The x/y positions of the chunk.
 	 */
-	private int x, y;
+	private short x, y;
 	/**
 	 * Whether this chunk has at least one high priority placement.
 	 * A chunk with a high priority placement will always be active.
@@ -46,7 +45,7 @@ public class Chunk implements IChunkDetails {
 	 * @param tiles The multi-dimensional array holding the tile types for the chunk.
 	 * @param placements The multi-dimensional array holding the placements that this chunk is composed of.
 	 */
-	public Chunk(int x, int y, TileType[][] tiles, Placement[][] placements) {
+	public Chunk(short x, short y, TileType[][] tiles, Placement[][] placements) {
 		this.x          = x;
 		this.y          = y;
 		this.tiles      = tiles;
@@ -154,8 +153,8 @@ public class Chunk implements IChunkDetails {
 	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldMessageQueue worldMessageQueue) {
 		boolean highPriorityPlacementFound = false;
 		// Execute placement actions for each placement.
-		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
-			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
+		for (short placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
+			for (short placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
 				// Get the placement at the current position.
 				Placement placement = placements[placementX][placementY];
 				// Do nothing if there is no placement at this position.
@@ -235,7 +234,7 @@ public class Chunk implements IChunkDetails {
 	 * @param hasTimeChanged Whether the time has changed on this server tick.
 	 * @param worldMessageQueue The world message queue.
 	 */
-	private void executePlacementActions(Placement placement, int placementX, int placementY, Time time, boolean hasTimeChanged, WorldMessageQueue worldMessageQueue) {
+	private void executePlacementActions(Placement placement, short placementX, short placementY, Time time, boolean hasTimeChanged, WorldMessageQueue worldMessageQueue) {
 		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
@@ -251,17 +250,17 @@ public class Chunk implements IChunkDetails {
 		if (hasTimeChanged) {
 			placement.getAction().onTimeUpdate(placement, time);
 		}
+		// Get the world position of the placement.
+		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placementX);
+		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
+		Position placementPosition = new Position(placementXPosition, placementYPosition);
 		// Has the underlay changed?
 		if (placement.getUnderlay() != preActionUnderlay) {
-			// Get the world position of the placement.
-			Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
 			// Add a message to the world message queue to notify of the change.
 			worldMessageQueue.add(new PlacementUnderlayChangedMessage(placement.getUnderlay(), placementPosition));
 		}
 		// Has the overlay changed?
 		if (placement.getOverlay() != preActionOverlay) {
-			// Get the world position of the placement.
-			Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
 			// Add a message to the world message queue to notify of the change.
 			worldMessageQueue.add(new PlacementOverlayChangedMessage(placement.getOverlay(), placementPosition));
 		}
@@ -270,8 +269,6 @@ public class Chunk implements IChunkDetails {
 			for (int containerItemIndex = 0; containerItemIndex < placement.getContainer().size(); containerItemIndex++) {
 				// Has the item type at the current container slot changed?
 				if (preActionContainerItemTypes[containerItemIndex] != placement.getContainer().get(containerItemIndex)) {
-					// Get the world position of the placement.
-					Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placementX, (this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
 					// Add a message to the world message queue to notify of the change.
 					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, placement.getContainer().get(containerItemIndex), placementPosition));
 				}
