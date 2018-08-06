@@ -85,11 +85,11 @@ public class ServerProxy {
 		MessageMarshallerProvider marshallerProvider = ClientServerMessageMarshallerProviderFactory.create();
 		// Create the message output stream used to write messages to the server.
 		MessageOutputStream messageOutputStream = new MessageOutputStream(connectionSocket.getOutputStream(), marshallerProvider);
-		// Send a handshake!
-		messageOutputStream.writeMessage(new Handshake(playerId));
 		// Wait for the response form the server. We are expecting either a join success or failure.
 		// Firstly, we need to create our message input stream in order to grab the server response.
 		MessageInputStream messageInputStream = new MessageInputStream(connectionSocket.getInputStream(), marshallerProvider);
+		// Send a handshake!
+		messageOutputStream.writeMessage(new Handshake(playerId));
 		// Read the server response message. This operation blocks until we get it.
 		IMessage response = messageInputStream.readMessage();
 		// We got a response from the server!
