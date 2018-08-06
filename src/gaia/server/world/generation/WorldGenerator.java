@@ -1,8 +1,7 @@
 package gaia.server.world.generation;
 
 import java.util.Random;
-
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.world.tile.TileType;
 
 /**

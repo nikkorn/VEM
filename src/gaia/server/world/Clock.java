@@ -1,6 +1,6 @@
 package gaia.server.world;
 
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.time.Season;
 import gaia.time.Time;
 

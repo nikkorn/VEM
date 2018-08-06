@@ -4,6 +4,7 @@ import gaia.networking.marshallers.HandshakeMarshaller;
 import gaia.networking.marshallers.JoinFailureMarshaller;
 import gaia.networking.marshallers.JoinSuccessMarshaller;
 import gaia.networking.marshallers.MovePlayerMarshaller;
+import gaia.networking.marshallers.PlacementLoadedMarshaller;
 import gaia.networking.marshallers.PlayerMovedMarshaller;
 import gaia.networking.marshallers.PlayerSpawnedMarshaller;
 
@@ -31,6 +32,8 @@ public class ClientServerMessageMarshallerProviderFactory {
 		provider.addMarshaller(new PlayerMovedMarshaller());
 		// Add the marshaller used for reading/writing player spawn messages.
 		provider.addMarshaller(new PlayerSpawnedMarshaller());
+		// Add the marshaller used for reading/writing placement loaded messages.
+		provider.addMarshaller(new PlacementLoadedMarshaller());
 		// Return the provider.
 		return provider;
 	}

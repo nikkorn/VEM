@@ -1,7 +1,7 @@
 package gaia.world;
 
 import org.json.JSONObject;
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.utils.BitPacker;
 
 /**

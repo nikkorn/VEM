@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.Helpers;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.ChunkFactory;

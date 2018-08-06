@@ -2,7 +2,7 @@ package gaia.server.world.chunk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.items.ItemType;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;

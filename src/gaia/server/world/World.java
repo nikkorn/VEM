@@ -1,8 +1,7 @@
 package gaia.server.world;
 
 import org.json.JSONObject;
-
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.generation.WorldGenerator;

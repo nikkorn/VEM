@@ -1,5 +1,7 @@
 package gaia.server;
 
+import gaia.Constants;
+
 /**
  * The server clock which calls the server loop at a consistent rate.
  */

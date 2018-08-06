@@ -20,4 +20,5 @@ public class MessageIdentifier {
 	public static final int PLAYER_DESPAWNED     = 9;
 	public static final int PLAYER_MOVED         = 10;
 	public static final int PLAYER_SLOT_CHANGED  = 11;
+	public static final int PLACEMENT_LOADED     = 12;
 }

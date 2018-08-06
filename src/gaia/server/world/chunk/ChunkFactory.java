@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.items.ItemType;
 import gaia.server.world.container.Container;
 import gaia.server.world.generation.WorldGenerator;

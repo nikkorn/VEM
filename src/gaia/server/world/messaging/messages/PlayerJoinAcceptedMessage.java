@@ -3,7 +3,7 @@ package gaia.server.world.messaging.messages;
 import gaia.server.engine.WelcomePackage;
 
 /**
- * A message containing the detials of a successful join attempt.
+ * A message containing the details of a successful join attempt.
  */
 public class PlayerJoinAcceptedMessage implements IWorldMessage {
 	/**

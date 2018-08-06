@@ -2,7 +2,7 @@ package gaia.server.world.chunk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import gaia.server.Constants;
+import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ChunkLoadedMessage;

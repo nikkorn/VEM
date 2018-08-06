@@ -3,7 +3,9 @@ package gaia.server.networking;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
+import gaia.server.world.chunk.IChunkDetails;
 import gaia.server.world.messaging.IWorldMessageProcessor;
+import gaia.server.world.messaging.messages.ChunkLoadedMessage;
 import gaia.server.world.messaging.messages.IWorldMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
@@ -38,6 +40,10 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 		// How we handle this world message depends on its type.
 		switch (message.getMessageType()) {
 			case CHUNK_LOADED:
+				// A chunk has been loaded, potentially in response to a player move/spawn.
+				ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage)message;
+				// Handle the chunk load, this would involve sending placement information to nearby clients.
+				onChunkLoad(chunkLoadedMessage.getChunkDetails());
 				break;
 			case CHUNK_WEATHER_CHANGED:
 				break;
@@ -97,5 +103,13 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 			default:
 				break;
 		}
+	}
+	
+	/**
+	 * Called in response to a chunk loading.
+	 * @param chunkDetails The details of the loaded chunk.
+	 */
+	private void onChunkLoad(IChunkDetails chunkDetails) {
+		// TODO Should this exist? Or should the engine just raise PlacmentLoaded messages instead of chunk ones.
 	}
 }
