@@ -1,7 +1,6 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
-
 import gaia.server.world.chunk.Chunk;
 import gaia.world.Position;
 

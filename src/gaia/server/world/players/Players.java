@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
-import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 import gaia.world.Direction;
 import gaia.world.Position;
 
@@ -36,10 +35,6 @@ public class Players {
 		Player player = new Player(playerId, world.getPlayerSpawn());
 		// We can add our player to the list of active players.
 		this.players.add(player);
-		// Add a world message to notify of the success the player had in joining.
-		world.getWorldMessageQueue().add(new PlayerSpawnedMessage(playerId, new Position(player.getPositon().getX(), player.getPositon().getY())));
-		// As the player will be spawning into the world, we regard this as a chunk change.
-		world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
 		// We were able to add the player.
 		return PlayerJoinRequestResult.SUCCESS;
 	}

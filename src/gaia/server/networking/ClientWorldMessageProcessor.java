@@ -2,8 +2,11 @@ package gaia.server.networking;
 
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
+import gaia.server.ServerConsole;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.messages.IWorldMessage;
+import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
+import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 import gaia.world.Position;
@@ -51,6 +54,22 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 			case PLACEMENT_REMOVED:
 				break;
 			case PLACEMENT_UNDERLAY_CHANGED:
+				break;
+			case PLAYER_JOIN_SUCCESS:
+				// A player has joined successfully!
+				PlayerJoinAcceptedMessage joinAcceptedMessage = (PlayerJoinAcceptedMessage)message;
+				// Write this out to the console.
+				ServerConsole.writeInfo("Player '" + joinAcceptedMessage.getPlayerId() + "' joined!");
+				// Let the client proxy manager know that the client was successful in their join attempt.
+				this.clientProxyManager.acceptClient(joinAcceptedMessage.getClientId(), joinAcceptedMessage.getWelcomePackage());
+				break;
+			case PLAYER_JOIN_REJECTED:
+				// A player was rejected in attempting to join!
+				PlayerJoinRejectedMessage joinRejectedMessage = (PlayerJoinRejectedMessage)message;
+				// Write this out to the console.
+				ServerConsole.writeInfo("Player '" + joinRejectedMessage.getPlayerId() + "' failed to join! (" + joinRejectedMessage.getReason() + ")");
+				// Let the client proxy manager know that the client failed in their join attempt.
+				this.clientProxyManager.rejectClient(joinRejectedMessage.getClientId(), joinRejectedMessage.getReason());
 				break;
 			case PLAYER_DESPAWN:
 				break;

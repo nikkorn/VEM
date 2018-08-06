@@ -4,7 +4,6 @@ import gaia.server.world.World;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.players.PlayerJoinRequestResult;
 import gaia.time.Time;
 
 /**
@@ -23,18 +22,13 @@ public class Engine {
 	 * The request queue holding requests to be processed sequentially.
 	 */
 	private RequestQueue requestQueue = new RequestQueue();
-	/**
-	 * The join request processor.
-	 */
-	private IJoinRequestProcessor joinRequestProcessor;
 	
 	/**
 	 * Create a new instance of the Engine class.
 	 * @param world The game world.
 	 */
 	public Engine(World world) {
-		this.world                = world;
-		this.joinRequestProcessor = createJoinRequestProcessor(world);
+		this.world = world;
 	}
 	
 	/**
@@ -43,14 +37,6 @@ public class Engine {
 	 */
 	public RequestQueue getRequestQueue() {
 		return this.requestQueue;
-	}
-	
-	/**
-	 * Get the join request processor that handles join requests in a synchronized way.
-	 * @return The join request processor.
-	 */
-	public IJoinRequestProcessor getJoinRequestProcessor() {
-		return this.joinRequestProcessor;
 	}
 	
 	/**
@@ -65,53 +51,26 @@ public class Engine {
 	 * Tick the game engine.
 	 */
 	public void tick() {
-		// We need to synchronize the engine tick as players can join via a different thread.
-		synchronized (world.getPlayers()) {
-			// Process any requests.
-			processRequests();
-			// Update the world time and get whether it has changed.
-			// It does not change every server tick, just ever game minute.
-			boolean timeChanged = this.world.getClock().update();
-			// Get the current time.
-			Time currentTime = this.world.getClock().getCurrentTime();
-			// Tick each of our cached chunks.
-			for (Chunk chunk : world.getChunks().getCachedChunks()) {
-				// Are any players within the vicinity of this chunk?
-				boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
-				// We only want to tick chunks that are active. An active chunk either:
-				// - Contains a high priority placement.
-				// - Has any players in the vicinity.
-				if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
-					chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.world.getWorldMessageQueue());
-				}
+		// Process any requests.
+		processRequests();
+		// Update the world time and get whether it has changed.
+		// It does not change every server tick, just ever game minute.
+		boolean timeChanged = this.world.getClock().update();
+		// Get the current time.
+		Time currentTime = this.world.getClock().getCurrentTime();
+		// Tick each of our cached chunks.
+		for (Chunk chunk : world.getChunks().getCachedChunks()) {
+			// Are any players within the vicinity of this chunk?
+			boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
+			// We only want to tick chunks that are active. An active chunk either:
+			// - Contains a high priority placement.
+			// - Has any players in the vicinity.
+			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
+				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.world.getWorldMessageQueue());
 			}
-			// Process any messages that were added to the world message queue as part of this engine tick.
-			processWorldMessages();
 		}
-	}
-	
-	/**
-	 * Create the join request processor that handles join requests in a synchronized way.
-	 * @param world The world.
-	 * @return The join request processor that handles join requests in a synchronized way.
-	 */
-	private static IJoinRequestProcessor createJoinRequestProcessor(World world) {
-		return new IJoinRequestProcessor() {
-			@Override
-			public PlayerJoinRequestResult join(String playerId) {
-				// We need to attempt the join in a synchronized way as this will be called
-				// on a different thread to the one on which the engine is ticked.
-				synchronized (world.getPlayers()) {
-					return world.getPlayers().addPlayer(playerId, world);
-				}
-			}
-
-			@Override
-			public WelcomePackage getWelcomePackage() {
-				// Get a welcome package for a joining player.
-				return new WelcomePackage(world.getSeed(), world.getClock().getCurrentTime());
-			}
-		};
+		// Process any messages that were added to the world message queue as part of this engine tick.
+		processWorldMessages();
 	}
 
 	/**

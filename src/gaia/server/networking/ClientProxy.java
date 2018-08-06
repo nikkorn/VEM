@@ -19,19 +19,29 @@ public class ClientProxy {
 	 */
 	private MessageOutputStream messageOutputStream;
 	/**
+	 * The client id.
+	 */
+	private String clientId;
+	/**
 	 * The player id.
 	 */
 	private String playerId;
+	/**
+	 * A flag defining whether the client has joined the server player pool.
+	 */
+	private ClientProxyStatus status = ClientProxyStatus.WAITING_TO_JOIN;
 	
 	/**
 	 * Create a new instance of the ClientProxy class.
 	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue.
 	 * @param messageOutputStream The output stream used to write messages to the client. 
-	 * @param id The player id.
+	 * @param clientId The client id.
+	 * @param playerId The player id.
 	 */
-	public ClientProxy(QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, String playerId) {
+	public ClientProxy(QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, String clientId, String playerId) {
 		this.queuedMessageReader  = queuedMessageReader;
 		this.messageOutputStream  = messageOutputStream;
+		this.clientId             = clientId;
 		this.playerId             = playerId;
 		// Our queued message reader needs to start reading incoming messages.
 		Thread messageReaderThread = new Thread(queuedMessageReader);
@@ -46,6 +56,30 @@ public class ClientProxy {
 	public boolean isConnected() {
 		// For now, we will check whether the client is connected by checking if our reader is still connected.
 		return this.queuedMessageReader.isConnected();
+	}
+	
+	/**
+	 * Get the status of the client.
+	 * @return The status of the client.
+	 */
+	public ClientProxyStatus getStatus() {
+		return this.status;
+	}
+	
+	/**
+	 * Set the status of the client.
+	 * @param status The status of the client.
+	 */
+	public void setStatus(ClientProxyStatus status) {
+		this.status = status;
+	}
+	
+	/**
+	 * Get the client id.
+	 * @return The client id.
+	 */
+	public String getClientId() {
+		return this.clientId;
 	}
 	
 	/**

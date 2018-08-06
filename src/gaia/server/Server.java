@@ -9,7 +9,9 @@ import gaia.server.networking.ClientMessageQueue;
 import gaia.server.networking.ClientProxyManager;
 import gaia.server.world.World;
 import gaia.server.world.WorldFactory;
+import gaia.server.world.players.requests.JoinRequest;
 import gaia.server.world.players.requests.LeaveRequest;
+import gaia.utils.Queue;
 
 /**
  * The game server.
@@ -45,9 +47,8 @@ public class Server {
 		World world = WorldFactory.createWorld(worldName);
 		// Create the game engine.
 		this.engine = new Engine(world);
-		// Create the client proxy manager, passing  the port for client connections
-		// and the processor provided by the engine for making synchronized join requests.
-		this.clientProxyManager = new ClientProxyManager(this.configuration.getPort(), this.engine.getJoinRequestProcessor());
+		// Create the client proxy manager, passing the port for client connections.
+		this.clientProxyManager = new ClientProxyManager(this.configuration.getPort());
 		// In order to be able to process messages output by the engine we need to specify a world message processor.
 		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.clientProxyManager));
 		// Now that everything is set up we should start listening for client connection requests.
@@ -74,6 +75,8 @@ public class Server {
 	public void loop() {
 		// Handle any client disconnections.
 		handleClientDisconnections();
+		// Process and client join requests.
+		processClientJoinRequests();
 		// Process any messages received from the connected clients.
 		processReceivedClientMessages();
 		// Tick the game engine.
@@ -91,6 +94,18 @@ public class Server {
 		for (String disconnectedPlayerId : this.clientProxyManager.processDisconnections()) {
 			// We will have to request that the player be removed from the game world.
 			engine.getRequestQueue().add(new LeaveRequest(disconnectedPlayerId));
+		}
+	}
+	
+	/**
+	 * Process any client join requests.
+	 */
+	private void processClientJoinRequests() {
+		// Get any requests to join made on behalf of any newly connected clients.
+		Queue<JoinRequest> joinRequestQueue = this.clientProxyManager.getClientJoinRequestQueue();
+		// Queue up and join requests to be processed.
+		while (joinRequestQueue.hasNext()) {
+			engine.getRequestQueue().add(joinRequestQueue.next());
 		}
 	}
 

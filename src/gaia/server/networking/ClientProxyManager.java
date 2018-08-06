@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.UUID;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
 import gaia.networking.MessageInputStream;
@@ -16,8 +17,9 @@ import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
 import gaia.server.ServerConsole;
-import gaia.server.engine.IJoinRequestProcessor;
 import gaia.server.engine.WelcomePackage;
+import gaia.server.world.players.requests.JoinRequest;
+import gaia.utils.Queue;
 
 /**
  * Manages connected clients and listens for client handshakes.
@@ -28,9 +30,9 @@ public class ClientProxyManager {
 	 */
 	private ArrayList<ClientProxy> clients = new ArrayList<ClientProxy>();
 	/**
-	 * The processor for join requests.
+	 * The queue of join requests for newly connected clients.
 	 */
-	private IJoinRequestProcessor joinRequestProcessor;
+	private Queue<JoinRequest> clientJoinRequestQueue = new Queue<JoinRequest>();
 	/**
 	 * The port on which client connections are made.
 	 */
@@ -39,11 +41,9 @@ public class ClientProxyManager {
 	/**
 	 * Creates a new instance of the ClientProxyManager class.
 	 * @param port The port on which client connections are made.
-	 * @param joinRequestProcessor The processor for join requests.
 	 */
-	public ClientProxyManager(int port, IJoinRequestProcessor joinRequestProcessor) {
-		this.port                 = port;
-		this.joinRequestProcessor = joinRequestProcessor;
+	public ClientProxyManager(int port) {
+		this.port = port;
 	}
 	
 	/**
@@ -71,7 +71,64 @@ public class ClientProxyManager {
 	}
 	
 	/**
-	 * Send a message to a client.
+	 * Get a queue of any client join requests that need to be processed.
+	 * @return A queue of any client join requests that need to be processed.
+	 */
+	public Queue<JoinRequest> getClientJoinRequestQueue() {
+		// Create a new queue to hold the requests.
+		Queue<JoinRequest> requests = new Queue<JoinRequest>();
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			requests.add(clientJoinRequestQueue);
+		}
+		// Return the queued client join requests.
+		return requests;
+	}
+	
+	/**
+	 * Accept a client waiting to join.
+	 * @param clientId The id of the client that we have accepted.
+	 * @param welcomePackage The welcome package containing details to send.
+	 */
+	public void acceptClient(String clientId, WelcomePackage welcomePackage) {
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			for (ClientProxy client : this.clients) {
+				// Is this the client we are looking for?
+				if (client.getClientId().equals(clientId)) {
+					// We found the client so set their status.
+					client.setStatus(ClientProxyStatus.JOINED);
+					// Let the client know that they have joined! This completes the handshake.
+					client.sendMessage(new JoinSuccess(welcomePackage.getWorldSeed(), welcomePackage.getWorldTime()));
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Reject a client waiting to join.
+	 * @param clientId The id of the client that we have rejected.
+	 * @param reason The reason for the rejection.
+	 */
+	public void rejectClient(String clientId, String reason) {
+		// We will need to synchronize this as clients can be added/removed on separate threads.
+		synchronized(this.clients) {
+			for (ClientProxy client : this.clients) {
+				// Is this the client we are looking for?
+				if (client.getClientId().equals(clientId)) {
+					// We found the client so set their status.
+					client.setStatus(ClientProxyStatus.JOIN_REJECTED);
+					// Let the client know that they have not joined! This completes the handshake.
+					client.sendMessage(new JoinFailure(reason));
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Send a message to a client, not including clients waiting to join.
 	 * @param playerId The id of the player to send the message to.
 	 * @param message The message to send.
 	 */
@@ -79,6 +136,10 @@ public class ClientProxyManager {
 		// We will need to synchronize this as clients can be added/removed on separate threads.
 		synchronized(this.clients) {
 			for (ClientProxy client : this.clients) {
+				// We ONLY send messages to clients that have joined.
+				if (client.getStatus() != ClientProxyStatus.JOINED) {
+					continue;
+				}
 				// Is this the client we are looking for?
 				if (client.getPlayerId().equals(playerId)) {
 					// We found the client that we want to send the message to.
@@ -90,21 +151,24 @@ public class ClientProxyManager {
 	}
 	
 	/**
-	 * Send a message to all clients.
+	 * Send a message to all clients, not including clients waiting to join.
 	 * @param message The message to send.
 	 */
 	public void broadcastMessage(IMessage message) {
 		// We will need to synchronize this as clients can be added/removed on separate threads.
 		synchronized(this.clients) {
 			for (ClientProxy client : this.clients) {
-				client.sendMessage(message);
+				// We ONLY send messages to clients that have joined.
+				if (client.getStatus() == ClientProxyStatus.JOINED) {
+					client.sendMessage(message);
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Check for client disconnections and remove them.
-	 * @return A list of the player ids of any clients that have disconnected. 
+	 * Check for client disconnections/rejections and remove them.
+	 * @return A list of the player ids of any joined clients that have disconnected. 
 	 */
 	public ArrayList<String> processDisconnections() {
 		// Create a list to store the disconnected player ids.
@@ -115,6 +179,12 @@ public class ClientProxyManager {
 			while (iterator.hasNext()) {
 				// Get the next client.
 				ClientProxy client = iterator.next();
+				// Remove the client if their attempt to join was rejected.
+				if (client.getStatus() == ClientProxyStatus.JOIN_REJECTED) {
+					// Remove the client.
+					iterator.remove();
+					continue;
+				}
 				// Remove the client if they have disconnected.
 				if (!client.isConnected()) {
 					// Store the id of the disconnected player.
@@ -188,32 +258,16 @@ public class ClientProxyManager {
 	private void processHandshake(Handshake handshake, Socket clientSocket, MessageInputStream messageInputStream, MessageOutputStream messageOutputStream) throws IOException {
 		// Get the player id from the handshake.
 		String playerId = handshake.getPlayerId();
-		// Attempt to join the world using the player id and handle the result.
-		switch (this.joinRequestProcessor.join(playerId)) {
-			case ALREADY_JOINED:
-				// Return failure message over output stream!
-				messageOutputStream.writeMessage(new JoinFailure("You have already joined!"));
-				break;
-			case BLACKLISTED:
-				// Return failure message over output stream!
-				messageOutputStream.writeMessage(new JoinFailure("You are on the blacklist!"));
-				break;
-			case SUCCESS:
-				// Get a welcome package for the client.
-				WelcomePackage welcomePackage = joinRequestProcessor.getWelcomePackage();
-				// Return success message over output stream!
-				messageOutputStream.writeMessage(new JoinSuccess(welcomePackage.getWorldSeed(), welcomePackage.getWorldTime()));
-				// Write the connection details to the server console.
-				ServerConsole.writeInfo("The player '" + playerId + "' has connected");
-				// Create the new client.
-				ClientProxy client = new ClientProxy(new QueuedMessageReader(messageInputStream), messageOutputStream, playerId);
-				// Add the client to our client list.
-				synchronized(this.clients) {
-					this.clients.add(client);
-				}
-				break;
-			default:
-				throw new RuntimeException("Unexpected join request result");
+		// Generate a unique client id.
+		String clientId = UUID.randomUUID().toString();
+		// Create the new client.
+		ClientProxy client = new ClientProxy(new QueuedMessageReader(messageInputStream), messageOutputStream, clientId, playerId);
+		// Add the client to our client list and request for them to join the game.
+		synchronized(this.clients) {
+			// Add the client.
+			this.clients.add(client);
+			// Add the client join request to the queue.
+			this.clientJoinRequestQueue.add(new JoinRequest(playerId, clientId));
 		}
 	}
 }
