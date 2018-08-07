@@ -92,10 +92,20 @@ public class Position {
 	 * @return The position as a packed integer.
 	 */
 	public int asPackedInt() {
+		return Position.asPackedInt(this.x, this.y);
+	}
+	
+	/**
+	 * Get the x/y position as a packed integer.
+	 *   bits 0-15  - X position
+	 *   bits 16-31 - Y position
+	 * @return The x/y position as a packed integer.
+	 */
+	public static int asPackedInt(short x, short y) {
 		// Pack the x position.
-		int packed = BitPacker.pack(0, (int)this.x, 0, 16);
+		int packed = BitPacker.pack(0, (int)x, 0, 16);
 		// Pack the y position.
-		packed = BitPacker.pack(packed, (int)this.y, 16, 16);
+		packed = BitPacker.pack(packed, (int)y, 16, 16);
 		// Return the packed value.
 		return packed;
 	}

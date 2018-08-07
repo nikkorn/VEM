@@ -11,11 +11,15 @@ import gaia.world.PlacementUnderlay;
 /**
  * Represents a tile-positioned placement.
  */
-public class Placement implements IModifiablePlacement {
+public class Placement implements IModifiablePlacement, IPlacementDetails {
 	/**
 	 * The placement type.
 	 */
 	private PlacementType type;
+	/**
+	 * The placement position within its parent chunk.
+	 */
+	private short x, y;
 	/**
 	 * The container of the placement.
 	 */
@@ -45,9 +49,29 @@ public class Placement implements IModifiablePlacement {
 	/**
 	 * Create a new instance of the Placement class.
 	 * @param type The placement type.
+	 * @param x The x position of the placement with its parent chunk.
+	 * @param y The y position of the placement with its parent chunk.
 	 */
-	public Placement(PlacementType type) {
+	public Placement(PlacementType type, short x, short y) {
 		this.type = type;
+		this.x    = x;
+		this.y    = y;
+	}
+	
+	/**
+	 * Get the placements x position within its parent chunk.
+	 * @return The placements x position within its parent chunk.
+	 */
+	public short getX() {
+		return this.x;
+	}
+
+	/**
+	 * Get the placements y position within its parent chunk.
+	 * @return The placements y position within its parent chunk.
+	 */
+	public short getY() {
+		return this.y;
 	}
 	
 	/**

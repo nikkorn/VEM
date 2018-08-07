@@ -1,8 +1,10 @@
 package gaia.client.networking;
 
+import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
+import gaia.networking.messages.PlacementLoaded;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.world.Position;
@@ -39,6 +41,15 @@ public class ServerMessageProcessor {
 			case MessageIdentifier.PLAYER_MOVED:
 				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
 				break;
+				
+			case MessageIdentifier.PLACEMENT_LOADED:
+				// Create the client-side representation of the placement.
+				Placement placement = Placement.fromPackedInt(((PlacementLoaded)message).getPackedComposition());
+				// Create the position of the placement.
+				Position position = Position.fromPackedInt(((PlacementLoaded)message).getPackedPosition());
+				// Handle the placement load.
+				onPlacementLoad(placement, position);
+				break;
 	
 			default:
 				throw new RuntimeException("error: cannot process message with id '" + message.getTypeId() + "'.");
@@ -63,5 +74,14 @@ public class ServerMessageProcessor {
 	private void updatePlayerPosition(String playerId, Position position) {
 		// TODO Handle properly.
 		System.out.println("player '" + playerId + "' has moved to X:" + position.getX() + " Y:" + position.getY());
+	}
+	
+	/**
+	 * Called in response to a placement load.
+	 */
+	private void onPlacementLoad(Placement placement, Position position) {
+		// TODO Handle properly.
+		System.out.println("placement of type '" + placement.getType().toString() + "' loaded (x:" + position.getX() + " y:" + position.getY() + ")");
+		
 	}
 }

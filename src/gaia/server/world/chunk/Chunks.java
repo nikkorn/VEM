@@ -5,8 +5,9 @@ import java.util.HashMap;
 import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.messaging.messages.ChunkLoadedMessage;
+import gaia.server.world.messaging.messages.PlacementLoadedMessage;
 import gaia.server.world.players.Player;
+import gaia.server.world.tile.placement.Placement;
 
 /**
  * Represents the collection of chunks that the world is composed of.
@@ -121,10 +122,8 @@ public class Chunks {
 					// Has the player previously been in the vicinity of the current chunk?
 					// If not then we will need to notify the player of the chunk details.
 					if (!player.hasVisitedChunk(chunk)) {
-						// Add a world message to notify the player of the chunk details.
-						worldMessageQueue.add(new ChunkLoadedMessage(player.getPlayerId(), chunk));
-						// Now we can say that the player has visited the chunk.
-						player.addVisitedChunk(chunk);
+						// Handle a player moving into a chunk vicinity for the first time.
+						this.onInitialPlayerChunkVisit(chunk, player, worldMessageQueue);
 					}
 				} else {
 					// The player has wandered into the vicinity of chunk that has never
@@ -132,13 +131,30 @@ public class Chunks {
 					Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY);
 					// Cache this chunk so that we don't have to keep generating it.
 					this.cachedChunks.put(chunk.getKey(), chunk);
-					// Add a world message to notify the player of the chunk details.
-					worldMessageQueue.add(new ChunkLoadedMessage(player.getPlayerId(), chunk));
-					// Now we can say that the player has visited the chunk.
-					player.addVisitedChunk(chunk);
+					// Handle a player moving into a chunk vicinity for the first time.
+					this.onInitialPlayerChunkVisit(chunk, player, worldMessageQueue);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Handle a player moving into a chunk vicinity for the first time.
+	 * @param chunk The chunk.
+	 * @param player The player.
+	 * @param worldMessageQueue The wolrd message queue
+	 */
+	private void onInitialPlayerChunkVisit(Chunk chunk, Player player, WorldMessageQueue worldMessageQueue) {
+		// Queue a world message for each placement loaded.
+		for (Placement placement : chunk.getPlacements().getAll()) {
+			// Get the absolute x/y position of the placement.
+			short placementXPosition = (short) (placement.getX() + (chunk.getX() * Constants.WORLD_CHUNK_SIZE));
+			short placementYPosition = (short) (placement.getY() + (chunk.getY() * Constants.WORLD_CHUNK_SIZE));
+			// Queue the world message.
+			worldMessageQueue.add(new PlacementLoadedMessage(placement, placementXPosition, placementYPosition, player.getPlayerId()));
+		}
+		// Now we can say that the player has visited the chunk.
+		player.addVisitedChunk(chunk);
 	}
 	
 	/**

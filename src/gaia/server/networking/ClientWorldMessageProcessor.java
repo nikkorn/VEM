@@ -1,16 +1,17 @@
 package gaia.server.networking;
 
+import gaia.networking.messages.PlacementLoaded;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
-import gaia.server.world.chunk.IChunkDetails;
 import gaia.server.world.messaging.IWorldMessageProcessor;
-import gaia.server.world.messaging.messages.ChunkLoadedMessage;
 import gaia.server.world.messaging.messages.IWorldMessage;
+import gaia.server.world.messaging.messages.PlacementLoadedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
+import gaia.server.world.tile.placement.IPlacementDetails;
 import gaia.world.Position;
 
 /**
@@ -39,12 +40,6 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 	public void process(IWorldMessage message) {
 		// How we handle this world message depends on its type.
 		switch (message.getMessageType()) {
-			case CHUNK_LOADED:
-				// A chunk has been loaded, potentially in response to a player move/spawn.
-				ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage)message;
-				// Handle the chunk load, this would involve sending placement information to nearby clients.
-				onChunkLoad(chunkLoadedMessage.getChunkDetails());
-				break;
 			case CHUNK_WEATHER_CHANGED:
 				break;
 			case CONTAINER_CLOSED:
@@ -52,6 +47,18 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 			case CONTAINER_OPENED:
 				break;
 			case CONTAINER_SLOT_CHANGED:
+				break;
+			case PLACEMENT_LOADED:
+				// A placement was loaded!
+				PlacementLoadedMessage placementLoadedMessage = (PlacementLoadedMessage)message;
+				// Get the client that instigated the load. This is the only client that will need to know about it.
+				String clientToNotify = placementLoadedMessage.getInstigatingPlayerId();
+				// Get the placement details.
+				IPlacementDetails details = placementLoadedMessage.getPlacementDetails();
+				// Get the placement position as a packed integer.
+				int position = Position.asPackedInt(placementLoadedMessage.getX(), placementLoadedMessage.getY());
+				// Send the placement load details to the client that instigated the load.
+				this.clientProxyManager.sendMessage(clientToNotify, new PlacementLoaded(details.asPackedInt(), position));
 				break;
 			case PLACEMENT_ADDED:
 				break;
@@ -103,13 +110,5 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 			default:
 				break;
 		}
-	}
-	
-	/**
-	 * Called in response to a chunk loading.
-	 * @param chunkDetails The details of the loaded chunk.
-	 */
-	private void onChunkLoad(IChunkDetails chunkDetails) {
-		// TODO Should this exist? Or should the engine just raise PlacmentLoaded messages instead of chunk ones.
 	}
 }

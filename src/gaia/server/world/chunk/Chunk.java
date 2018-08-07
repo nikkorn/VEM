@@ -1,5 +1,6 @@
 package gaia.server.world.chunk;
 
+import java.util.Collection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
@@ -9,7 +10,9 @@ import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.server.world.messaging.messages.PlacementOverlayChangedMessage;
 import gaia.server.world.messaging.messages.PlacementUnderlayChangedMessage;
 import gaia.server.world.tile.TileType;
+import gaia.server.world.tile.placement.IPlacementDetails;
 import gaia.server.world.tile.placement.Placement;
+import gaia.server.world.tile.placement.Placements;
 import gaia.server.world.tile.placement.Priority;
 import gaia.time.Time;
 import gaia.world.PlacementOverlay;
@@ -19,7 +22,7 @@ import gaia.world.Position;
 /**
  * A world chunk.
  */
-public class Chunk implements IChunkDetails {
+public class Chunk {
 	/**
 	 * The static tiles that this chunk is composed of.
 	 */
@@ -27,7 +30,7 @@ public class Chunk implements IChunkDetails {
 	/**
 	 * The placements that this chunk is composed of.
 	 */
-	private Placement[][] placements = new Placement[Constants.WORLD_CHUNK_SIZE][Constants.WORLD_CHUNK_SIZE];
+	private Placements placements;
 	/**
 	 * The x/y positions of the chunk.
 	 */
@@ -43,22 +46,18 @@ public class Chunk implements IChunkDetails {
 	 * @param x The x position of this chunk.
 	 * @param y The y position of this chunk.
 	 * @param tiles The multi-dimensional array holding the tile types for the chunk.
-	 * @param placements The multi-dimensional array holding the placements that this chunk is composed of.
+	 * @param placements The placements that this chunk is composed of.
 	 */
-	public Chunk(short x, short y, TileType[][] tiles, Placement[][] placements) {
+	public Chunk(short x, short y, TileType[][] tiles, Placements placements) {
 		this.x          = x;
 		this.y          = y;
 		this.tiles      = tiles;
 		this.placements = placements;
 		// Determine whether any placement is a high priority one.
-		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
-			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
-				// Get the placement at the current position.
-				Placement placement = placements[placementX][placementY];
-				// Is this a high priority placement?
-				if (placement != null && placement.getPriority() == Priority.HIGH) {
-					this.hasHighPriorityPlacement = true;
-				}
+		for (Placement placement : placements.getAll()) {
+			// Is this a high priority placement?
+			if (placement.getPriority() == Priority.HIGH) {
+				this.hasHighPriorityPlacement = true;
 			}
 		}
 	}
@@ -91,17 +90,15 @@ public class Chunk implements IChunkDetails {
 	 * Get the tiles array.
 	 * @return The tiles array.
 	 */
-	@Override
 	public TileType[][] getTiles() {
 		return this.tiles;
 	}
 	
 	/**
-	 * Get the placements array.
-	 * @return The placements array.
+	 * Get the placements.
+	 * @return The placements.
 	 */
-	@Override
-	public Placement[][] getPlacements() {
+	public Placements getPlacements() {
 		return this.placements;
 	}
 	
@@ -134,7 +131,7 @@ public class Chunk implements IChunkDetails {
 	 */
 	public boolean isPositionWalkable(int x, int y) {
 		// Get the placement at this position.
-		Placement placement = placements[x][y];
+		Placement placement = placements.get(x, y);
 		// If there is no placement at this position then we can say it is walkable.
 		if (placement == null) {
 			return true;
@@ -156,7 +153,7 @@ public class Chunk implements IChunkDetails {
 		for (short placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
 			for (short placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
 				// Get the placement at the current position.
-				Placement placement = placements[placementX][placementY];
+				Placement placement = placements.get(placementX, placementY);
 				// Do nothing if there is no placement at this position.
 				if (placement == null) {
 					continue;
@@ -204,7 +201,7 @@ public class Chunk implements IChunkDetails {
 		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
 			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
 				// Get the placement at the current position.
-				Placement currentPlacement = placements[placementX][placementY];
+				Placement currentPlacement = placements.get(placementX, placementY);
 				// Only serialise placements that actually exist.
 				if (currentPlacement != null) {
 					placementArray.put(currentPlacement.serialise());
