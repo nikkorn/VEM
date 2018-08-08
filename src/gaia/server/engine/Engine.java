@@ -1,5 +1,6 @@
 package gaia.server.engine;
 
+import gaia.server.ServerConsole;
 import gaia.server.world.World;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.IWorldMessageProcessor;
@@ -97,10 +98,18 @@ public class Engine {
 		}
 		// Grab the world message queue from the world.
 		WorldMessageQueue worldMessageQueue = this.world.getWorldMessageQueue();
+		
+		long time        = System.currentTimeMillis();
+		int messageCount = worldMessageQueue.size();
+				
 		// Process all messages in the queue.
 		while(worldMessageQueue.hasNext()) {
 			// It is the responsibility of the world message processor to handle this message.
 			this.worldMessageProcessor.process(worldMessageQueue.next());
+		}
+		
+		if (messageCount > 0) {
+			ServerConsole.writeDebug("processed " + messageCount + " messages in " + (System.currentTimeMillis() - time) + "ms");
 		}
 	}
 }

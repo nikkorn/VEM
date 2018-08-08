@@ -2,7 +2,6 @@ package gaia.server.world.generation;
 
 import java.util.HashMap;
 import java.util.Random;
-
 import gaia.lotto.Lotto;
 import gaia.server.world.tile.TileType;
 import gaia.world.PlacementType;

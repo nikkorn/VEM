@@ -19,6 +19,14 @@ public class Queue<TItem> {
     public boolean hasNext() {
         return this.items.size() > 0;
     }
+    
+    /**
+     * Get the size of the queue.
+     * @return The size of the queue.
+     */
+    public int size() {
+    	return this.items.size();
+    }
 
     /**
      * Gets the next item from the queue.
