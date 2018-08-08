@@ -204,6 +204,9 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	public JSONObject serialise() {
 		// Create the JSON object that will hold the information about this placement.
 		JSONObject placement = new JSONObject();
+		// Set the position.
+		placement.put("x", this.getX());
+		placement.put("y", this.getY());
 		// Set the type.
 		placement.put("type", this.type.ordinal());
 		// Set the underlay.

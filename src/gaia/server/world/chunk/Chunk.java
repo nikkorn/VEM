@@ -1,6 +1,5 @@
 package gaia.server.world.chunk;
 
-import java.util.Collection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
@@ -10,7 +9,6 @@ import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.server.world.messaging.messages.PlacementOverlayChangedMessage;
 import gaia.server.world.messaging.messages.PlacementUnderlayChangedMessage;
 import gaia.server.world.tile.TileType;
-import gaia.server.world.tile.placement.IPlacementDetails;
 import gaia.server.world.tile.placement.Placement;
 import gaia.server.world.tile.placement.Placements;
 import gaia.server.world.tile.placement.Priority;
@@ -150,34 +148,26 @@ public class Chunk {
 	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldMessageQueue worldMessageQueue) {
 		boolean highPriorityPlacementFound = false;
 		// Execute placement actions for each placement.
-		for (short placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
-			for (short placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
-				// Get the placement at the current position.
-				Placement placement = placements.get(placementX, placementY);
-				// Do nothing if there is no placement at this position.
-				if (placement == null) {
-					continue;
+		for (Placement placement : this.placements.getAll()) {
+			// Does this placement have no action associated with it?
+			if (placement.getAction() == null) {
+				// We cannot execute actions for a placement when there are none!
+			} else if (arePlayersInChunkVicinity) {
+				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
+				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
+					// Execute the placement actions.
+					executePlacementActions(placement, placement.getX(), placement.getY(), time, hasTimeChanged, worldMessageQueue);
 				}
-				// Does this placement have no action associated with it?
-				if (placement.getAction() == null) {
-					// We cannot execute actions for a placement when there are none!
-				} else if (arePlayersInChunkVicinity) {
-					// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
-					if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
-						// Execute the placement actions.
-						executePlacementActions(placement, placementX, placementY, time, hasTimeChanged, worldMessageQueue);
-					}
-				} else {
-					// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
-					if (placement.getPriority() == Priority.HIGH) {
-						// Execute the placement actions.
-						executePlacementActions(placement, placementX, placementY, time, hasTimeChanged, worldMessageQueue);
-					}
-				}
-				// Is this a high priority placement?
+			} else {
+				// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 				if (placement.getPriority() == Priority.HIGH) {
-					highPriorityPlacementFound = true;
+					// Execute the placement actions.
+					executePlacementActions(placement, placement.getX(), placement.getY(), time, hasTimeChanged, worldMessageQueue);
 				}
+			}
+			// Is this a high priority placement?
+			if (placement.getPriority() == Priority.HIGH) {
+				highPriorityPlacementFound = true;
 			}
 		}
 		// Set whether this chunk contains any high priority placements.
@@ -198,15 +188,8 @@ public class Chunk {
 		// Create a JSON array to hold placement state.
 		JSONArray placementArray = new JSONArray();
 		// Add placement state.
-		for (int placementX = 0; placementX < Constants.WORLD_CHUNK_SIZE; placementX++) {
-			for (int placementY = 0; placementY < Constants.WORLD_CHUNK_SIZE; placementY++) {
-				// Get the placement at the current position.
-				Placement currentPlacement = placements.get(placementX, placementY);
-				// Only serialise placements that actually exist.
-				if (currentPlacement != null) {
-					placementArray.put(currentPlacement.serialise());
-				}
-			}
+		for (Placement placement : this.placements.getAll()) {
+			placementArray.put(placement.serialise());
 		}
 		// Return the chunk state.
 		return chunkState;
