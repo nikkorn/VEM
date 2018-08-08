@@ -10,6 +10,18 @@ import gaia.world.PlacementUnderlay;
 public interface IPlacementDetails {
 	
 	/**
+	 * Get the placements x position within its parent chunk.
+	 * @return The placements x position within its parent chunk.
+	 */
+	public short getX();
+
+	/**
+	 * Get the placements y position within its parent chunk.
+	 * @return The placements y position within its parent chunk.
+	 */
+	public short getY();
+	
+	/**
 	 * Get the placement type.
 	 * @return The placement type.
 	 */

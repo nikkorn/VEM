@@ -9,7 +9,7 @@ public class Constants {
 	public static final String VERSION = "0.0.1";
 	
 	/** The size of a chunk (tiles). */
-	public static short WORLD_CHUNK_SIZE = 32;
+	public static short WORLD_CHUNK_SIZE = 16;
 	
 	/** The size of the world (tiles). */
 	public static short WORLD_SIZE = 1024;

@@ -4,10 +4,12 @@ import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
-import gaia.networking.messages.PlacementLoaded;
+import gaia.networking.messages.PackedPlacement;
+import gaia.networking.messages.ChunkLoaded;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.world.Position;
+import gaia.Constants;
 
 /**
  * Processor of messages sent from the server.
@@ -42,13 +44,18 @@ public class ServerMessageProcessor {
 				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
 				break;
 				
-			case MessageIdentifier.PLACEMENT_LOADED:
-				// Create the client-side representation of the placement.
-				Placement placement = Placement.fromPackedInt(((PlacementLoaded)message).getPackedComposition());
-				// Create the position of the placement.
-				Position position = Position.fromPackedInt(((PlacementLoaded)message).getPackedPosition());
-				// Handle the placement load.
-				onPlacementLoad(placement, position);
+			case MessageIdentifier.CHUNK_LOADED:
+				ChunkLoaded chunkLoadedMessage = ((ChunkLoaded)message);
+				// Process this chunk load as individual placement loads.
+				for (PackedPlacement packedPlacement : chunkLoadedMessage.getPackedPlacements()) {
+					// Determine the absolute x/y placement position.
+					short placementX = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
+					short placementY = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
+					// Create the client-side representation of the placement.
+					Placement placement = Placement.fromPackedInt(packedPlacement.getComposition());
+					// Handle the placement load.
+					onPlacementLoad(placement, new Position(placementX, placementY));
+				}
 				break;
 	
 			default:

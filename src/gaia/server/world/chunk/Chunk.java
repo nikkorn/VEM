@@ -72,7 +72,7 @@ public class Chunk {
 	 * Get the x position of the chunk.
 	 * @return The x position of the chunk.
 	 */
-	public int getX() {
+	public short getX() {
 		return x;
 	}
 	
@@ -80,7 +80,7 @@ public class Chunk {
 	 * Get the y position of the chunk.
 	 * @return The y position of the chunk.
 	 */
-	public int getY() {
+	public short getY() {
 		return y;
 	}
 	

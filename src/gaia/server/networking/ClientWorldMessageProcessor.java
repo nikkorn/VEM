@@ -1,12 +1,14 @@
 package gaia.server.networking;
 
-import gaia.networking.messages.PlacementLoaded;
+import java.util.ArrayList;
+import gaia.networking.messages.ChunkLoaded;
+import gaia.networking.messages.PackedPlacement;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
 import gaia.server.world.messaging.IWorldMessageProcessor;
+import gaia.server.world.messaging.messages.ChunkLoadedMessage;
 import gaia.server.world.messaging.messages.IWorldMessage;
-import gaia.server.world.messaging.messages.PlacementLoadedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
@@ -48,17 +50,20 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 				break;
 			case CONTAINER_SLOT_CHANGED:
 				break;
-			case PLACEMENT_LOADED:
-				// A placement was loaded!
-				PlacementLoadedMessage placementLoadedMessage = (PlacementLoadedMessage)message;
+			case CHUNK_LOADED:
+				// A chunk was loaded for a client!
+				ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage)message;
 				// Get the client that instigated the load. This is the only client that will need to know about it.
-				String clientToNotify = placementLoadedMessage.getInstigatingPlayerId();
-				// Get the placement details.
-				IPlacementDetails details = placementLoadedMessage.getPlacementDetails();
-				// Get the placement position as a packed integer.
-				int position = Position.asPackedInt(placementLoadedMessage.getX(), placementLoadedMessage.getY());
-				// Send the placement load details to the client that instigated the load.
-				this.clientProxyManager.sendMessage(clientToNotify, new PlacementLoaded(details.asPackedInt(), position));
+				String clientToNotify = chunkLoadedMessage.getInstigatingPlayerId();
+				// Create a list to hold the packed placements.
+				ArrayList<PackedPlacement> placements = new ArrayList<PackedPlacement>();
+				// Add each placement to the placements list.
+				for (IPlacementDetails placement : chunkLoadedMessage.getPlacements()) {
+					// Add the read placement into the placements list.
+					placements.add(new PackedPlacement(placement.getX(), placement.getY(), placement.asPackedInt()));
+				}
+				// Send the chunk load details to the client that instigated the load.
+				this.clientProxyManager.sendMessage(clientToNotify, new ChunkLoaded(chunkLoadedMessage.getX(), chunkLoadedMessage.getY(), placements));
 				break;
 			case PLACEMENT_ADDED:
 				break;

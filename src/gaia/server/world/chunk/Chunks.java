@@ -5,9 +5,8 @@ import java.util.HashMap;
 import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.messaging.messages.PlacementLoadedMessage;
+import gaia.server.world.messaging.messages.ChunkLoadedMessage;
 import gaia.server.world.players.Player;
-import gaia.server.world.tile.placement.Placement;
 
 /**
  * Represents the collection of chunks that the world is composed of.
@@ -142,17 +141,11 @@ public class Chunks {
 	 * Handle a player moving into a chunk vicinity for the first time.
 	 * @param chunk The chunk.
 	 * @param player The player.
-	 * @param worldMessageQueue The wolrd message queue
+	 * @param worldMessageQueue The world message queue.
 	 */
 	private void onInitialPlayerChunkVisit(Chunk chunk, Player player, WorldMessageQueue worldMessageQueue) {
-		// Queue a world message for each placement loaded.
-		for (Placement placement : chunk.getPlacements().getAll()) {
-			// Get the absolute x/y position of the placement.
-			short placementXPosition = (short) (placement.getX() + (chunk.getX() * Constants.WORLD_CHUNK_SIZE));
-			short placementYPosition = (short) (placement.getY() + (chunk.getY() * Constants.WORLD_CHUNK_SIZE));
-			// Queue the world message.
-			worldMessageQueue.add(new PlacementLoadedMessage(placement, placementXPosition, placementYPosition, player.getPlayerId()));
-		}
+		// Queue a world message for the chunk load.
+		worldMessageQueue.add(new ChunkLoadedMessage(chunk.getPlacements().getAll(), chunk.getX(), chunk.getY() , player.getPlayerId()));
 		// Now we can say that the player has visited the chunk.
 		player.addVisitedChunk(chunk);
 	}
