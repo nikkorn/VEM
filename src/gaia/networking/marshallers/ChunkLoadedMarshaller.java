@@ -16,21 +16,18 @@ public class ChunkLoadedMarshaller implements IMessageMarshaller<ChunkLoaded> {
 
 	@Override
 	public ChunkLoaded read(DataInputStream dataInputStream) throws IOException {
-		
-		System.out.println("READING!");
-		
 		// Read the x/y position of the chunk.
-		short chunkX = (short)dataInputStream.readInt();
-		short chunkY = (short)dataInputStream.readInt();
+		short chunkX = (short)(dataInputStream.readByte() & 0xFF);
+		short chunkY = (short)(dataInputStream.readByte() & 0xFF);
 		// Read the number of packed placements.
-		short placementCount = (short)dataInputStream.readInt();
+		short placementCount = (short)(dataInputStream.readByte() & 0xFF);
 		// Create a list to hold the placements.
 		ArrayList<PackedPlacement> placements = new ArrayList<PackedPlacement>();
 		// Read each placement into the placements list.
-		for (int placementIndex = 0; placementIndex < placementCount; placementIndex++) {
+		for (int placementIndex = 0; placementIndex <= placementCount; placementIndex++) {
 			// Read the x/y position of the placement relative to the chunk position.
-			short placementX = (short)dataInputStream.readInt();
-			short placementY = (short)dataInputStream.readInt();
+			short placementX = (short)(dataInputStream.readByte() & 0xFF);
+			short placementY = (short)(dataInputStream.readByte() & 0xFF);
 			// Read the packed composition of the placement.
 			int composition = dataInputStream.readInt();
 			// Add the read placement into the placements list.
@@ -42,19 +39,16 @@ public class ChunkLoadedMarshaller implements IMessageMarshaller<ChunkLoaded> {
 
 	@Override
 	public void write(ChunkLoaded message, DataOutputStream dataOutputStream) throws IOException {
-		
-		System.out.println("WRITING: x:" + message.getX() + " y:" + message.getY() + " ps:" + message.getPackedPlacements().size());
-		
 		// Write the x/y position of the chunk.
-		dataOutputStream.writeInt(message.getX());
-		dataOutputStream.writeInt(message.getY());
+		dataOutputStream.writeByte((byte) message.getX());
+		dataOutputStream.writeByte((byte) message.getY());
 		// Write the number of packed placements.
-		dataOutputStream.writeInt(message.getPackedPlacements().size());
+		dataOutputStream.writeByte((byte) message.getPackedPlacements().size() - 1);
 		// Write out each packed placement.
 		for (PackedPlacement placement : message.getPackedPlacements()) {
 			// Write the x/y position of the placement relative to the chunk position.
-			dataOutputStream.writeInt(placement.getX());
-			dataOutputStream.writeInt(placement.getY());
+			dataOutputStream.writeByte((byte) placement.getX());
+			dataOutputStream.writeByte((byte) placement.getY());
 			// Write the packed composition of the placement.
 			dataOutputStream.writeInt(placement.getComposition());
 		}
