@@ -22,7 +22,15 @@ public class ServerConsole {
 	 * @param value The value to write to the server console.
 	 */
 	public static void writeInfo(String value) {
-		System.out.println("INFO  : " + value);
+		System.out.println("INFO     : " + value);
+	}
+	
+	/**
+	 * Write the warning to the server console.
+	 * @param value The warning to write to the server console.
+	 */
+	public static void writeWarning(String value) {
+		System.out.println("WARNING  : " + value);
 	}
 	
 	/**
@@ -32,7 +40,7 @@ public class ServerConsole {
 	public static void writeDebug(String value) {
 		// Do nothing if we have specified to not output debug info to the console.
 		if (outputDebugInfo) {
-			System.out.println("DEBUG : " + value);
+			System.out.println("DEBUG    : " + value);
 		}
 	}
 }

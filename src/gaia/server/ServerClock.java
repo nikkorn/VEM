@@ -33,6 +33,12 @@ public class ServerClock {
 			if (currentTimeMillis >= (lastLoopCall + Constants.SERVER_CLOCK_RATE)) {
 				// Call the server loop.
 				server.loop();
+				// Get how long it took to execute our server loop.
+				long loopDuration = System.currentTimeMillis() - currentTimeMillis;
+				// Check whether our server loop took too long to execute. (exceeded the server clock rate)
+				if (loopDuration >= Constants.SERVER_CLOCK_RATE) {
+					ServerConsole.writeWarning("tick exceeded server clock rate and took: " + loopDuration + "ms");				
+				}
 				// Update the last loop call time.
 				lastLoopCall = currentTimeMillis;
 			}
