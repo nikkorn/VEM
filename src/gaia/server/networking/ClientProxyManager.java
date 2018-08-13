@@ -1,6 +1,7 @@
 package gaia.server.networking;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -242,6 +243,9 @@ public class ClientProxyManager {
 			connectionListenerThread.setDaemon(true);
 			// Start listening for client connections.
 			connectionListenerThread.start();
+		} catch (BindException e) {
+			// We failed to bind to the socket!
+			ServerConsole.writeWarning("We failed to bind to the socket. Is a server already running?");
 		} catch (IOException e) {
 			// An IO exception was thrown in creating a new ServerSocket instance.
 			e.printStackTrace();
