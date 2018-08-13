@@ -49,8 +49,8 @@ public class ContainerSlotChangedMessage implements IWorldMessage {
 	}
 
 	/**
-	 * Get the position of the placement.
-	 * @return The position of the placement.
+	 * Get the position of the placements.
+	 * @return The position of the placements.
 	 */
 	public Position getPosition() {
 		return position;

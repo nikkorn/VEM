@@ -1,10 +1,9 @@
-package gaia.server.world.generation;
+package gaia.world.generation;
 
 import java.util.HashMap;
 import java.util.Random;
-
 import gaia.lotto.Lotto;
-import gaia.server.world.tile.TileType;
+import gaia.world.TileType;
 
 /**
  * Represents a map of tile type lottos keyed on tile type.

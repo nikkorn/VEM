@@ -1,7 +1,7 @@
 package gaia.world;
 
 /**
- * Enumeration of placement types.
+ * Enumeration of placements types.
  */
 public enum PlacementType {
 	NONE,

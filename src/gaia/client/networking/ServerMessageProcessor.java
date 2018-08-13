@@ -46,14 +46,14 @@ public class ServerMessageProcessor {
 				
 			case MessageIdentifier.CHUNK_LOADED:
 				ChunkLoaded chunkLoadedMessage = ((ChunkLoaded)message);
-				// Process this chunk load as individual placement loads.
+				// Process this chunk load as individual placements loads.
 				for (PackedPlacement packedPlacement : chunkLoadedMessage.getPackedPlacements()) {
-					// Determine the absolute x/y placement position.
+					// Determine the absolute x/y placements position.
 					short placementX = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
 					short placementY = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
-					// Create the client-side representation of the placement.
+					// Create the client-side representation of the placements.
 					Placement placement = Placement.fromPackedInt(packedPlacement.getComposition());
-					// Handle the placement load.
+					// Handle the placements load.
 					onPlacementLoad(placement, new Position(placementX, placementY));
 				}
 				break;
@@ -84,11 +84,11 @@ public class ServerMessageProcessor {
 	}
 	
 	/**
-	 * Called in response to a placement load.
+	 * Called in response to a placements load.
 	 */
 	private void onPlacementLoad(Placement placement, Position position) {
 		// TODO Handle properly.
-		System.out.println("placement of type '" + placement.getType().toString() + "' loaded (x:" + position.getX() + " y:" + position.getY() + ")");
+		System.out.println("placements of type '" + placement.getType().toString() + "' loaded (x:" + position.getX() + " y:" + position.getY() + ")");
 		
 	}
 }

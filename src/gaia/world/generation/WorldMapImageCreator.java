@@ -1,11 +1,11 @@
-package gaia.server.world.generation;
+package gaia.world.generation;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import gaia.Constants;
-import gaia.server.world.tile.TileType;
+import gaia.world.TileType;
 
 /**
  * Creates world map images to write to disk.
@@ -18,7 +18,7 @@ public class WorldMapImageCreator {
 	 * @param name The map name.
 	 * @param path The path.
 	 */
-	public static void create(WorldGenerator generator, String name, String path) {
+	public static void create(TileGenerator generator, String name, String path) {
 		File outputfile   = new File(path + name + ".png");
 		BufferedImage img = new BufferedImage(Constants.WORLD_SIZE, Constants.WORLD_SIZE, BufferedImage.TYPE_INT_RGB);
 		

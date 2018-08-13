@@ -3,14 +3,15 @@ package gaia.server.world;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
+import gaia.server.ServerConsole;
+import gaia.server.world.generation.WorldGenerator;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.Helpers;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.chunk.Chunks;
-import gaia.server.world.generation.WorldGenerator;
-import gaia.server.world.generation.WorldMapImageCreator;
+import gaia.world.generation.WorldMapImageCreator;
 import gaia.time.Season;
 import gaia.time.Time;
 import gaia.world.Position;
@@ -31,18 +32,18 @@ public class WorldFactory {
 		if (worldSaveDir.exists() && worldSaveDir.isDirectory()) {
 			// Write something sensible to the console.
 			System.out.println("##########################################################");
-			System.out.print("loading existing world '" + name + "' ...");
+			System.out.print("loading existing world '" + name + "' ... ");
 			// A save already exists for this world! Create a world based on the saved state.
 			World world = createExistingWorld(name);
 			// Write something sensible to the console.
-			System.out.println(" done!");
+			System.out.println("done!");
 			System.out.println("##########################################################");
 			// Return the world.
 			return world;
 		} else {
 			// Write something sensible to the console.
 			System.out.println("##########################################################");
-			System.out.print("creating new world '" + name + "' ...");
+			System.out.print("creating new world '" + name + "' ... ");
 			// We are creating a new world save!
 			// Create a brand new world seed.
 			long worldSeed = new Random().nextLong();
@@ -61,7 +62,7 @@ public class WorldFactory {
 			// Create the map overview image file.
 			WorldMapImageCreator.create(worldGenerator, "map", "worlds/" + name + "/");
 			// Write something sensible to the console.
-			System.out.println(" done!");
+			System.out.println("done!");
 			System.out.println("##########################################################");
 			// Return the new world.
 			return world;
@@ -116,6 +117,8 @@ public class WorldFactory {
 		File worldSaveFile = new File("worlds/" + worldName + "/world.json");
 		// Convert the world save file to JSON.
 		JSONObject worldState = Helpers.readJSONObjectFromFile(worldSaveFile);
+		// Verify that the server version used to create the existing world state is compatible with the current version.
+		verifyExistingWorldVersion(worldState.getString("version"), worldName);
 		// Get the world seed.
 		long worldSeed = worldState.getLong("seed");
 		// Get the world time.
@@ -173,5 +176,27 @@ public class WorldFactory {
 		File worldSaveFile = new File("worlds/" + worldName + "/world.json");
 		// Get the world state as JSON (excluding chunk information) and write it to the world save file.
 		Helpers.writeStringToFile(worldSaveFile, world.serialise().toString());
+	}
+
+	/**
+	 * Verify that the server version used to create the existing world state is compatible with the current version.
+	 * @param worldVersion The server version used to create the existing world state.
+	 * @param worldName The world name.
+     */
+	private static void verifyExistingWorldVersion(String worldVersion, String worldName) {
+		// Split the version into major/minor/patch semantic versions.
+		String[] versions = worldVersion.split("\\.");
+		// Check whether the major version number differs. If so then there have
+		// been breaking changes and we cannot load the existing world save state.
+		if (!versions[0].equals(Constants.VERSION.split("\\.")[0])) {
+			System.out.println();
+			ServerConsole.writeError("The world '" + worldName + "' cannot be loaded as it uses outdated world save format '" + worldVersion + "'");
+			System.exit(0);
+		}
+		// Check whether the minor version number differs. If so then the save is still compatible (for now).
+		if (!versions[1].equals(Constants.VERSION.split("\\.")[1])) {
+			System.out.println();
+			ServerConsole.writeWarning("The world '" + worldName + "' save format has a minor version mismatch '" + worldVersion + "'");
+		}
 	}
 }

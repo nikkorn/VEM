@@ -1,11 +1,11 @@
-package gaia.server.world.tile.placement;
+package gaia.server.world.placements;
 
 /**
- * Enumeration of all placement visualisations.
+ * Enumeration of all placements visualisations.
  */
 public enum Visualisation {
 	// ------------------------------------------------------
-	// The default visualisation based on the placement type.
+	// The default visualisation based on the placements type.
 	// ------------------------------------------------------
 	DEFAULT,
 	

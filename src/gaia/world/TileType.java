@@ -1,4 +1,4 @@
-package gaia.server.world.tile;
+package gaia.world;
 
 /**
  * Enumeration of static world tile types.

@@ -1,7 +1,7 @@
 package gaia.world;
 
 /**
- * Enumeration of placement underlays.
+ * Enumeration of placements underlays.
  */
 public enum PlacementUnderlay {
 	NONE,
@@ -10,8 +10,8 @@ public enum PlacementUnderlay {
 	TILLED_EARTH_WET;
 	
 	/**
-	 * Gets whether the placement underlay is walkable.
-	 * @return Whether the placement underlay is walkable.
+	 * Gets whether the placements underlay is walkable.
+	 * @return Whether the placements underlay is walkable.
 	 */
 	public boolean isWalkable() {
 		switch(this) {

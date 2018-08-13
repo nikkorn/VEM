@@ -1,7 +1,7 @@
 package gaia.server.world.messaging.messages;
 
 import java.util.Collection;
-import gaia.server.world.tile.placement.IPlacementDetails;
+import gaia.server.world.placements.IPlacementDetails;
 
 /**
  * A message containing the details of a chunk load.
@@ -22,7 +22,7 @@ public class ChunkLoadedMessage implements IWorldMessage {
 	
 	/**
 	 * Create a new instance of the ChunkLoadedMessage class.
-	 * @param placementDetails The placement details of the loaded chunk.
+	 * @param placementDetails The placements details of the loaded chunk.
 	 * @param x The x position of the chunk.
 	 * @param y The y position of the chunk.
 	 * @param playerId The id of the player that instigated the load.
@@ -35,8 +35,8 @@ public class ChunkLoadedMessage implements IWorldMessage {
 	}
 	
 	/**
-	 * Get the placement details of the loaded chunk.
-	 * @return The placement details of the loaded chunk.
+	 * Get the placements details of the loaded chunk.
+	 * @return The placements details of the loaded chunk.
 	 */
 	public Collection<? extends IPlacementDetails> getPlacements() {
 		return this.placements;

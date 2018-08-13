@@ -1,11 +1,11 @@
-package gaia.server.world.tile.placement;
+package gaia.server.world.placements;
 
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 
 /**
- * Exposes the immutable properties of a placement.
+ * Exposes the immutable properties of a placements.
  */
 public interface IPlacementDetails {
 	
@@ -22,26 +22,26 @@ public interface IPlacementDetails {
 	public short getY();
 	
 	/**
-	 * Get the placement type.
-	 * @return The placement type.
+	 * Get the placements type.
+	 * @return The placements type.
 	 */
 	public PlacementType getType();
 	
 	/**
-	 * Get the placement underlay.
-	 * @return The placement underlay.
+	 * Get the placements underlay.
+	 * @return The placements underlay.
 	 */
 	public PlacementUnderlay getUnderlay();
 	
 	/**
-	 * Get the placement overlay.
-	 * @return The placement overlay.
+	 * Get the placements overlay.
+	 * @return The placements overlay.
 	 */
 	public PlacementOverlay getOverlay();
 	
 	/**
-	 * Get the placement as a packed integer.
-	 * @return The placement as a packed integer.
+	 * Get the placements as a packed integer.
+	 * @return The placements as a packed integer.
 	 */
 	public int asPackedInt();
 }

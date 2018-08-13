@@ -8,10 +8,10 @@ import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.server.world.messaging.messages.PlacementOverlayChangedMessage;
 import gaia.server.world.messaging.messages.PlacementUnderlayChangedMessage;
-import gaia.server.world.tile.TileType;
-import gaia.server.world.tile.placement.Placement;
-import gaia.server.world.tile.placement.Placements;
-import gaia.server.world.tile.placement.Priority;
+import gaia.world.TileType;
+import gaia.server.world.placements.Placement;
+import gaia.server.world.placements.Placements;
+import gaia.server.world.placements.Priority;
 import gaia.time.Time;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
@@ -34,8 +34,8 @@ public class Chunk {
 	 */
 	private short x, y;
 	/**
-	 * Whether this chunk has at least one high priority placement.
-	 * A chunk with a high priority placement will always be active.
+	 * Whether this chunk has at least one high priority placements.
+	 * A chunk with a high priority placements will always be active.
 	 */
 	private boolean hasHighPriorityPlacement = false;
 	
@@ -51,9 +51,9 @@ public class Chunk {
 		this.y          = y;
 		this.tiles      = tiles;
 		this.placements = placements;
-		// Determine whether any placement is a high priority one.
+		// Determine whether any placements is a high priority one.
 		for (Placement placement : placements.getAll()) {
-			// Is this a high priority placement?
+			// Is this a high priority placements?
 			if (placement.getPriority() == Priority.HIGH) {
 				this.hasHighPriorityPlacement = true;
 			}
@@ -101,8 +101,8 @@ public class Chunk {
 	}
 	
 	/**
-	 * Gets whether this chunk has at least one high priority placement.
-	 * @return Whether this chunk has at least one high priority placement.
+	 * Gets whether this chunk has at least one high priority placements.
+	 * @return Whether this chunk has at least one high priority placements.
 	 */
 	public boolean hasHighPriorityPlacement() {
 		return this.hasHighPriorityPlacement;
@@ -122,19 +122,19 @@ public class Chunk {
 	
 	/**
 	 * Get whether the specified position is walkable.
-	 * A position is regarded as walkable if there isn't a blocking placement positioned there.
+	 * A position is regarded as walkable if there isn't a blocking placements positioned there.
 	 * @param x The x position.
 	 * @param y The y position.
 	 * @return Whether the specified position is walkable.
 	 */
 	public boolean isPositionWalkable(int x, int y) {
-		// Get the placement at this position.
+		// Get the placements at this position.
 		Placement placement = placements.get(x, y);
-		// If there is no placement at this position then we can say it is walkable.
+		// If there is no placements at this position then we can say it is walkable.
 		if (placement == null) {
 			return true;
 		}
-		// A position with a placement is walkable if both the placement overlay and underlay are walkable.
+		// A position with a placements is walkable if both the placements overlay and underlay are walkable.
 		return placement.getOverlay().isWalkable() && placement.getUnderlay().isWalkable();
 	}
 	
@@ -147,25 +147,25 @@ public class Chunk {
 	 */
 	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldMessageQueue worldMessageQueue) {
 		boolean highPriorityPlacementFound = false;
-		// Execute placement actions for each placement.
+		// Execute placements actions for each placements.
 		for (Placement placement : this.placements.getAll()) {
-			// Does this placement have no action associated with it?
+			// Does this placements have no action associated with it?
 			if (placement.getAction() == null) {
-				// We cannot execute actions for a placement when there are none!
+				// We cannot execute actions for a placements when there are none!
 			} else if (arePlayersInChunkVicinity) {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
-					// Execute the placement actions.
+					// Execute the placements actions.
 					executePlacementActions(placement, placement.getX(), placement.getY(), time, hasTimeChanged, worldMessageQueue);
 				}
 			} else {
 				// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 				if (placement.getPriority() == Priority.HIGH) {
-					// Execute the placement actions.
+					// Execute the placements actions.
 					executePlacementActions(placement, placement.getX(), placement.getY(), time, hasTimeChanged, worldMessageQueue);
 				}
 			}
-			// Is this a high priority placement?
+			// Is this a high priority placements?
 			if (placement.getPriority() == Priority.HIGH) {
 				highPriorityPlacementFound = true;
 			}
@@ -185,9 +185,9 @@ public class Chunk {
 		// Set the position.
 		chunkState.put("x", this.x);
 		chunkState.put("y", this.y);
-		// Create a JSON array to hold placement state.
+		// Create a JSON array to hold placements state.
 		JSONArray placementArray = new JSONArray();
-		// Add placement state.
+		// Add placements state.
 		for (Placement placement : this.placements.getAll()) {
 			placementArray.put(placement.serialise());
 		}
@@ -206,31 +206,31 @@ public class Chunk {
 	}
 	
 	/**
-	 * Execute relevant actions for the specified placement.
-	 * @param placement The placement.
-	 * @param placementX The placement x position within this chunk.
-	 * @param placementY The placement y position within this chunk.
+	 * Execute relevant actions for the specified placements.
+	 * @param placement The placements.
+	 * @param placementX The placements x position within this chunk.
+	 * @param placementY The placements y position within this chunk.
 	 * @param time the time.
 	 * @param hasTimeChanged Whether the time has changed on this server tick.
 	 * @param worldMessageQueue The world message queue.
 	 */
 	private void executePlacementActions(Placement placement, short placementX, short placementY, Time time, boolean hasTimeChanged, WorldMessageQueue worldMessageQueue) {
-		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
+		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
 		PlacementOverlay preActionOverlay      = placement.getOverlay();
 		ItemType[] preActionContainerItemTypes = null;
-		// The placement may not even have a container.
+		// The placements may not even have a container.
 		if (placement.getContainer() != null) {
 			preActionContainerItemTypes = placement.getContainer().asItemTypeArray();
 		}
-		// Execute the placement action that is called once per server tick.
+		// Execute the placements action that is called once per server tick.
 		placement.getAction().onServerTick(placement);
-		// Execute the placement action that is called for a time change if it has.
+		// Execute the placements action that is called for a time change if it has.
 		if (hasTimeChanged) {
 			placement.getAction().onTimeUpdate(placement, time);
 		}
-		// Get the world position of the placement.
+		// Get the world position of the placements.
 		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placementX);
 		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placementY);
 		Position placementPosition = new Position(placementXPosition, placementYPosition);

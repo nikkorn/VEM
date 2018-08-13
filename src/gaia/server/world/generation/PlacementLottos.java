@@ -3,7 +3,7 @@ package gaia.server.world.generation;
 import java.util.HashMap;
 import java.util.Random;
 import gaia.lotto.Lotto;
-import gaia.server.world.tile.TileType;
+import gaia.world.TileType;
 import gaia.world.PlacementType;
 
 /**
@@ -23,13 +23,13 @@ public class PlacementLottos extends HashMap<TileType, Lotto<PlacementType>> {
 	}
 	
 	/**
-	 * Get a placement for the specified tile type.
-	 * @param type The tile type to get a placement for.
+	 * Get a placements for the specified tile type.
+	 * @param type The tile type to get a placements for.
 	 * @param random The rng to use in picking winners.
-	 * @return The placement for the specified tile type.
+	 * @return The placements for the specified tile type.
 	 */
 	public PlacementType getPlacementForTile(TileType type, Random random) {
-		// If we have no lotto for this type then simply return no placement as we wont be creating one.
+		// If we have no lotto for this type then simply return no placements as we wont be creating one.
 		if (!this.containsKey(type)) {
 			return PlacementType.NONE;
 		}
@@ -37,7 +37,7 @@ public class PlacementLottos extends HashMap<TileType, Lotto<PlacementType>> {
 		Lotto<PlacementType> lotto = this.get(type);
 		// Reset the lotto RNG as we need a consistent result based on the rng.
 		lotto.setRNG(random);
-		// Return the placement.
+		// Return the placements.
 		return lotto.draw();
 	}
 

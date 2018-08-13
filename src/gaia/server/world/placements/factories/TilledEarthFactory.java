@@ -1,21 +1,21 @@
-package gaia.server.world.tile.placement.factories;
+package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.items.ItemType;
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.container.Container;
-import gaia.server.world.tile.placement.IModifiablePlacement;
-import gaia.server.world.tile.placement.IPlacementAction;
-import gaia.server.world.tile.placement.Priority;
-import gaia.server.world.tile.placement.state.IPlacementState;
-import gaia.server.world.tile.placement.state.TilledEarthState;
+import gaia.server.world.placements.IModifiablePlacement;
+import gaia.server.world.placements.IPlacementAction;
+import gaia.server.world.placements.Priority;
+import gaia.server.world.placements.state.IPlacementState;
+import gaia.server.world.placements.state.TilledEarthState;
 import gaia.time.Time;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
 
 /**
- * Factory for creating a tilled earth placement.
+ * Factory for creating a tilled earth placements.
  */
 public class TilledEarthFactory implements IPlacementFactory {
 

@@ -1,10 +1,10 @@
 package gaia.server.world;
 
+import gaia.world.generation.TileGenerator;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
-import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
@@ -33,7 +33,7 @@ public class World {
 	/**
 	 * The world generator.
 	 */
-	private WorldGenerator worldGenerator;
+	private TileGenerator tileGenerator;
 	/**
 	 * The world message queue.
 	 */
@@ -44,13 +44,13 @@ public class World {
 	 * @param chunks The chunks that the world is composed of.
 	 * @param spawn The player spawn.
 	 * @param time The world time.
-	 * @param worldGenerator The world generator.
+	 * @param tileGenerator The world generator.
 	 */
-	public World(Chunks chunks, Position spawn, Time time, WorldGenerator worldGenerator) {
+	public World(Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator) {
 		this.chunks         = chunks;
 		this.playerSpawn    = spawn;
 		this.clock          = new Clock(time);
-		this.worldGenerator = worldGenerator;
+		this.tileGenerator = tileGenerator;
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class World {
 	 * @return the world seed.
 	 */
 	public long getSeed() {
-		return this.worldGenerator.getSeed();
+		return this.tileGenerator.getSeed();
 	}
 	
 	/**
@@ -143,8 +143,10 @@ public class World {
 	public JSONObject serialise() {
 		// Create the JSON object that will represent this world.
 		JSONObject worldState = new JSONObject();
+		// Set the server version.
+		worldState.put("version", Constants.VERSION);
 		// Set the world seed.
-		worldState.put("seed", this.worldGenerator.getSeed());
+		worldState.put("seed", this.tileGenerator.getSeed());
 		// Set the spawn position.
 		worldState.put("spawn", Position.serialise(this.playerSpawn));
 		// Set the world time.

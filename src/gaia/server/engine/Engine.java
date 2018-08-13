@@ -64,7 +64,7 @@ public class Engine {
 			// Are any players within the vicinity of this chunk?
 			boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
 			// We only want to tick chunks that are active. An active chunk either:
-			// - Contains a high priority placement.
+			// - Contains a high priority placements.
 			// - Has any players in the vicinity.
 			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
 				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.world.getWorldMessageQueue());

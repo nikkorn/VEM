@@ -205,7 +205,7 @@ public class ClientProxyManager {
 	public void startListeningForConnections() {
 		try {
 			// Create the ServerSocket instance on which we will accept new connections.
-			ServerSocket serverSocket = new ServerSocket(this.port);
+			final ServerSocket serverSocket = new ServerSocket(this.port);
 			// Create a new thread on which to sit and listen for client connections.
 			Thread connectionListenerThread = new Thread(new Runnable() {
 				@Override
@@ -245,7 +245,7 @@ public class ClientProxyManager {
 			connectionListenerThread.start();
 		} catch (BindException e) {
 			// We failed to bind to the socket!
-			ServerConsole.writeWarning("We failed to bind to the socket. Is a server already running?");
+			ServerConsole.writeError("We failed to bind to the socket. Is a server already running?");
 		} catch (IOException e) {
 			// An IO exception was thrown in creating a new ServerSocket instance.
 			e.printStackTrace();

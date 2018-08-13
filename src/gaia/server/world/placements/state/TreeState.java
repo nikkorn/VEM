@@ -1,4 +1,4 @@
-package gaia.server.world.tile.placement.state;
+package gaia.server.world.placements.state;
 
 import org.json.JSONObject;
 

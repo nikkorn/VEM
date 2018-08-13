@@ -29,16 +29,16 @@ public class ChunkLoaded implements IMessage {
 	}
 	
 	/**
-	 * Get the x position of the placement relative to the parent chunk.
-	 * @return The x position of the placement relative to the parent chunk.
+	 * Get the x position of the placements relative to the parent chunk.
+	 * @return The x position of the placements relative to the parent chunk.
 	 */
 	public short getX() {
 		return this.x;
 	}
 	
 	/**
-	 * Get the y position of the placement relative to the parent chunk.
-	 * @return The y position of the placement relative to the parent chunk.
+	 * Get the y position of the placements relative to the parent chunk.
+	 * @return The y position of the placements relative to the parent chunk.
 	 */
 	public short getY() {
 		return this.y;

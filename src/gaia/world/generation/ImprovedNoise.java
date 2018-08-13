@@ -1,4 +1,4 @@
-package gaia.server.world.generation;
+package gaia.world.generation;
 
 public final class ImprovedNoise {
 	   static public double noise(double x, double y, double z) {

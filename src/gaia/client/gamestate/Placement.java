@@ -6,27 +6,27 @@ import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 
 /**
- * A client-side representation of a tile-positioned world placement.
+ * A client-side representation of a tile-positioned world placements.
  */
 public class Placement {
 	/**
-	 * The placement type.
+	 * The placements type.
 	 */
 	private PlacementType type;
 	/**
-	 * The placement underlay.
+	 * The placements underlay.
 	 */
 	private PlacementUnderlay underlay;
 	/**
-	 * The placement overlay.
+	 * The placements overlay.
 	 */
 	private PlacementOverlay overlay;
 	
 	/**
 	 * Create a new instance of the Placement class.
-	 * @param type The placement type.
-	 * @param underlay The placement underlay.
-	 * @param overlay The placement overlay.
+	 * @param type The placements type.
+	 * @param underlay The placements underlay.
+	 * @param overlay The placements overlay.
 	 */
 	public Placement(PlacementType type, PlacementUnderlay underlay, PlacementOverlay overlay) {
 		this.type     = type;
@@ -35,49 +35,49 @@ public class Placement {
 	}
 	
 	/**
-	 * Get the placement type.
-	 * @return The placement type.
+	 * Get the placements type.
+	 * @return The placements type.
 	 */
 	public PlacementType getType() {
 		return this.type;
 	}
 	
 	/**
-	 * Get the placement underlay.
-	 * @return The placement underlay.
+	 * Get the placements underlay.
+	 * @return The placements underlay.
 	 */
 	public PlacementUnderlay getUnderlay() {
 		return this.underlay;
 	}
 	
 	/**
-	 * Set the placement underlay.
-	 * @param underlay The placement underlay.
+	 * Set the placements underlay.
+	 * @param underlay The placements underlay.
 	 */
 	public void setUnderlay(PlacementUnderlay underlay) {
 		this.underlay = underlay;
 	}
 	
 	/**
-	 * Get the placement overlay.
-	 * @return The placement overlay.
+	 * Get the placements overlay.
+	 * @return The placements overlay.
 	 */
 	public PlacementOverlay getOverlay() {
 		return this.overlay;
 	}
 	
 	/**
-	 * Set the placement overlay.
-	 * @param overlay The placement overlay.
+	 * Set the placements overlay.
+	 * @param overlay The placements overlay.
 	 */
 	public void setOverlay(PlacementOverlay overlay) {
 		this.overlay = overlay;
 	}
 	
 	/**
-	 * Create a placement based on information parsed from a packed integer.
+	 * Create a placements based on information parsed from a packed integer.
 	 * @param packed The packed integer.
-	 * @return The placement.
+	 * @return The placements.
 	 */
 	public static Placement fromPackedInt(int packed) {
 		PlacementUnderlay underlay = PlacementUnderlay.values()[BitPacker.unpack(packed, 0, 10)];
