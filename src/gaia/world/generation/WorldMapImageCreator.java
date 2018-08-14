@@ -139,6 +139,6 @@ public class WorldMapImageCreator {
 		// Create the colour.
 		int colour = (r << 16) | (g << 8) | b;
 		// Set the pixel colour at the x/y position.
-		image.setRGB(x + centreToEdge, z + centreToEdge, colour);
+		image.setRGB(x + centreToEdge, (Constants.WORLD_SIZE - 1) - (z + centreToEdge), colour);
 	}
 }
