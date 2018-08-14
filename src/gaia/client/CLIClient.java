@@ -8,6 +8,7 @@ import gaia.Constants;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
 import gaia.world.Direction;
+import gaia.world.TileType;
 
 /**
  * A command line based client to test server functionality.
@@ -89,6 +90,23 @@ public class CLIClient {
 					}
 				}
 				break;
+			case "tile":
+				// We are expecting a x and z position.
+				if (command.size() != 2) {
+					System.out.println("expected a x and z position.");
+				} else {
+					// Parse the tile position from the command.
+					int x         = Integer.parseInt(command.pop());
+					int z         = Integer.parseInt(command.pop());
+					TileType type = server.getServerState().getTileAt(x, z);
+					// Print the tile type to the console.
+					if (type == null) {
+						System.out.println("not a valid world position");
+					} else {
+						System.out.println("tile type: " + type.toString());
+					}
+				}
+				break;
 			case "refresh":
 				// We are refreshing the server state.
 				server.getServerState().refresh();
@@ -105,6 +123,7 @@ public class CLIClient {
 		System.out.println("##########################################################");
 		System.out.println("commands:");
 		System.out.println("move [up|down|left|right]     Move in a direction");
+		System.out.println("tile [x] [z]                  Get the type of tile at the x/z position");
 		System.out.println("refresh                       Refresh the server state");
 		System.out.println("help                          Print the command list");
 		System.out.println("exit                          Close the client");

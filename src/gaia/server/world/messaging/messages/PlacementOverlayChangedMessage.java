@@ -4,22 +4,22 @@ import gaia.world.PlacementOverlay;
 import gaia.world.Position;
 
 /**
- * A message containing the details of a placements overlay change.
+ * A message containing the details of a placement overlay change.
  */
 public class PlacementOverlayChangedMessage implements IWorldMessage {
 	/**
-	 * The position of the placements.
+	 * The position of the placement.
 	 */
 	private Position position;
 	/**
-	 * The new placements overlay.
+	 * The new placement overlay.
 	 */
 	private PlacementOverlay overlay;
 	
 	/**
 	 * Create a new instance of the PlacementOverlayChangedMessage class.
-	 * @param overlay The new placements overlay.
-	 * @param position The position of the placements.
+	 * @param overlay The new placement overlay.
+	 * @param position The position of the placement.
 	 */
 	public PlacementOverlayChangedMessage(PlacementOverlay overlay, Position position) {
 		this.overlay  = overlay;
@@ -27,16 +27,16 @@ public class PlacementOverlayChangedMessage implements IWorldMessage {
 	}
 	
 	/**
-	 * Get the new placements overlay.
-	 * @return The new placements overlay.
+	 * Get the new placement overlay.
+	 * @return The new placement overlay.
 	 */
 	public PlacementOverlay getOverlay() {
 		return this.overlay;
 	}
 
 	/**
-	 * Get the position of the placements.
-	 * @return The position of the placements.
+	 * Get the position of the placement.
+	 * @return The position of the placement.
 	 */
 	public Position getPosition() {
 		return position;

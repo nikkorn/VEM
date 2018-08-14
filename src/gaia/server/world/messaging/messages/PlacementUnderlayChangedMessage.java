@@ -4,22 +4,22 @@ import gaia.world.PlacementUnderlay;
 import gaia.world.Position;
 
 /**
- * A message containing the details of a placements underlay change.
+ * A message containing the details of a placement underlay change.
  */
 public class PlacementUnderlayChangedMessage implements IWorldMessage {
 	/**
-	 * The position of the placements.
+	 * The position of the placement.
 	 */
 	private Position position;
 	/**
-	 * The new placements underlay.
+	 * The new placement underlay.
 	 */
 	private PlacementUnderlay underlay;
 	
 	/**
 	 * Create a new instance of the PlacementUnderlayChangedMessage class.
-	 * @param underlay The new placements underlay.
-	 * @param position The position of the placements.
+	 * @param underlay The new placement underlay.
+	 * @param position The position of the placement.
 	 */
 	public PlacementUnderlayChangedMessage(PlacementUnderlay underlay, Position position) {
 		this.underlay = underlay;
@@ -27,16 +27,16 @@ public class PlacementUnderlayChangedMessage implements IWorldMessage {
 	}
 	
 	/**
-	 * Get the new placements underlay.
-	 * @return The new placements underlay.
+	 * Get the new placement underlay.
+	 * @return The new placement underlay.
 	 */
 	public PlacementUnderlay getUnderlay() {
 		return this.underlay;
 	}
 
 	/**
-	 * Get the position of the placements.
-	 * @return The position of the placements.
+	 * Get the position of the placement.
+	 * @return The position of the placement.
 	 */
 	public Position getPosition() {
 		return position;

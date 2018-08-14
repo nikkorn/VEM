@@ -3,7 +3,10 @@ package gaia.client.gamestate;
 import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
+import gaia.world.TileType;
+import gaia.world.generation.TileGenerator;
 import java.util.ArrayList;
+import gaia.Constants;
 
 /**
  * Represents a snapshot of the server state.
@@ -21,6 +24,10 @@ public class ServerState {
 	 * The world seed.
 	 */
 	private long worldSeed;
+	/**
+     * The immutable world tiles.
+     */
+    private TileType[][] tiles;
     /**
      * The players.
      */
@@ -35,6 +42,8 @@ public class ServerState {
 		this.queuedMessageReader    = queuedMessageReader;
 		this.serverMessageProcessor = new ServerMessageProcessor(this);
 		this.worldSeed              = worldSeed;
+		// Generate the world tiles based on the world seed.
+		generateWorldTiles(new TileGenerator(worldSeed));
 	}
 	
 	/**
@@ -43,6 +52,24 @@ public class ServerState {
 	 */
 	public ArrayList<Player> getPlayers() {
 		return this.players;
+	}
+	
+	/**
+	 * Get the type of the tile at the x/z position, or null if the position is invalid.
+	 * @param x The x position.
+	 * @param z The z position.
+	 * @return the type of the tile at the x/z position, or null if the position is invalid.
+	 */
+	public TileType getTileAt(int x, int z) {
+		// Calculate the distance between the world centre and the edge.
+		int centreToEdge = Constants.WORLD_SIZE / 2;
+		try {
+			// Return the tile type.
+			return this.tiles[x + centreToEdge][z + centreToEdge];
+		} catch(IndexOutOfBoundsException e) {
+			// There is no tile at this x/z position.
+			return null;
+		}
 	}
 	
 	/**
@@ -77,4 +104,20 @@ public class ServerState {
     		serverMessageProcessor.process(receivedMessages.next());
     	}
     }
+    
+    /**
+     * Populate the world tiles array based on the world seed.
+     * @param tileGenerator The tile generator.
+     */
+    private void generateWorldTiles(TileGenerator tileGenerator) {
+    	tiles = new TileType[Constants.WORLD_SIZE][Constants.WORLD_SIZE];
+    	// Calculate the distance between the world centre and the edge.
+		int centreToEdge = Constants.WORLD_SIZE / 2;
+		// Generate each static tile and add it to our tiles array.
+		for (int x = 0; x < Constants.WORLD_SIZE; x++) {
+			for (int z = 0; z < Constants.WORLD_SIZE; z++) {
+				tiles[x][z] = tileGenerator.getTileAt(x - centreToEdge, z - centreToEdge);
+			}
+		}
+	}
 }

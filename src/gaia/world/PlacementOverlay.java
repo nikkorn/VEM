@@ -1,7 +1,7 @@
 package gaia.world;
 
 /**
- * Enumeration of placements overlays.
+ * Enumeration of placement overlays.
  */
 public enum PlacementOverlay {
 	NONE,
@@ -9,8 +9,8 @@ public enum PlacementOverlay {
 	PLANTED_SEED_SPROUTING;
 	
 	/**
-	 * Gets whether the placements overlay is walkable.
-	 * @return Whether the placements overlay is walkable.
+	 * Gets whether the placement overlay is walkable.
+	 * @return Whether the placement overlay is walkable.
 	 */
 	public boolean isWalkable() {
 		switch(this) {

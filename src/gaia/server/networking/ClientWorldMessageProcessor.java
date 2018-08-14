@@ -57,9 +57,9 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 				String clientToNotify = chunkLoadedMessage.getInstigatingPlayerId();
 				// Create a list to hold the packed placements.
 				ArrayList<PackedPlacement> placements = new ArrayList<PackedPlacement>();
-				// Add each placements to the placements list.
+				// Add each placement to the placement list.
 				for (IPlacementDetails placement : chunkLoadedMessage.getPlacements()) {
-					// Add the read placements into the placements list.
+					// Add the read placement into the placement list.
 					placements.add(new PackedPlacement(placement.getX(), placement.getY(), placement.asPackedInt()));
 				}
 				// Send the chunk load details to the client that instigated the load.
