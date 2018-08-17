@@ -1,6 +1,7 @@
 package gaia.client.networking;
 
 import gaia.client.gamestate.Placement;
+import gaia.client.gamestate.Player;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
@@ -50,7 +51,7 @@ public class ServerMessageProcessor {
 				for (PackedPlacement packedPlacement : chunkLoadedMessage.getPackedPlacements()) {
 					// Determine the absolute x/y placement position.
 					short placementX = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
-					short placementY = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
+					short placementY = (short) ((chunkLoadedMessage.getY() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getY());
 					// Create the client-side representation of the placement.
 					Placement placement = Placement.fromPackedInt(packedPlacement.getComposition());
 					// Handle the placement load.
@@ -69,8 +70,7 @@ public class ServerMessageProcessor {
 	 * @param position The positon of the spawning player.
 	 */
 	private void addPlayer(String playerId, Position position) {
-		// TODO Handle properly.
-		System.out.println("player '" + playerId + "' has spawned at X:" + position.getX() + " Y:" + position.getY());
+		this.serverState.getPlayers().addPlayer(new Player(playerId, position));
 	}
 	
 	/**
@@ -79,16 +79,19 @@ public class ServerMessageProcessor {
 	 * @param position The positon of the player.
 	 */
 	private void updatePlayerPosition(String playerId, Position position) {
-		// TODO Handle properly.
-		System.out.println("player '" + playerId + "' has moved to X:" + position.getX() + " Y:" + position.getY());
+		// Get the position of the player.
+		Position currentPosition = this.serverState.getPlayers().getPlayer(playerId).getPosition();
+		// Update the player position.
+		currentPosition.setX(position.getX());
+		currentPosition.setY(position.getY());
 	}
 	
 	/**
 	 * Called in response to a placement load.
+	 * @param placement The loaded placement.
+	 * @param position The placement position.
 	 */
 	private void onPlacementLoad(Placement placement, Position position) {
-		// TODO Handle properly.
-		System.out.println("placement of type '" + placement.getType().toString() + "' loaded (x:" + position.getX() + " y:" + position.getY() + ")");
-		
+		this.serverState.getPlacements().add(placement, position.getX(), position.getY());
 	}
 }

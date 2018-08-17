@@ -2,7 +2,6 @@ package gaia.client.networking;
 
 import java.io.IOException;
 import java.net.Socket;
-
 import gaia.client.gamestate.ServerState;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
@@ -34,13 +33,14 @@ public class ServerProxy {
 	
 	/**
 	 * Create a new instance of the ServerProxy class.
+	 * @param playerId The player id.
 	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue. 
 	 * @param messageOutputStream The message output stream used to write messages to the server.
 	 * @param worldSeed The world seed.
 	 */
-	private ServerProxy(final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, long worldSeed) {
+	private ServerProxy(String playerId, final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, long worldSeed) {
 		this.queuedMessageReader = queuedMessageReader;
-		this.serverState         = new ServerState(queuedMessageReader, worldSeed);
+		this.serverState         = new ServerState(playerId, queuedMessageReader, worldSeed);
 		this.playerActions       = new PlayerActions(messageOutputStream);
 	}
 
@@ -100,7 +100,7 @@ public class ServerProxy {
 				// Firstly, create the queued message reader that will be used by the server proxy.
 				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
 				// Next, create the server proxy instance.
-				ServerProxy serverProxy = new ServerProxy(queuedMessageReader, messageOutputStream, joinSuccessMessage.getWorldSeed());
+				ServerProxy serverProxy = new ServerProxy(playerId, queuedMessageReader, messageOutputStream, joinSuccessMessage.getWorldSeed());
 				// Lastly, our queued message reader needs to start reading incoming messages.
 				Thread messageReaderThread = new Thread(queuedMessageReader);
 				messageReaderThread.setDaemon(true);

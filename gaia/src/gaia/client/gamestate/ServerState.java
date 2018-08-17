@@ -5,7 +5,6 @@ import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import gaia.world.TileType;
 import gaia.world.generation.TileGenerator;
-import java.util.ArrayList;
 import gaia.Constants;
 
 /**
@@ -29,18 +28,24 @@ public class ServerState {
      */
     private TileType[][] tiles;
     /**
+     * The world placements.
+     */
+    private Placements placements = new Placements();
+    /**
      * The players.
      */
-    private ArrayList<Player> players = new ArrayList<Player>();
+    private Players players;
 	
 	/**
 	 * Create a new instance of the ServerState class.
+	 * @param playerId The client's player id.
 	 * @param queuedMessageReader The reader of messages sent form the server.
 	 * @param worldSeed The world seed.
 	 */
-	public ServerState(QueuedMessageReader queuedMessageReader, long worldSeed) {
+	public ServerState(String playerId, QueuedMessageReader queuedMessageReader, long worldSeed) {
 		this.queuedMessageReader    = queuedMessageReader;
 		this.serverMessageProcessor = new ServerMessageProcessor(this);
+		this.players                = new Players(playerId);
 		this.worldSeed              = worldSeed;
 		// Generate the world tiles based on the world seed.
 		generateWorldTiles(new TileGenerator(worldSeed));
@@ -50,8 +55,16 @@ public class ServerState {
 	 * Get the players.
 	 * @return The players.
 	 */
-	public ArrayList<Player> getPlayers() {
+	public Players getPlayers() {
 		return this.players;
+	}
+	
+	/**
+	 * Get the placements.
+	 * @return The placements.
+	 */
+	public Placements getPlacements() {
+		return this.placements;
 	}
 	
 	/**

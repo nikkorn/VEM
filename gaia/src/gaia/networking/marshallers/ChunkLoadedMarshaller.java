@@ -17,8 +17,8 @@ public class ChunkLoadedMarshaller implements IMessageMarshaller<ChunkLoaded> {
 	@Override
 	public ChunkLoaded read(DataInputStream dataInputStream) throws IOException {
 		// Read the x/y position of the chunk.
-		short chunkX = (short)(dataInputStream.readByte() & 0xFF);
-		short chunkY = (short)(dataInputStream.readByte() & 0xFF);
+		short chunkX = (short)(dataInputStream.readByte());
+		short chunkY = (short)(dataInputStream.readByte());
 		// Read the number of packed placements.
 		short placementCount = (short)dataInputStream.readInt();
 		// Create a list to hold the placements.
