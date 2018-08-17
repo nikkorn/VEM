@@ -98,7 +98,7 @@ public class CLIClient {
 					// Parse the tile position from the command.
 					int x         = Integer.parseInt(command.pop());
 					int z         = Integer.parseInt(command.pop());
-					TileType type = server.getServerState().getTileAt(x, z);
+					TileType type = server.getServerState().getTiles().getTileAt(x, z);
 					// Print the tile type to the console.
 					if (type == null) {
 						System.out.println("not a valid world position");

@@ -82,7 +82,7 @@ public class Gaia extends ApplicationAdapter {
 		for (int x = (playerX - 6); x <= (playerX + 6); x++) {
 			for (int z = (playerZ - 6); z <= (playerZ + 6); z++) {
 				// Get the tile type at this position.
-				TileType tileType = server.getServerState().getTileAt(x, z);
+				TileType tileType = server.getServerState().getTiles().getTileAt(x, z);
 				// Do nothing if this tile is OOB.
 				if (tileType == null) {
 					continue;
@@ -97,6 +97,7 @@ public class Gaia extends ApplicationAdapter {
 					// Draw the placement underlay if there is one!
 					if (placement.getUnderlay() != PlacementUnderlay.NONE) {
 						batch.draw(this.placementResources.getUnderlayTexture(placement.getUnderlay()), (x - playerX + 6) * TILE_LENGTH, (z - playerZ + 6) * TILE_LENGTH);
+						System.out.println("TREE: X:" + x + " Z:" + z);
 					}
 					// Draw the placement overlay if there is one!
 					if (placement.getOverlay() != PlacementOverlay.NONE) {
@@ -105,6 +106,10 @@ public class Gaia extends ApplicationAdapter {
 				}
 			}
 		}
+		// Draw the player!
+		batch.draw(PlayerResources.PLAYER_TEXTURE, 6 * TILE_LENGTH, 6 * TILE_LENGTH);
+		System.out.println("PLAYER: X:" + playerX + " Z:" + playerZ);
+		// Draw the player!
 		batch.end();
 	}
 	
