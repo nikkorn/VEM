@@ -142,6 +142,6 @@ public class Position {
 	 * @return The chunk position.
 	 */
 	private static short convertWorldToChunkPosition(short position) {
-		return (short) ((position / Constants.WORLD_CHUNK_SIZE) - (position < 0 ? 1 : 0));
+		return (short) Math.floor(position / (double) Constants.WORLD_CHUNK_SIZE);
 	}
 }
