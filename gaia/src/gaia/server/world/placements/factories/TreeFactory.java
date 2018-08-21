@@ -2,10 +2,8 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.items.ItemType;
+
 import gaia.server.world.chunk.ChunkFactory;
-import gaia.server.world.container.Container;
-import gaia.server.world.container.NoFreeSlotException;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.IPlacementAction;
 import gaia.server.world.placements.Priority;
@@ -14,6 +12,9 @@ import gaia.server.world.placements.state.TreeState;
 import gaia.time.Time;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
+import gaia.world.items.ItemType;
+import gaia.world.items.container.Container;
+import gaia.world.items.container.NoFreeSlotException;
 
 /**
  * Factory for creating a plain tree placements.

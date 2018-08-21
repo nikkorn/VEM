@@ -3,7 +3,7 @@ package gaia.server.world.placements.state;
 import org.json.JSONObject;
 
 import gaia.lotto.Lotto;
-import gaia.server.items.ItemType;
+import gaia.world.items.ItemType;
 
 /**
  * Represents state of a plain tree.

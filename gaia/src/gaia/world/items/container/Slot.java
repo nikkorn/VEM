@@ -1,6 +1,6 @@
-package gaia.server.world.container;
+package gaia.world.items.container;
 
-import gaia.server.items.ItemType;
+import gaia.world.items.ItemType;
 
 /**
  * Represents a container slot.

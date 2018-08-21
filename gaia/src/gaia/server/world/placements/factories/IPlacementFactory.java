@@ -2,12 +2,13 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.container.Container;
+
 import gaia.server.world.placements.IPlacementAction;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
+import gaia.world.items.container.Container;
 
 /**
  * Represents a placements factory.

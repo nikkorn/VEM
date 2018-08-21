@@ -1,9 +1,8 @@
-package gaia.server.world.container;
+package gaia.world.items.container;
 
 import java.util.ArrayList;
 import org.json.JSONArray;
-
-import gaia.server.items.ItemType;
+import gaia.world.items.ItemType;
 
 /**
  * Represents a container consisting of slots.

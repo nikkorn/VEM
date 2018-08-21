@@ -8,13 +8,25 @@ import gaia.world.Direction;
 import gaia.world.Position;
 
 /**
- * The players within a world.
+ * Represents the collection of all players within a world.
  */
 public class Players {
 	/**
 	 * The list of players.
 	 */
 	private ArrayList<Player> players = new ArrayList<Player>();
+	/**
+	 * The factory used to create Player instances.
+	 */
+	private PlayerFactory playerFactory;
+	
+	/**
+	 * Create a new instance of the Players class.
+	 * @param playerFactory The factory used to create Player instances.
+	 */
+	public Players(PlayerFactory playerFactory) {
+		this.playerFactory = playerFactory;
+	}
 	
 	/**
 	 * Attempt to add a player.
@@ -31,8 +43,8 @@ public class Players {
 		if (this.isPlayerBlacklisted(playerId)) {
 			return PlayerJoinRequestResult.BLACKLISTED;
 		}
-		// Create the new player and place them at the world spawn.
-		Player player = new Player(playerId, world.getPlayerSpawn());
+		// Create the player and place them at the world spawn or last known position.
+		Player player = this.playerFactory.create(playerId, world.getPlayerSpawn());
 		// We can add our player to the list of active players.
 		this.players.add(player);
 		// We were able to add the player.

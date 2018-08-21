@@ -1,4 +1,4 @@
-package gaia.server.items;
+package gaia.world.items;
 
 /**
  * Enumeration of item types.

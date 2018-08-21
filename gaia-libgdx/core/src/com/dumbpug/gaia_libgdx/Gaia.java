@@ -30,7 +30,7 @@ public class Gaia extends ApplicationAdapter {
 		placementResources = new PlacementResources();
 		
 		try {
-			server = ServerProxy.create("localhost", 23445, "nikolas howard");
+			server = ServerProxy.create("localhost", 23445, "niko");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ServerJoinRequestRejectedException e) {

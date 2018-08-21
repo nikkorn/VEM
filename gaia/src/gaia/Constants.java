@@ -8,6 +8,15 @@ public class Constants {
 	/** The application version. */
 	public static final String VERSION = "0.0.1";
 	
+	//------------------------------- SERVER -----------------------------------
+	/** The server clock rate (ms). */
+	public static long SERVER_CLOCK_RATE = 125l;
+	
+	/** The number of server ticks per minute in game. */
+	public static int SERVER_TIME_MINUTE_TICKS = 16;
+	//--------------------------------------------------------------------------
+	
+	//-------------------------------- WORLD ------------------------------------
 	/** The size of a chunk (tiles). */
 	public static short WORLD_CHUNK_SIZE = 16;
 	
@@ -19,10 +28,10 @@ public class Constants {
 	
 	/** The distance (in chunks) from a chunk that is regarded as being in the chunks vicinity. */
 	public static short WORLD_CHUNK_VICINITY_RANGE = 1;
+	//---------------------------------------------------------------------------
 	
-	/** The server clock rate (ms). */
-	public static long SERVER_CLOCK_RATE = 125l;
-	
-	/** The number of server ticks per minute in game. */
-	public static int SERVER_TIME_MINUTE_TICKS = 16;
+	//-------------------------------- PLAYER ------------------------------------
+	/** The size of a player inventory. */
+	public static short PLAYER_INVENTORY_SIZE = 14;
+	//---------------------------------------------------------------------------
 }

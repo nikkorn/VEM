@@ -1,6 +1,7 @@
 package gaia.client.gamestate;
 
 import gaia.world.Position;
+import gaia.world.items.Inventory;
 
 /**
  * Represents a player.
@@ -14,6 +15,10 @@ public class Player {
      * The player position.
      */
     private Position position;
+    /**
+     * The player inventory.
+     */
+    private Inventory inventory = new Inventory();
 
     /**
      * Create an instance of the Player class.
@@ -21,7 +26,7 @@ public class Player {
      * @param position The player position.
      */
     public Player(String id, Position position) {
-        this.id      = id;
+        this.id       = id;
         this.position = position;
     }
 
@@ -39,5 +44,13 @@ public class Player {
      */
     public Position getPosition() {
         return position;
+    }
+    
+    /**
+     * Get the player inventory.
+     * @return The player inventory.
+     */
+    public Inventory getInventory() {
+    	return this.inventory;
     }
 }

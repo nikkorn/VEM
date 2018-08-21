@@ -21,7 +21,7 @@ public class World {
 	/**
 	 * The players within the world.
 	 */
-	private Players players = new Players();
+	private Players players;
 	/**
 	 * The world player spawn position.
 	 */
@@ -41,15 +41,17 @@ public class World {
 	
 	/**
 	 * Creates a new instance of the World class.
+	 * @param players The players.
 	 * @param chunks The chunks that the world is composed of.
 	 * @param spawn The player spawn.
 	 * @param time The world time.
 	 * @param tileGenerator The world generator.
 	 */
-	public World(Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator) {
-		this.chunks         = chunks;
-		this.playerSpawn    = spawn;
-		this.clock          = new Clock(time);
+	public World(Players players, Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator) {
+		this.players       = players; 
+		this.chunks        = chunks;
+		this.playerSpawn   = spawn;
+		this.clock         = new Clock(time);
 		this.tileGenerator = tileGenerator;
 	}
 	

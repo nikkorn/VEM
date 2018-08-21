@@ -53,6 +53,9 @@ public class JoinRequest extends PlayerRequest {
 				world.getWorldMessageQueue().add(new PlayerJoinAcceptedMessage(this.getRequestingPlayerId(), this.clientId, welcomePackage));
 				// Add a world message to notify of the spawning player.
 				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPositon().getX(), player.getPositon().getY())));
+				
+				// TODO Add a world message for each item in the player inventorythat is not NONE.
+				
 				// As the player will be spawning into the world, we regard this as a chunk change.
 				world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
 				break;

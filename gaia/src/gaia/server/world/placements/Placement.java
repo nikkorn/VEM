@@ -1,12 +1,13 @@
 package gaia.server.world.placements;
 
 import org.json.JSONObject;
-import gaia.server.world.container.Container;
+
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.utils.BitPacker;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
+import gaia.world.items.container.Container;
 
 /**
  * Represents a tile-positioned placements.

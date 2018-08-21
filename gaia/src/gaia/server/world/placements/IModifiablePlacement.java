@@ -1,9 +1,9 @@
 package gaia.server.world.placements;
 
-import gaia.server.world.container.Container;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
+import gaia.world.items.container.Container;
 
 /**
  * Represents a placements modifiable in the context of an exectuing placements action.

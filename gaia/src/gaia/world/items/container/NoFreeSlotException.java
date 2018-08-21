@@ -1,6 +1,6 @@
-package gaia.server.world.container;
+package gaia.world.items.container;
 
-import gaia.server.items.ItemType;
+import gaia.world.items.ItemType;
 
 /**
  * The exception thrown when attempting to add an item to a container without a free slot.

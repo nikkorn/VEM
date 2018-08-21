@@ -3,6 +3,7 @@ package gaia.server.world.players;
 import java.util.ArrayList;
 import gaia.server.world.chunk.Chunk;
 import gaia.world.Position;
+import gaia.world.items.Inventory;
 
 /**
  * Represents a player in the world.
@@ -16,6 +17,10 @@ public class Player {
 	 * The player position.
 	 */
 	private Position position;
+	/**
+	 * The player inventory.
+	 */
+	private Inventory inventory = new Inventory();
 	/**
 	 * The list of id's of chunks that this player has visited (been in the vicinity of).
 	 */
@@ -45,6 +50,14 @@ public class Player {
 	 */
 	public Position getPositon() {
 		return position;
+	}
+	
+	/**
+	 * Get the player inventory.
+	 * @return The player inventory.
+	 */
+	public Inventory getInventory() {
+		return this.inventory;
 	}
 	
 	/**

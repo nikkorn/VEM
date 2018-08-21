@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import gaia.server.ServerConsole;
 import gaia.server.world.generation.WorldGenerator;
+import gaia.server.world.players.PlayerFactory;
+import gaia.server.world.players.Players;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.Helpers;
@@ -56,7 +58,7 @@ public class WorldFactory {
 			// Load the chunks that are in the vicinity of the spawn.
 			ArrayList<Chunk> spawnChunks = generateSpawnChunks(spawn, worldGenerator);
 			// Create a new world!
-			World world = new World(new Chunks(worldGenerator, spawnChunks), spawn, initialWorldTime, worldGenerator);
+			World world = new World(new Players(new PlayerFactory()), new Chunks(worldGenerator, spawnChunks), spawn, initialWorldTime, worldGenerator);
 			// Create the world save directory for this new world.
 			createWorldSaveDirectory(worldSaveDir, name, world);
 			// Create the map overview image file.
@@ -129,8 +131,10 @@ public class WorldFactory {
 		Chunks existingChunks = createExistingChunks(worldName, worldGenerator);
 		// Get the player spawn.
 		Position spawn = new Position((short)worldState.getJSONObject("spawn").getInt("x"), (short)worldState.getJSONObject("spawn").getInt("y"));
+		// Create the player factory.
+		PlayerFactory playerFactory = new PlayerFactory("worlds/" + worldName + "/players");
 		// Create the world instance.
-		World world = new World(existingChunks, spawn, worldTime, worldGenerator);
+		World world = new World(new Players(playerFactory), existingChunks, spawn, worldTime, worldGenerator);
 		// Return the world instance.
 		return world;
 	}
