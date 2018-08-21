@@ -116,7 +116,7 @@ public class World {
 		// Get the chunk that this position is within.
 		Chunk target = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Ask the chunk whether the local position is walkable.
-		return target.isPositionWalkable(position.getX() % Constants.WORLD_CHUNK_SIZE, position.getY() % Constants.WORLD_CHUNK_SIZE);
+		return target.isPositionWalkable((position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
 	}
 	
 	/**
