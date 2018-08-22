@@ -4,12 +4,9 @@ import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.Player;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
-import gaia.networking.messages.MessageIdentifier;
-import gaia.networking.messages.PackedPlacement;
-import gaia.networking.messages.ChunkLoaded;
-import gaia.networking.messages.PlayerMoved;
-import gaia.networking.messages.PlayerSpawned;
+import gaia.networking.messages.*;
 import gaia.world.Position;
+import gaia.world.items.ItemType;
 import gaia.Constants;
 
 /**
@@ -37,6 +34,10 @@ public class ServerMessageProcessor {
 		// How we process this message depends on its type.
 		switch (message.getTypeId()) {
 		
+			case MessageIdentifier.INVENTORY_SLOT_CHANGED:
+				setInventorySlot(((InventorySlotSet)message).getItemType(), ((InventorySlotSet)message).getSlotIndex());
+				break;
+			
 			case MessageIdentifier.PLAYER_SPAWNED:
 				addPlayer(((PlayerSpawned)message).getPlayerId(), ((PlayerSpawned)message).getSpawnPosition());
 				break;
@@ -64,6 +65,15 @@ public class ServerMessageProcessor {
 		}
 	}
 	
+	/**
+	 * Set the item type for an inventory slot.
+	 * @param itemType The item type.
+	 * @param slotIndex The inventory slot index.
+	 */
+	private void setInventorySlot(ItemType itemType, int slotIndex) {
+		this.serverState.getPlayers().getClientsPlayer().getInventory().set(itemType, slotIndex);
+	}
+
 	/**
 	 * Add a newly spawned player.
 	 * @param playerId The id of the spawning player.

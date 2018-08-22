@@ -2,6 +2,7 @@ package gaia.server.networking;
 
 import java.util.ArrayList;
 import gaia.networking.messages.ChunkLoaded;
+import gaia.networking.messages.InventorySlotSet;
 import gaia.networking.messages.PackedPlacement;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
@@ -9,6 +10,7 @@ import gaia.server.ServerConsole;
 import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.messages.ChunkLoadedMessage;
 import gaia.server.world.messaging.messages.IWorldMessage;
+import gaia.server.world.messaging.messages.InventorySlotSetMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
@@ -93,14 +95,17 @@ public class ClientWorldMessageProcessor implements IWorldMessageProcessor {
 				break;
 			case PLAYER_DIRECTION_CHANGED:
 				break;
-			case PLAYER_INVENTORY_SLOT_CHANGED:
+			case PLAYER_INVENTORY_SLOT_SET:
+				InventorySlotSetMessage indentorySlotSetMessage = (InventorySlotSetMessage)message;
+				// Let the client know about the update to their inventory.
+				this.clientProxyManager.sendMessage(indentorySlotSetMessage.getPlayerId(), new InventorySlotSet(indentorySlotSetMessage.getItemType(), indentorySlotSetMessage.getSlotIndex()));
 				break;
 			case PLAYER_POSITION_CHANGED:
 				// Get the id of the moving player.
 				String movingPlayerId = ((PlayerPositionChangedMessage)message).getPlayerId();
-				// Get the new positino of the player.
+				// Get the new position of the player.
 				Position newPosition = ((PlayerPositionChangedMessage)message).getNewPosition();
-				// Broadcast the player moved detials.
+				// Broadcast the player moved details.
 				this.clientProxyManager.broadcastMessage(new PlayerMoved(movingPlayerId, newPosition));
 				break;
 			case PLAYER_SPAWN:

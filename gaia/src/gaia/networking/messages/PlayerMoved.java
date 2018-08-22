@@ -4,7 +4,7 @@ import gaia.networking.IMessage;
 import gaia.world.Position;
 
 /**
- * A message sent to a client ot notify of a player that has changed positions.
+ * A message sent to a client to notify of a player that has changed positions.
  */
 public class PlayerMoved implements IMessage {
 	/**

@@ -3,12 +3,14 @@ package gaia.server.world.players.requests;
 import gaia.server.ServerConsole;
 import gaia.server.engine.WelcomePackage;
 import gaia.server.world.World;
+import gaia.server.world.messaging.messages.InventorySlotSetMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
 import gaia.server.world.messaging.messages.PlayerJoinRejectedMessage;
 import gaia.server.world.messaging.messages.PlayerSpawnedMessage;
 import gaia.server.world.players.Player;
 import gaia.server.world.players.PlayerJoinRequestResult;
 import gaia.world.Position;
+import gaia.world.items.ItemType;
 
 /**
  * A request to join a world.
@@ -53,9 +55,15 @@ public class JoinRequest extends PlayerRequest {
 				world.getWorldMessageQueue().add(new PlayerJoinAcceptedMessage(this.getRequestingPlayerId(), this.clientId, welcomePackage));
 				// Add a world message to notify of the spawning player.
 				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPositon().getX(), player.getPositon().getY())));
-				
-				// TODO Add a world message for each item in the player inventorythat is not NONE.
-				
+				// Add a world message for each item in the player inventorythat is not NONE.
+				for (int slotIndex = 0; slotIndex < player.getInventory().size(); slotIndex++) {
+					// Get the item at the current slot index.
+					ItemType item = player.getInventory().get(slotIndex);
+					// We only care about items that are not of the NONE type.
+					if (item != ItemType.NONE) {
+						world.getWorldMessageQueue().add(new InventorySlotSetMessage(this.getRequestingPlayerId(), item, slotIndex));
+					}
+				}
 				// As the player will be spawning into the world, we regard this as a chunk change.
 				world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
 				break;

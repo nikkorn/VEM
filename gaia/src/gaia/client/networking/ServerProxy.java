@@ -41,7 +41,7 @@ public class ServerProxy {
 	private ServerProxy(String playerId, final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, long worldSeed) {
 		this.queuedMessageReader = queuedMessageReader;
 		this.serverState         = new ServerState(playerId, queuedMessageReader, worldSeed);
-		this.playerActions       = new PlayerActions(messageOutputStream);
+		this.playerActions       = new PlayerActions(messageOutputStream, serverState);
 	}
 
 	/**
