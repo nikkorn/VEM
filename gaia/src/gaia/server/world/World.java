@@ -1,6 +1,8 @@
 package gaia.server.world;
 
 import gaia.world.generation.TileGenerator;
+import gaia.world.items.ItemType;
+
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
@@ -101,6 +103,17 @@ public class World {
 	 */
 	public long getSeed() {
 		return this.tileGenerator.getSeed();
+	}
+	
+	/**
+	 * Use an item at the specified position.
+	 * @param item The item to use.
+	 * @param position The position at which to use the item.
+	 * @return Any modification made to the item.
+	 */
+	public ItemType useItem(ItemType item, Position position) {
+		// TODO Use the item! Could be on a tile, placement or even a player that is in the way!
+		return item;
 	}
 	
 	/**

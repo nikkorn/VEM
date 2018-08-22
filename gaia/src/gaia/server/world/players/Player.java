@@ -1,9 +1,12 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
+import gaia.server.ServerConsole;
 import gaia.server.world.chunk.Chunk;
+import gaia.world.Direction;
 import gaia.world.Position;
 import gaia.world.items.Inventory;
+import gaia.world.items.ItemType;
 
 /**
  * Represents a player in the world.
@@ -17,6 +20,10 @@ public class Player {
 	 * The player position.
 	 */
 	private Position position;
+	/**
+	 * The direction that the player is facing.
+	 */
+	private Direction direction;
 	/**
 	 * The player inventory.
 	 */
@@ -53,6 +60,14 @@ public class Player {
 	}
 	
 	/**
+	 * Get the facing firection of the player.
+	 * @return The facing firection of the player.
+	 */
+	public Direction getFacingDirection() {
+		return this.direction;
+	}
+	
+	/**
 	 * Get the player inventory.
 	 * @return The player inventory.
 	 */
@@ -76,5 +91,16 @@ public class Player {
 	 */
 	public boolean hasVisitedChunk(Chunk chunk) {
 		return this.chunksVisited.contains(chunk.getKey());
+	}
+	
+	/**
+	 * Called when an item is used on the player.
+	 * @return The modification made to the item type in its use.
+	 */
+	public ItemType onItemUse(ItemType item) {
+		// TODO Handle this properly.
+		ServerConsole.writeDebug("The item " + item.toString() + " was used on player '" + this.id + "'!");
+		// Return the modified item type.
+		return item;
 	}
 }
