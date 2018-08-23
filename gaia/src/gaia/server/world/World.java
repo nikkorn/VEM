@@ -2,12 +2,12 @@ package gaia.server.world;
 
 import gaia.world.generation.TileGenerator;
 import gaia.world.items.ItemType;
-
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.players.Player;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
 import gaia.world.Position;
@@ -39,7 +39,7 @@ public class World {
 	/**
 	 * The world message queue.
 	 */
-	private WorldMessageQueue worldMessageQueue = new WorldMessageQueue();
+	private WorldMessageQueue worldMessageQueue;
 	
 	/**
 	 * Creates a new instance of the World class.
@@ -48,13 +48,15 @@ public class World {
 	 * @param spawn The player spawn.
 	 * @param time The world time.
 	 * @param tileGenerator The world generator.
+	 * @param worldMessageQueue The world message queue.
 	 */
-	public World(Players players, Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator) {
-		this.players       = players; 
-		this.chunks        = chunks;
-		this.playerSpawn   = spawn;
-		this.clock         = new Clock(time);
-		this.tileGenerator = tileGenerator;
+	public World(Players players, Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator, WorldMessageQueue worldMessageQueue) {
+		this.players           = players; 
+		this.chunks            = chunks;
+		this.playerSpawn       = spawn;
+		this.clock             = new Clock(time);
+		this.tileGenerator     = tileGenerator;
+		this.worldMessageQueue = worldMessageQueue;
 	}
 	
 	/**
@@ -106,14 +108,25 @@ public class World {
 	}
 	
 	/**
-	 * Use an item at the specified position.
+	 * Use an item at the specified position and return the modification made in its use.
+	 * This could be on a tile, placement or even a player that is in the way.
 	 * @param item The item to use.
 	 * @param position The position at which to use the item.
 	 * @return Any modification made to the item.
 	 */
 	public ItemType useItem(ItemType item, Position position) {
-		// TODO Use the item! Could be on a tile, placement or even a player that is in the way!
-		return item;
+		// If a player is at the position then we will use the item on them.
+		Player targetPlayer = this.players.getPlayerAt(position.getX(), position.getY());
+		if (targetPlayer != null) {
+			// We are using the item on a player!
+			return targetPlayer.onItemUse(item);
+		}
+		// We are using the item at a world position, possibly on a placement or tile.
+		// Firstly, get the chunk that the position is in. This could mean that we need
+		// to create a new chunk if the position is within an uncached chunk.
+		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
+		// Use the item at the position in the chunk and return any modification made in its use.
+		return targetChunk.useItem(item, (position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
 	}
 	
 	/**
@@ -129,9 +142,9 @@ public class World {
 			return false;
 		}
 		// Get the chunk that this position is within.
-		Chunk target = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
+		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Ask the chunk whether the local position is walkable.
-		return target.isPositionWalkable((position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
+		return targetChunk.isPositionWalkable((position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
 	}
 	
 	/**

@@ -121,7 +121,7 @@ public class Players {
 		// Has the player has moved into a different chunk?
 		if (oldChunkXPosition != targetPlayer.getPositon().getChunkX() || oldChunkYPosition != targetPlayer.getPositon().getChunkY()) {
 			// The player has moved into a different chunk.
-			world.getChunks().onPlayerChunkChange(targetPlayer, world.getWorldMessageQueue());
+			world.getChunks().onPlayerChunkChange(targetPlayer);
 		}
 	}
 	
@@ -156,6 +156,23 @@ public class Players {
 			}
 		}
 		// No player with the specified id was found.
+		return null;
+	}
+	
+	/**
+	 * Get the player at the specified position, or null if there is no player at the position.
+	 * @param x The x position.
+	 * @param y The y position.
+	 * @return The player at the specified position, or null if there is no player at the position.
+	 */
+	public Player getPlayerAt(int x, int y) {
+		for (Player player : this.players) {
+			if (player.getPositon().getX() == x && player.getPositon().getY() == y) {
+				// There was a player at this position.
+				return player;
+			}
+		}
+		// There was no player at the position.
 		return null;
 	}
 	

@@ -20,22 +20,29 @@ public class Chunks {
 	 * The world generator instance to use in building chunks.
 	 */
 	private WorldGenerator worldGenerator;
+	/**
+	 * The world message queue.
+	 */
+	private WorldMessageQueue worldMessageQueue;
 	
 	/**
 	 * Create a new instance of the Chunks class.
 	 * @param worldGenerator The world generator instance to use in building chunks.
+	 * @param worldMessageQueue The world message queue.
 	 */
-	public Chunks(WorldGenerator worldGenerator) {
-		this.worldGenerator = worldGenerator;
+	public Chunks(WorldGenerator worldGenerator, WorldMessageQueue worldMessageQueue) {
+		this.worldGenerator    = worldGenerator;
+		this.worldMessageQueue = worldMessageQueue;
 	}
 	
 	/**
 	 * Create a new instance of the Chunks class.
 	 * @param worldGenerator The world generator instance to use in building chunks.
+	 * @param worldMessageQueue The world message queue.
 	 * @param existingChunks The existing chunks to be added.
 	 */
-	public Chunks(WorldGenerator worldGenerator, ArrayList<Chunk> existingChunks) {
-		this(worldGenerator);
+	public Chunks(WorldGenerator worldGenerator, WorldMessageQueue worldMessageQueue, ArrayList<Chunk> existingChunks) {
+		this(worldGenerator, worldMessageQueue);
 		for (Chunk chunk : existingChunks) {
 			this.addCachedChunk(chunk);
 		}
@@ -51,6 +58,7 @@ public class Chunks {
 	
 	/**
 	 * Get the cached chunk at the x/y position.
+	 * An error will be thrown if the target chunk has not already been cached.
 	 * @param x The x position of the chunk.
 	 * @param y The y position of the chunk.
 	 * @return The cached chunk.
@@ -69,6 +77,35 @@ public class Chunks {
 		} else {
 			// We have not loaded this chunk yet!
 			throw new RuntimeException("error: chunk at position: x=" + x + " y=" + y + " is not cached");
+		}
+	}
+	
+	/**
+	 * Get the chunk at the x/y position.
+	 * If the chunk has not already been cached then it will be loaded.
+	 * @param x The x position of the chunk.
+	 * @param y The y position of the chunk.
+	 * @return The chunk.
+	 */
+	public Chunk getChunk(int x, int y) {
+		// Check to make sure that we are not trying to get a chunk for an invalid position.
+		if (!isValidChunkPosition(x, y)) {
+			throw new RuntimeException("error: invalid chunk position: x=" + x + " y=" + y);
+		}
+		// Create the key for the chunk we are looking for.
+		String chunkKey = Chunk.getChunkKey(x, y);
+		// Check whether we have already cached the chunk.
+		if (this.cachedChunks.containsKey(chunkKey)) {
+			// We already have this chunk!
+			return this.cachedChunks.get(chunkKey);
+		} else {
+			// This chunk has not been cached yet, so it will need to be loaded.
+			// Create the new chunk using the world generator.
+			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, (short)x, (short)y, worldMessageQueue);
+			// Cache this chunk so that we don't have to keep generating it.
+			this.cachedChunks.put(chunk.getKey(), chunk);
+			// Return our newly created chunk.
+			return chunk;
 		}
 	}
 	
@@ -99,9 +136,8 @@ public class Chunks {
 	 * Called when a player changes chunk positions.
 	 * Any chunks that are in the vicinity of the player will have to be loaded.
 	 * @param player The player that has changed chunk positions.
-	 * @param worldMessageQueue The world message queue.
 	 */
-	public void onPlayerChunkChange(Player player, WorldMessageQueue worldMessageQueue) {
+	public void onPlayerChunkChange(Player player) {
 		// Get the position of the chunk that the player has moved to.
 		short playerChunkX = player.getPositon().getChunkX();
 		short playerChunkY = player.getPositon().getChunkY();
@@ -127,7 +163,7 @@ public class Chunks {
 				} else {
 					// The player has wandered into the vicinity of chunk that has never
 					// been loaded before. Create the new chunk using the world generator
-					Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY);
+					Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY, worldMessageQueue);
 					// Cache this chunk so that we don't have to keep generating it.
 					this.cachedChunks.put(chunk.getKey(), chunk);
 					// Handle a player moving into a chunk vicinity for the first time.

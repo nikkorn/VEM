@@ -65,7 +65,7 @@ public class JoinRequest extends PlayerRequest {
 					}
 				}
 				// As the player will be spawning into the world, we regard this as a chunk change.
-				world.getChunks().onPlayerChunkChange(player, world.getWorldMessageQueue());
+				world.getChunks().onPlayerChunkChange(player);
 				break;
 			default:
 				throw new RuntimeException("Unexpected PlayerJoinRequestResult value: " + result.toString());

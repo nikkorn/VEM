@@ -2,6 +2,7 @@ package gaia.server.world.chunk;
 
 import gaia.server.world.generation.PlacementFactories;
 import gaia.server.world.generation.WorldGenerator;
+import gaia.server.world.messaging.WorldMessageQueue;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
@@ -28,9 +29,10 @@ public class ChunkFactory {
 	 * @param generator The world generator.
 	 * @param x The x position of the chunk.
 	 * @param y The y position of the chunk.
+	 * @param worldMessageQueue The world message queue.
 	 * @return The created chunk.
 	 */
-	public static Chunk createNewChunk(WorldGenerator generator, short x, short y) {
+	public static Chunk createNewChunk(WorldGenerator generator, short x, short y, WorldMessageQueue worldMessageQueue) {
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// This is the first time we are creating this chunk (there is no 
@@ -38,7 +40,7 @@ public class ChunkFactory {
 		// generator to create some nice initial naturally-occurring placements.
 		Placements placements = generator.getChunkPlacements(tiles, x, y);
 		// Create and return the chunk.
-		return new Chunk(x, y, tiles, placements);
+		return new Chunk(x, y, tiles, placements, worldMessageQueue);
 	}
 	
 	/**
@@ -47,9 +49,10 @@ public class ChunkFactory {
 	 * The chunk we create will reflect this saved state state.
 	 * @param chunkJSON The JSON object representing the chunk.
 	 * @param generator The world generator.
+	 * @param worldMessageQueue The world message queue.
 	 * @return The created chunk.
 	 */
-	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator) {
+	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator, WorldMessageQueue worldMessageQueue) {
 		// Get the x/y chunk position.
 		short x = (short)chunkJSON.getInt("x");
 		short y = (short)chunkJSON.getInt("y");
@@ -70,7 +73,7 @@ public class ChunkFactory {
 			placements.add(createPlacement(placementJSON, placementXPosition, placementYPosition));
 		}
 		// Create and return the chunk.
-		return new Chunk(x, y, tiles, placements);
+		return new Chunk(x, y, tiles, placements, worldMessageQueue);
 	}
 	
 	/**
