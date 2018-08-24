@@ -11,6 +11,7 @@ public enum ItemType {
 	GATE,
 	SMALL_WATERING_CAN,
 	SHOVEL,
+	HOE,
 	BACON;
 	
 	/**
@@ -23,6 +24,7 @@ public enum ItemType {
 				return ItemTarget.PLAYER;
 			case SMALL_WATERING_CAN:
 			case SHOVEL:
+			case HOE:
 				return ItemTarget.FACING_TILE;
 			default:
 				return ItemTarget.NONE;
