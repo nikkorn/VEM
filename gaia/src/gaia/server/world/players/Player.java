@@ -23,7 +23,7 @@ public class Player {
 	/**
 	 * The direction that the player is facing.
 	 */
-	private Direction direction;
+	private Direction direction = Direction.DOWN;
 	/**
 	 * The player inventory.
 	 */
@@ -60,13 +60,21 @@ public class Player {
 	}
 	
 	/**
-	 * Get the facing firection of the player.
-	 * @return The facing firection of the player.
+	 * Get the facing direction of the player.
+	 * @return The facing direction of the player.
 	 */
 	public Direction getFacingDirection() {
 		return this.direction;
 	}
 	
+	/**
+	 * Set the facing direction of the player.
+	 * @param direction The facing direction of the player.
+	 */
+	public void setFacingDirection(Direction direction) {
+		this.direction = direction;
+	}
+
 	/**
 	 * Get the player inventory.
 	 * @return The player inventory.

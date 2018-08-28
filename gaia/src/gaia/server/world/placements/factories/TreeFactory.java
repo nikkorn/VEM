@@ -2,7 +2,6 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.IPlacementAction;
@@ -80,7 +79,15 @@ public class TreeFactory implements IPlacementFactory {
 
 			@Override
 			public ItemType onInteraction(IModifiablePlacement placement, ItemType item) {
-				return ItemType.NONE;
+				// TODO Remove this! You cannot chop down a tree with a hoe!
+				if (item == ItemType.HOE) {
+					// Set the underlay of the placement to NONE so that it seems we chopped it down.
+					placement.setUnderlay(PlacementUnderlay.NONE);
+					// Give the player some wood in exchange for their nice hoe.
+					return ItemType.WOOD;
+				}
+				// Using any other item does nothing.
+				return item;
 			}
 		};
 	}

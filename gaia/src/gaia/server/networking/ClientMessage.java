@@ -3,8 +3,10 @@ package gaia.server.networking;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.MovePlayer;
+import gaia.networking.messages.UseInventoryItem;
 import gaia.server.engine.Request;
 import gaia.server.world.players.requests.MoveRequest;
+import gaia.server.world.players.requests.UseItemRequest;
 
 /**
  * Represents a message sent from a client that includes the player id of the client.
@@ -55,6 +57,9 @@ public class ClientMessage {
 
 			case MessageIdentifier.MOVE_PLAYER:
 				return new MoveRequest(message.getPlayerId(), ((MovePlayer)message.getMessage()).getDirection());
+
+			case MessageIdentifier.USE_INVENTORY_ITEM:
+				return new UseItemRequest(message.getPlayerId(), ((UseInventoryItem)message.getMessage()).getSlotIndex(), ((UseInventoryItem)message.getMessage()).getExpectedItemType());
 
 			default:
 				throw new RuntimeException("error: cannot convert client message with id '" + message.getMessage().getTypeId() + "' to engine request.");

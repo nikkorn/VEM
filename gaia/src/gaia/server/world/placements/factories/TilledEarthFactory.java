@@ -2,7 +2,6 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.IPlacementAction;

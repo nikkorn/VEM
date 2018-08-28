@@ -2,7 +2,6 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-
 import gaia.server.world.placements.IPlacementAction;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.state.IPlacementState;
@@ -11,52 +10,52 @@ import gaia.world.PlacementUnderlay;
 import gaia.world.items.container.Container;
 
 /**
- * Represents a placements factory.
+ * Represents a placement factory.
  */
 public interface IPlacementFactory {
 	
 	/**
-	 * Create default state for the placements type.
-	 * @param chunkRng The rng to use in creating a placements for a chunk.
-	 * @return The default placements state.
+	 * Create default state for the placement type.
+	 * @param chunkRng The rng to use in creating a placement for a chunk.
+	 * @return The default placement state.
 	 */
 	IPlacementState createState(Random chunkRng);
 	
 	/**
-	 * Create state for the placements type based on existing save state.
+	 * Create state for the placement type based on existing save state.
 	 * @param stateJSON The existing save state.
-	 * @return The existing placements state.
+	 * @return The existing placement state.
 	 */
 	IPlacementState createState(JSONObject stateJSON);
 	
 	/**
-	 * Get the initial placements priority.
-	 * @return The initial placements priority.
+	 * Get the initial placement priority.
+	 * @return The initial placement priority.
 	 */
 	Priority getInitialPriority();
 	
 	/**
-	 * Get the initial placements underlay.
-	 * @return The initial placements underlay.
+	 * Get the initial placement underlay.
+	 * @return The initial placement underlay.
 	 */
 	PlacementUnderlay getInitialUnderlay();
 	
 	/**
-	 * Get the initial placements overlay.
-	 * @return The initial placements overlay.
+	 * Get the initial placement overlay.
+	 * @return The initial placement overlay.
 	 */
 	PlacementOverlay getInitialOverlay();
 	
 	/**
-	 * Get the placements container.
-	 * @param chunkRng The rng to use in creating a placements for a chunk.
-	 * @return The placements container.
+	 * Get the placement container.
+	 * @param chunkRng The rng to use in creating a placement for a chunk.
+	 * @return The placement container.
 	 */
 	Container getContainer(Random chunkRng);
 	
 	/**
-	 * Create the placements action for this placements.
-	 * @return The placements action.
+	 * Create the placement action for this placement.
+	 * @return The placement action.
 	 */
 	IPlacementAction getAction();
 }

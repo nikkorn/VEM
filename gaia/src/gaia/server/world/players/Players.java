@@ -116,6 +116,8 @@ public class Players {
 		// The player can move to this new position.
 		targetPlayer.getPositon().setX(newPositionX);
 		targetPlayer.getPositon().setY(newPositionY);
+		// Set the direction that the player is facing.
+		targetPlayer.setFacingDirection(direction);
 		// Add a world message to notify of the success.
 		world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(newPositionX, newPositionY)));
 		// Has the player has moved into a different chunk?
