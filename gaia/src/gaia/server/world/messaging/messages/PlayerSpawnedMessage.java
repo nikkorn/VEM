@@ -44,6 +44,6 @@ public class PlayerSpawnedMessage implements IWorldMessage {
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		// TODO Auto-generated method stub
+		handler.onPlayerSpawn(playerId, spawnPosition.getX(), spawnPosition.getY());
 	}
 }

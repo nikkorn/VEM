@@ -32,19 +32,19 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onPlayerJoinSuccess(String playerId, WelcomePackage welcomePackage) {
+	public void onPlayerJoinSuccess(String clientId, String playerId, WelcomePackage welcomePackage) {
 		// Write this out to the console.
-		ServerConsole.writeInfo("Player '" + playerId + "' joined!");
+		ServerConsole.writeInfo("Client '" + clientId + "' has joined as '" + playerId + "'!");
 		// Let the client proxy manager know that the client was successful in their join attempt.
-		this.clientProxyManager.acceptClient(playerId, welcomePackage);
+		this.clientProxyManager.acceptClient(clientId, welcomePackage);
 	}
 
 	@Override
-	public void onPlayerJoinRejected(String playerId, String reason) {
+	public void onPlayerJoinRejected(String clientId, String reason) {
 		// Write this out to the console.
-		ServerConsole.writeInfo("Player '" + playerId + "' failed to join! (" + reason + ")");
+		ServerConsole.writeInfo("Client '" + clientId + "' failed to join! (" + reason + ")");
 		// Let the client proxy manager know that the client failed in their join attempt.
-		this.clientProxyManager.rejectClient(playerId, reason);
+		this.clientProxyManager.rejectClient(clientId, reason);
 	}
 
 	@Override

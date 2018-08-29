@@ -11,17 +11,18 @@ public interface IWorldEventsHandler {
 	
 	/**
 	 * Called when a player successfully joins.
-	 * @param playerId The id of the joining player.
+	 * @param clientId The id of the joining client.
+	 * @param playerId The player id of the joining client.
 	 * @param welcomePackage The welcome package to give to the player.
 	 */
-	void onPlayerJoinSuccess(String playerId, WelcomePackage welcomePackage);
+	void onPlayerJoinSuccess(String clientId, String playerId, WelcomePackage welcomePackage);
 	
 	/**
 	 * Called when a player fails to join.
-	 * @param playerId The id of the player that failed to join.
+	 * @param clientId The id of the client that failed to join.
 	 * @param reason The reason for the failure.
 	 */
-	void onPlayerJoinRejected(String playerId, String reason);
+	void onPlayerJoinRejected(String clientId, String reason);
 	
 	/**
 	 * Called when a player spawns.

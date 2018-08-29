@@ -58,6 +58,6 @@ public class PlayerJoinAcceptedMessage implements IWorldMessage {
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlayerJoinSuccess(playerId, welcomePackage);
+		handler.onPlayerJoinSuccess(clientId, playerId, welcomePackage);
 	}
 }

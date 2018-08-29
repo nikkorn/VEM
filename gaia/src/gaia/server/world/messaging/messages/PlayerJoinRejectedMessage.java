@@ -57,7 +57,7 @@ public class PlayerJoinRejectedMessage implements IWorldMessage {
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlayerJoinRejected(playerId, reason);
+		handler.onPlayerJoinRejected(clientId, reason);
 	}
 }
 
