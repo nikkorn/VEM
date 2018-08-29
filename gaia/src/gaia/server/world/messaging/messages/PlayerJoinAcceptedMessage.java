@@ -1,5 +1,6 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.server.engine.WelcomePackage;
 
 /**
@@ -56,7 +57,7 @@ public class PlayerJoinAcceptedMessage implements IWorldMessage {
 	}
 	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_JOIN_SUCCESS;
+	public void process(IWorldEventsHandler handler) {
+		handler.onPlayerJoinSuccess(playerId, welcomePackage);
 	}
 }

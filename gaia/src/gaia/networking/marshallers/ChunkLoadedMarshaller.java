@@ -23,14 +23,14 @@ public class ChunkLoadedMarshaller implements IMessageMarshaller<ChunkLoaded> {
 		short placementCount = (short)dataInputStream.readInt();
 		// Create a list to hold the placements.
 		ArrayList<PackedPlacement> placements = new ArrayList<PackedPlacement>();
-		// Read each placements into the placements list.
+		// Read each placement into the placement list.
 		for (int placementIndex = 0; placementIndex < placementCount; placementIndex++) {
-			// Read the x/y position of the placements relative to the chunk position.
+			// Read the x/y position of the placement relative to the chunk position.
 			short placementX = (short)(dataInputStream.readByte() & 0xFF);
 			short placementY = (short)(dataInputStream.readByte() & 0xFF);
-			// Read the packed composition of the placements.
+			// Read the packed composition of the placement.
 			int composition = dataInputStream.readInt();
-			// Add the read placements into the placements list.
+			// Add the read placement into the placement list.
 			placements.add(new PackedPlacement(placementX, placementY, composition));
 		}
 		// Return the constructed message.
@@ -44,12 +44,12 @@ public class ChunkLoadedMarshaller implements IMessageMarshaller<ChunkLoaded> {
 		dataOutputStream.writeByte((byte) message.getY());
 		// Write the number of packed placements.
 		dataOutputStream.writeInt(message.getPackedPlacements().size());
-		// Write out each packed placements.
+		// Write out each packed placement.
 		for (PackedPlacement placement : message.getPackedPlacements()) {
-			// Write the x/y position of the placements relative to the chunk position.
+			// Write the x/y position of the placement relative to the chunk position.
 			dataOutputStream.writeByte((byte) placement.getX());
 			dataOutputStream.writeByte((byte) placement.getY());
-			// Write the packed composition of the placements.
+			// Write the packed composition of the placement.
 			dataOutputStream.writeInt(placement.getComposition());
 		}
 	}

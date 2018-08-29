@@ -1,9 +1,7 @@
 package gaia.server.engine;
 
-import gaia.server.ServerConsole;
 import gaia.server.world.World;
 import gaia.server.world.chunk.Chunk;
-import gaia.server.world.messaging.IWorldMessageProcessor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.time.Time;
 
@@ -18,7 +16,7 @@ public class Engine {
 	/**
 	 * The world message processor.
 	 */
-	private IWorldMessageProcessor worldMessageProcessor;
+	private IWorldEventsHandler worldEventsHandler;
 	/**
 	 * The request queue holding requests to be processed sequentially.
 	 */
@@ -41,11 +39,11 @@ public class Engine {
 	}
 	
 	/**
-	 * Set the world message processor.
-	 * @param worldMessageProcessor The world message processor.
+	 * Set the world events handler.
+	 * @param worldEventsHandler The world events handler.
 	 */
-	public void setWorldMessageProcessor(IWorldMessageProcessor worldMessageProcessor) {
-		this.worldMessageProcessor = worldMessageProcessor;
+	public void setWorldEventsHandler(IWorldEventsHandler worldEventsHandler) {
+		this.worldEventsHandler = worldEventsHandler;
 	}
 	
 	/**
@@ -89,27 +87,19 @@ public class Engine {
 	
 	/**
 	 * Process the world messages in the world message queue.
-	 * World messages in the queue will only be processed if a world message processor has been set.
+	 * World messages in the queue will only be processed if a world event handler has been set.
 	 */
 	private void processWorldMessages() {
 		// We cannot do anything if a world message processor has not been set.
-		if (this.worldMessageProcessor == null) {
+		if (this.worldEventsHandler == null) {
 			return;
 		}
 		// Grab the world message queue from the world.
 		WorldMessageQueue worldMessageQueue = this.world.getWorldMessageQueue();
-		
-		long time        = System.currentTimeMillis();
-		int messageCount = worldMessageQueue.size();
-				
 		// Process all messages in the queue.
 		while(worldMessageQueue.hasNext()) {
-			// It is the responsibility of the world message processor to handle this message.
-			this.worldMessageProcessor.process(worldMessageQueue.next());
-		}
-		
-		if (messageCount > 0) {
-			ServerConsole.writeDebug("processed " + messageCount + " messages in " + (System.currentTimeMillis() - time) + "ms");
+			// Process the next world message, potentially invoking any relevant world event handlers.
+			worldMessageQueue.next().process(this.worldEventsHandler);
 		}
 	}
 }

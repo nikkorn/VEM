@@ -3,10 +3,10 @@ package gaia.server;
 import gaia.Constants;
 import gaia.server.engine.Engine;
 import gaia.server.engine.Request;
-import gaia.server.networking.ClientWorldMessageProcessor;
 import gaia.server.networking.ClientMessage;
 import gaia.server.networking.ClientMessageQueue;
 import gaia.server.networking.ClientProxyManager;
+import gaia.server.networking.ClientWorldEventsHandler;
 import gaia.server.world.World;
 import gaia.server.world.WorldFactory;
 import gaia.server.world.players.requests.JoinRequest;
@@ -49,8 +49,8 @@ public class Server {
 		this.engine = new Engine(world);
 		// Create the client proxy manager, passing the port for client connections.
 		this.clientProxyManager = new ClientProxyManager(this.configuration.getPort());
-		// In order to be able to process messages output by the engine we need to specify a world message processor.
-		this.engine.setWorldMessageProcessor(new ClientWorldMessageProcessor(this.clientProxyManager));
+		// In order to be able to handle events output by the engine we need to specify a world events handler.
+		this.engine.setWorldEventsHandler(new ClientWorldEventsHandler(this.clientProxyManager));
 		// Now that everything is set up we should start listening for client connection requests.
 		this.clientProxyManager.startListeningForConnections();
 	}

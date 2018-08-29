@@ -1,5 +1,6 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.world.items.ItemType;
 
 /**
@@ -54,9 +55,9 @@ public class InventorySlotSetMessage implements IWorldMessage {
 	public int getSlotIndex() {
 		return this.slotIndex;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_INVENTORY_SLOT_SET;
+	public void process(IWorldEventsHandler handler) {
+		handler.onPlayerInventoryChange(playerId, itemType, slotIndex);
 	}
 }
