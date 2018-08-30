@@ -80,6 +80,6 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	@Override
 	public void onPlacementChange(int x, int y, IPlacementDetails placement) {
 		// Broadcast the placement change details.
-		this.clientProxyManager.broadcastMessage(new PlacementUpdated(new Position((short)x, (short)y), 12345));
+		this.clientProxyManager.broadcastMessage(new PlacementUpdated(new Position((short)x, (short)y), placement.asPackedInt()));
 	}
 }
