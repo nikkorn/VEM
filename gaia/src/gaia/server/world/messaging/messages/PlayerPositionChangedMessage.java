@@ -1,5 +1,6 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.world.Position;
 
 /**
@@ -40,10 +41,10 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	public Position getNewPosition() {
 		return newPosition;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_POSITION_CHANGED;
+	public void process(IWorldEventsHandler handler) {
+		handler.onPlayerPositionChange(playerId, newPosition.getX(), newPosition.getY());
 	}
 }
 

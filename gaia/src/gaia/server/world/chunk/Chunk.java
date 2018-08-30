@@ -5,8 +5,7 @@ import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
-import gaia.server.world.messaging.messages.PlacementOverlayChangedMessage;
-import gaia.server.world.messaging.messages.PlacementUnderlayChangedMessage;
+import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
 import gaia.server.world.placements.Placement;
@@ -258,15 +257,10 @@ public class Chunk {
 		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX());
 		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
 		Position placementPosition = new Position(placementXPosition, placementYPosition);
-		// Has the underlay changed?
-		if (placement.getUnderlay() != preActionUnderlay) {
-			// Add a message to the world message queue to notify of the change.
-			worldMessageQueue.add(new PlacementUnderlayChangedMessage(placement.getUnderlay(), placementPosition));
-		}
-		// Has the overlay changed?
-		if (placement.getOverlay() != preActionOverlay) {
-			// Add a message to the world message queue to notify of the change.
-			worldMessageQueue.add(new PlacementOverlayChangedMessage(placement.getOverlay(), placementPosition));
+		// Has the underlay or overlay changed?
+		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
+			// Add a message to the world message queue to notify of the placement change.
+			worldMessageQueue.add(new PlacementChangedMessage(placement, placementPosition));
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
@@ -301,15 +295,10 @@ public class Chunk {
 		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX());
 		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
 		Position placementPosition = new Position(placementXPosition, placementYPosition);
-		// Has the underlay changed?
-		if (placement.getUnderlay() != preActionUnderlay) {
-			// Add a message to the world message queue to notify of the change.
-			worldMessageQueue.add(new PlacementUnderlayChangedMessage(placement.getUnderlay(), placementPosition));
-		}
-		// Has the overlay changed?
-		if (placement.getOverlay() != preActionOverlay) {
-			// Add a message to the world message queue to notify of the change.
-			worldMessageQueue.add(new PlacementOverlayChangedMessage(placement.getOverlay(), placementPosition));
+		// Has the underlay or overlay changed?
+		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
+			// Add a message to the world message queue to notify of the placement change.
+			worldMessageQueue.add(new PlacementChangedMessage(placement, placementPosition));
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {

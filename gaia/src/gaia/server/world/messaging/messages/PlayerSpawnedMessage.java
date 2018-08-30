@@ -1,5 +1,6 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.world.Position;
 
 /**
@@ -40,9 +41,9 @@ public class PlayerSpawnedMessage implements IWorldMessage {
 	public Position getSpawnPosition() {
 		return spawnPosition;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_SPAWN;
+	public void process(IWorldEventsHandler handler) {
+		handler.onPlayerSpawn(playerId, spawnPosition.getX(), spawnPosition.getY());
 	}
 }

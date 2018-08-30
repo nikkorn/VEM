@@ -34,6 +34,15 @@ public class ServerMessageProcessor {
 		// How we process this message depends on its type.
 		switch (message.getTypeId()) {
 		
+			case MessageIdentifier.PLACEMENT_UPDATED:
+				// Get the updated version of the placement.
+				Placement updated = Placement.fromPackedInt(((PlacementUpdated)message).getComposition());
+				// Get the position of the placement.
+				Position position = ((PlacementUpdated)message).getPosition();
+				// Handle the placement update.
+				onPlacementUpdate(updated, position);
+				break;
+			
 			case MessageIdentifier.INVENTORY_SLOT_CHANGED:
 				setInventorySlot(((InventorySlotSet)message).getItemType(), ((InventorySlotSet)message).getSlotIndex());
 				break;
@@ -103,5 +112,22 @@ public class ServerMessageProcessor {
 	 */
 	private void onPlacementLoad(Placement placement, Position position) {
 		this.serverState.getPlacements().add(placement, position.getX(), position.getY());
+	}
+	
+	/**
+	 * Called in response to a placement update.
+	 * @param placement The updated placement.
+	 * @param position The placement position.
+	 */
+	private void onPlacementUpdate(Placement updated, Position position) {
+		// Get the exisitng placement at tthe specified position.
+		Placement target = this.serverState.getPlacements().getPlacementAt(position.getX(), position.getY());
+		// If the placement does not exist or the types do not match then do nothing.
+		if (target == null || target.getType() != updated.getType()) {
+			return;
+		}
+		// Update the state of the target placement.
+		target.setUnderlay(updated.getUnderlay());
+		target.setOverlay(updated.getOverlay());
 	}
 }

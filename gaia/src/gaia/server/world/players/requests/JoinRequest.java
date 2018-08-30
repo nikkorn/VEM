@@ -33,7 +33,7 @@ public class JoinRequest extends PlayerRequest {
 
 	@Override
 	public void satisfy(World world) {
-		ServerConsole.writeInfo("Player '" + this.getRequestingPlayerId() + "' is attempting to join...");
+		ServerConsole.writeInfo("Client '" + clientId + "' is attempting to join...");
 		// Attempt to add the player to the world.
 		PlayerJoinRequestResult result = world.getPlayers().addPlayer(this.getRequestingPlayerId(), world);
 		// Handle the result of attempting to join.

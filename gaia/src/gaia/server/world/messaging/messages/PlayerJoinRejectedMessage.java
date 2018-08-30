@@ -1,5 +1,7 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
+
 /**
  * A message containing the detials of a failed join attempt.
  */
@@ -54,8 +56,8 @@ public class PlayerJoinRejectedMessage implements IWorldMessage {
 	}
 	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_JOIN_REJECTED;
+	public void process(IWorldEventsHandler handler) {
+		handler.onPlayerJoinRejected(clientId, reason);
 	}
 }
 

@@ -1,5 +1,6 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
 
@@ -55,9 +56,9 @@ public class ContainerSlotChangedMessage implements IWorldMessage {
 	public Position getPosition() {
 		return position;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.CONTAINER_SLOT_CHANGED;
+	public void process(IWorldEventsHandler handler) {
+		// TODO Auto-generated method stub
 	}
 }

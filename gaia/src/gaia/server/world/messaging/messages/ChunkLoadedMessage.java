@@ -1,6 +1,9 @@
 package gaia.server.world.messaging.messages;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
+import gaia.server.engine.IWorldEventsHandler;
 import gaia.server.world.placements.IPlacementDetails;
 
 /**
@@ -65,9 +68,15 @@ public class ChunkLoadedMessage implements IWorldMessage {
 	public String getInstigatingPlayerId() {
 		return this.playerId;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.CHUNK_LOADED;
+	public void process(IWorldEventsHandler handler) {
+		// Create a list to hold the placement details.
+		ArrayList<IPlacementDetails> placements = new ArrayList<IPlacementDetails>();
+		// Add each placement to the placement details list.
+		for (IPlacementDetails placement : getPlacements()) {
+			placements.add(placement);
+		}
+		handler.onChunkLoad(x, y, placements, playerId);
 	}
 }

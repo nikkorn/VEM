@@ -1,5 +1,7 @@
 package gaia.server.world.messaging.messages;
 
+import gaia.server.engine.IWorldEventsHandler;
+
 /**
  * A message containing the details of a player despawn.
  */
@@ -24,9 +26,9 @@ public class PlayerDespawnedMessage implements IWorldMessage {
 	public String getPlayerId() {
 		return playerId;
 	}
-
+	
 	@Override
-	public WorldMessageType getMessageType() {
-		return WorldMessageType.PLAYER_DESPAWN;
+	public void process(IWorldEventsHandler handler) {
+		// TODO Auto-generated method stub
 	}
 }
