@@ -1,8 +1,6 @@
 package gaia.server.world.players;
 
-import java.util.ArrayList;
 import gaia.server.ServerConsole;
-import gaia.server.world.chunk.Chunk;
 import gaia.world.Direction;
 import gaia.world.Position;
 import gaia.world.items.Inventory;
@@ -29,9 +27,9 @@ public class Player {
 	 */
 	private Inventory inventory = new Inventory();
 	/**
-	 * The list of id's of chunks that this player has visited (been in the vicinity of).
+	 * The player's familiarity with the world.
 	 */
-	private ArrayList<String> chunksVisited = new ArrayList<String>();
+	private PlayerWorldFamiliarity worldFamiliarity = new PlayerWorldFamiliarity();
 
 	/**
 	 * Create an instance of the Player class.
@@ -55,7 +53,7 @@ public class Player {
 	 * Get the player position.
 	 * @return The player position.
 	 */
-	public Position getPositon() {
+	public Position getPosition() {
 		return position;
 	}
 	
@@ -84,21 +82,11 @@ public class Player {
 	}
 	
 	/**
-	 * Add a chunk that the player has visited.
-	 * Keeping track of chunk visitors helps us determine who has been here.
-	 * @param chunk The visited chunk.
+	 * Get the player's familiarity with the world.
+	 * @return The player's familiarity with the world.
 	 */
-	public void addVisitedChunk(Chunk chunk) {
-		this.chunksVisited.add(chunk.getKey());
-	}
-	
-	/**
-	 * Get whether this player has visited the specified chunk before.
-	 * @param chunk The chunk.
-	 * @return Whether this player has visited the specified chunk before.
-	 */
-	public boolean hasVisitedChunk(Chunk chunk) {
-		return this.chunksVisited.contains(chunk.getKey());
+	public PlayerWorldFamiliarity getWorldFamiliarity() {
+		return this.worldFamiliarity;
 	}
 	
 	/**

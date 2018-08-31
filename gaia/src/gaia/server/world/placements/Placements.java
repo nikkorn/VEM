@@ -63,7 +63,7 @@ public class Placements {
 	 * @param y The placements y position.
 	 * @return The key.
 	 */
-	private static String getPlacementKey(int x, int y) {
+	public static String getPlacementKey(int x, int y) {
 		return x + "-" + y;
 	}
 }

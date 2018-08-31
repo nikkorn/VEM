@@ -5,8 +5,6 @@ import java.util.HashMap;
 import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.messaging.messages.ChunkLoadedMessage;
-import gaia.server.world.players.Player;
 
 /**
  * Represents the collection of chunks that the world is composed of.
@@ -133,57 +131,29 @@ public class Chunks {
 	}
 	
 	/**
-	 * Called when a player changes chunk positions.
-	 * Any chunks that are in the vicinity of the player will have to be loaded.
-	 * @param player The player that has changed chunk positions.
+	 * Called when a player visits a chunk.
+	 * Any un-cached chunks that are in the vicinity of the visited chunk will have to be loaded.
+	 * @param visitedChunkX The x position of the visited chunk.
+	 * @param visitedChunkY The y position of the visited chunk.
 	 */
-	public void onPlayerChunkChange(Player player) {
-		// Get the position of the chunk that the player has moved to.
-		short playerChunkX = player.getPositon().getChunkX();
-		short playerChunkY = player.getPositon().getChunkY();
+	public void onPlayerChunkVisit(short visitedChunkX, short visitedChunkY) {
 		// Get the chunk range that we regard as being the 'vicinity' of another chunk.
 		short range = Constants.WORLD_CHUNK_VICINITY_RANGE;
 		// Check every chunk position in the vicinity of the player.
-		for (short chunkX = (short)(playerChunkX - range); chunkX <= (playerChunkX + range); chunkX++) {
-			for (short chunkY = (short)(playerChunkY - range); chunkY <= (playerChunkY + range); chunkY++) {
+		for (short chunkX = (short)(visitedChunkX - range); chunkX <= (visitedChunkX + range); chunkX++) {
+			for (short chunkY = (short)(visitedChunkY - range); chunkY <= (visitedChunkY + range); chunkY++) {
 				// Check to make sure that we are looking at a valid chunk position as we could be at the world edge.
-				if (!isValidChunkPosition(chunkX, chunkY)) {
+				// Also, if this chunk has already been loaded then there is nothing left to do.
+				if (!isValidChunkPosition(chunkX, chunkY) || this.isChunkCached(chunkX, chunkY)) {
 					continue;
 				}
-				// Has this chunk already been cached?
-				if (this.isChunkCached(chunkX, chunkY)) {
-					// Get the cached chunk.
-					Chunk chunk = this.getCachedChunk(chunkX, chunkY);
-					// Has the player previously been in the vicinity of the current chunk?
-					// If not then we will need to notify the player of the chunk details.
-					if (!player.hasVisitedChunk(chunk)) {
-						// Handle a player moving into a chunk vicinity for the first time.
-						this.onInitialPlayerChunkVisit(chunk, player, worldMessageQueue);
-					}
-				} else {
-					// The player has wandered into the vicinity of chunk that has never
-					// been loaded before. Create the new chunk using the world generator
-					Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY, worldMessageQueue);
-					// Cache this chunk so that we don't have to keep generating it.
-					this.cachedChunks.put(chunk.getKey(), chunk);
-					// Handle a player moving into a chunk vicinity for the first time.
-					this.onInitialPlayerChunkVisit(chunk, player, worldMessageQueue);
-				}
+				// The player has wandered into the vicinity of chunk that has never
+				// been loaded before. Create the new chunk using the world generator
+				Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY, worldMessageQueue);
+				// Cache this chunk so that we don't have to keep generating it.
+				this.cachedChunks.put(chunk.getKey(), chunk);
 			}
 		}
-	}
-	
-	/**
-	 * Handle a player moving into a chunk vicinity for the first time.
-	 * @param chunk The chunk.
-	 * @param player The player.
-	 * @param worldMessageQueue The world message queue.
-	 */
-	private void onInitialPlayerChunkVisit(Chunk chunk, Player player, WorldMessageQueue worldMessageQueue) {
-		// Queue a world message for the chunk load.
-		worldMessageQueue.add(new ChunkLoadedMessage(chunk.getPlacements().getAll(), chunk.getX(), chunk.getY() , player.getPlayerId()));
-		// Now we can say that the player has visited the chunk.
-		player.addVisitedChunk(chunk);
 	}
 	
 	/**

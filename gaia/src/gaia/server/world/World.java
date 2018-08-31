@@ -148,6 +148,31 @@ public class World {
 	}
 	
 	/**
+	 * Called when the position of a player changes.
+	 * @param player The player that has changed positions.
+	 */
+	public void onPlayerMove(Player player, boolean hasChangedChunks) {
+		// The player may have moved into a different chunk. If this has happened then
+		// we may might need to load some chunks that have not already been cached.
+		if (hasChangedChunks) {
+			this.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
+		}
+		// TODO Get the direction that the player has moved in.
+		// TODO For each position in the row of tiles that we have moved towards at the edge of the player view distance:
+		//    - Check whether the position differs from what the player thinks is there.
+	}
+	
+	/**
+	 * Called when a player spawns at a position.
+	 * @param player The player that has spawned.
+	 */
+	public void onPlayerSpawn(Player player) {
+		// The player has spawned into a chunk. We may might need to load some chunks that have not already been cached.
+		this.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
+		// TODO For every position in the view distance of the player we will have to sent placement updates.
+	}
+	
+	/**
 	 * Checks whether any connected players are within the vicinity of the specified chunk.
 	 * @param chunk The chunk.
 	 * @return Whether any connected players are within the vicinity of the specified chunk.

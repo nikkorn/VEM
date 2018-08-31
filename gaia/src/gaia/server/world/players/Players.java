@@ -82,8 +82,8 @@ public class Players {
 		// Get the target player.
 		Player targetPlayer = this.getPlayer(playerId);
 		// Find the position the player is trying to move to based on their current position.
-		short newPositionX = targetPlayer.getPositon().getX();
-		short newPositionY = targetPlayer.getPositon().getY();
+		short newPositionX = targetPlayer.getPosition().getX();
+		short newPositionY = targetPlayer.getPosition().getY();
 		switch(direction) {
 			case DOWN:
 				newPositionY-=1;
@@ -111,20 +111,20 @@ public class Players {
 			}
 		}
 		// Get the x/y position of the chunk that the player was in before the move.
-		short oldChunkXPosition = targetPlayer.getPositon().getChunkX();
-		short oldChunkYPosition = targetPlayer.getPositon().getChunkY();
+		short oldChunkXPosition = targetPlayer.getPosition().getChunkX();
+		short oldChunkYPosition = targetPlayer.getPosition().getChunkY();
 		// The player can move to this new position.
-		targetPlayer.getPositon().setX(newPositionX);
-		targetPlayer.getPositon().setY(newPositionY);
+		targetPlayer.getPosition().setX(newPositionX);
+		targetPlayer.getPosition().setY(newPositionY);
 		// Set the direction that the player is facing.
 		targetPlayer.setFacingDirection(direction);
 		// Add a world message to notify of the success.
 		world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(newPositionX, newPositionY)));
-		// Has the player has moved into a different chunk?
-		if (oldChunkXPosition != targetPlayer.getPositon().getChunkX() || oldChunkYPosition != targetPlayer.getPositon().getChunkY()) {
-			// The player has moved into a different chunk.
-			world.getChunks().onPlayerChunkChange(targetPlayer);
-		}
+		// Determine whether the player has moved into a different chunk?
+		boolean hasPlayerChangedChunks = oldChunkXPosition != targetPlayer.getPosition().getChunkX() || oldChunkYPosition != targetPlayer.getPosition().getChunkY();
+		// Allow the world to handle the player moving as a moving player will need to
+		// know about any updates/additions/deletions of placements they are moving towards.
+		world.onPlayerMove(targetPlayer, hasPlayerChangedChunks);
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class Players {
 	 */
 	public Player getPlayerAt(int x, int y) {
 		for (Player player : this.players) {
-			if (player.getPositon().getX() == x && player.getPositon().getY() == y) {
+			if (player.getPosition().getX() == x && player.getPosition().getY() == y) {
 				// There was a player at this position.
 				return player;
 			}

@@ -1,7 +1,6 @@
 package gaia.server.world.placements;
 
 import org.json.JSONObject;
-
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.utils.BitPacker;
 import gaia.world.PlacementOverlay;

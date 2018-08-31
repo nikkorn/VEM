@@ -79,15 +79,15 @@ public class UseItemRequest extends PlayerRequest {
 	private static Position getPlayerFacingPosition(Player player) {
 		switch(player.getFacingDirection()) {
 			case UP:
-				return new Position(player.getPositon().getX(), (short) (player.getPositon().getY() + 1));
+				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() + 1));
 			case DOWN:
-				return new Position(player.getPositon().getX(), (short) (player.getPositon().getY() - 1));
+				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() - 1));
 			case LEFT:
-				return new Position((short) (player.getPositon().getX() - 1), player.getPositon().getY());
+				return new Position((short) (player.getPosition().getX() - 1), player.getPosition().getY());
 			case RIGHT:
-				return new Position((short) (player.getPositon().getX() + 1), player.getPositon().getY());
+				return new Position((short) (player.getPosition().getX() + 1), player.getPosition().getY());
 			default:
-				return new Position(player.getPositon().getX(), (short) (player.getPositon().getY() - 1));
+				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() - 1));
 		}
 	}
 }

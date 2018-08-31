@@ -33,5 +33,8 @@ public class Constants {
 	//-------------------------------- PLAYER ------------------------------------
 	/** The size of a player inventory. */
 	public static short PLAYER_INVENTORY_SIZE = 14;
+	
+	/** The view distance of players. */
+	public static int PLAYER_VIEW_DISTANCE = 9;
 	//---------------------------------------------------------------------------
 }

@@ -54,7 +54,7 @@ public class JoinRequest extends PlayerRequest {
 				// Add a world message to notify of the success the player had in joining.
 				world.getWorldMessageQueue().add(new PlayerJoinAcceptedMessage(this.getRequestingPlayerId(), this.clientId, welcomePackage));
 				// Add a world message to notify of the spawning player.
-				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPositon().getX(), player.getPositon().getY())));
+				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPosition().getX(), player.getPosition().getY())));
 				// Add a world message for each item in the player inventorythat is not NONE.
 				for (int slotIndex = 0; slotIndex < player.getInventory().size(); slotIndex++) {
 					// Get the item at the current slot index.
@@ -64,8 +64,8 @@ public class JoinRequest extends PlayerRequest {
 						world.getWorldMessageQueue().add(new InventorySlotSetMessage(this.getRequestingPlayerId(), item, slotIndex));
 					}
 				}
-				// As the player will be spawning into the world, we regard this as a chunk change.
-				world.getChunks().onPlayerChunkChange(player);
+				// As the player will be spawning into the world, we regard this as a chunk visit.
+				world.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
 				break;
 			default:
 				throw new RuntimeException("Unexpected PlayerJoinRequestResult value: " + result.toString());
