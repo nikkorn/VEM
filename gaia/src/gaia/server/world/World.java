@@ -2,11 +2,13 @@ package gaia.server.world;
 
 import gaia.world.generation.TileGenerator;
 import gaia.world.items.ItemType;
+import java.util.ArrayList;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementLoadedMessage;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.players.Player;
@@ -183,8 +185,11 @@ public class World implements IPlacementUpdateHandler {
 				}
 				// Get the placement at this position, or null if there is no placement.
 				Placement placement = chunks.getPlacement(x, y);
-				// If there is a placement at this position then create a placement loaded message for the spawning player.
+				// Is there is a placement at this position?
 				if (placement != null) {
+					// Update the player's familiarity with the placement.
+					player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y);
+					// Add a world message to notify the spawning player of the placement load.
 					worldMessageQueue.add(new PlacementLoadedMessage(player.getPlayerId(), placement, new Position(x, y)));
 				}
 			}
@@ -197,7 +202,23 @@ public class World implements IPlacementUpdateHandler {
 	 * @param position The position of the changed placmement.
 	 */
 	public void onPlacementChange(Placement placement, Position position) {
-		// TODO Get players that care!
+		// Create a list to hold the ids of any players that care about the placement change.
+		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
+		// Get all the players that are close enough to this placement to care about it.
+		for (Player player : this.getPlayers().getAllPlayers()) {
+			// We do not care about this player if they are not within the view range of the placement.
+			if (!position.isWithinDistanceOf(player.getPosition(), Constants.PLAYER_VIEW_DISTANCE)) {
+				continue;
+			}
+			// This player is close enough to the placement to care about it.
+			concernedPlayerIds.add(player.getPlayerId());
+			// Update the player's familiarity with the placement.
+			player.getWorldFamiliarity().compareAndUpdate(placement, position.getX(), position.getY());
+		}
+		// Add a world message to notify any concerned players of the placement change.
+		if (concernedPlayerIds.size() > 0) {
+			worldMessageQueue.add(new PlacementChangedMessage(concernedPlayerIds, placement, position));
+		}
 	}
 	
 	/**

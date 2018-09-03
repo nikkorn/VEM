@@ -111,6 +111,25 @@ public class Position {
 	}
 	
 	/**
+	 * Gets whether this position is within the specified distance of another position.
+	 * @param position The positon to check.
+	 * @param distance The distance.
+	 * @return Whether this position is within the specified distane of another position.
+	 */
+	public boolean isWithinDistanceOf(Position position, int distance) {
+		// Check the x axis.
+		if (this.x < (position.getX() - distance) || this.x > (position.getX() + distance)) {
+			return false;
+		}
+		// Check the y axis.
+		if (this.y < (position.getY() - distance) || this.y > (position.getY() + distance)) {
+			return false;
+		}
+		// This position is within distance of the other position.
+		return true;
+	}
+	
+	/**
 	 * Get the position as a packed integer.
 	 *   bits 0-15  - X position
 	 *   bits 16-31 - Y position

@@ -1,6 +1,9 @@
 package gaia.server.world.players;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
@@ -159,6 +162,14 @@ public class Players {
 		}
 		// No player with the specified id was found.
 		return null;
+	}
+	
+	/**
+	 * Get an immutable list of all players.
+	 * @return An immutable list of all players.
+	 */
+	public List<Player> getAllPlayers() {
+		return Collections.unmodifiableList(this.players);
 	}
 	
 	/**
