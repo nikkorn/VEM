@@ -65,7 +65,7 @@ public class Engine {
 			// - Contains a high priority placement.
 			// - Has any players in the vicinity.
 			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
-				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.world.getWorldMessageQueue());
+				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, world);
 			}
 		}
 		// Process any messages that were added to the world message queue as part of this engine tick.

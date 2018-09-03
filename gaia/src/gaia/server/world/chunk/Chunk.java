@@ -3,9 +3,9 @@ package gaia.server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
+import gaia.server.world.IPlacementUpdateHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
-import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
 import gaia.server.world.placements.Placement;
@@ -148,9 +148,9 @@ public class Chunk {
 	 * @param hasTimeChanged Whether the time has changed in the current server tick.
 	 * @param time The current time.
 	 * @param arePlayersInChunkVicinity Whether any players are in the vicinity of this chunk.
-	 * @param worldMessageQueue The world message queue.
+	 * @param placementUpdateHandler The placement update handler.
 	 */
-	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldMessageQueue worldMessageQueue) {
+	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, IPlacementUpdateHandler placementUpdateHandler) {
 		boolean highPriorityPlacementFound = false;
 		// Execute placements actions for each placements.
 		for (Placement placement : this.placements.getAll()) {
@@ -161,13 +161,13 @@ public class Chunk {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged);
+					executePlacementActions(placement, time, hasTimeChanged, placementUpdateHandler);
 				}
 			} else {
 				// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 				if (placement.getPriority() == Priority.HIGH) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged);
+					executePlacementActions(placement, time, hasTimeChanged, placementUpdateHandler);
 				}
 			}
 			// Is this a high priority placements?
@@ -185,16 +185,17 @@ public class Chunk {
 	 * @param item The item to use.
 	 * @param x The local x position.
 	 * @param y The local y position.
+	 * @param placementUpdateHandler The placement update handler.
 	 * @return Any modification made to the item.
 	 */
-	public ItemType useItem(ItemType item, int x, int y) {
+	public ItemType useItem(ItemType item, int x, int y, IPlacementUpdateHandler placementUpdateHandler) {
 		// Get the placement at this position.
 		Placement targetPlacement = placements.get(x, y);
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
 		if (targetPlacement != null && targetPlacement.getAction() != null) {
 			// We are using the item on a placement.
-			return this.executePlacementInteractionAction(targetPlacement, item);
+			return this.executePlacementInteractionAction(targetPlacement, item, placementUpdateHandler);
 		}
 		// TODO Try to use the item on a tile, this may create a placement.
 		// There was no way to use the item at the position.
@@ -236,8 +237,9 @@ public class Chunk {
 	 * @param placement The placement.
 	 * @param time the time.
 	 * @param hasTimeChanged Whether the time has changed on this server tick.
+	 * @param placementUpdateHandler The placement update handler.
 	 */
-	private void executePlacementActions(Placement placement, Time time, boolean hasTimeChanged) {
+	private void executePlacementActions(Placement placement, Time time, boolean hasTimeChanged, IPlacementUpdateHandler placementUpdateHandler) {
 		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
@@ -259,8 +261,8 @@ public class Chunk {
 		Position placementPosition = new Position(placementXPosition, placementYPosition);
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
-			// Add a message to the world message queue to notify of the placement change.
-			worldMessageQueue.add(new PlacementChangedMessage(placement, placementPosition));
+			// Handle the placement change.
+			placementUpdateHandler.onPlacementChange(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
@@ -278,8 +280,9 @@ public class Chunk {
 	 * Execute the interaction action with an item for the specified placement.
 	 * @param placement The placement to interact with.
 	 * @param item The item used in the interaction.
+	 * @param placementUpdateHandler The placement update handler.
 	 */
-	private ItemType executePlacementInteractionAction(Placement placement, ItemType item) {
+	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, IPlacementUpdateHandler placementUpdateHandler) {
 		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
@@ -297,8 +300,8 @@ public class Chunk {
 		Position placementPosition = new Position(placementXPosition, placementYPosition);
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
-			// Add a message to the world message queue to notify of the placement change.
-			worldMessageQueue.add(new PlacementChangedMessage(placement, placementPosition));
+			// Handle the placement change.
+			placementUpdateHandler.onPlacementChange(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
@@ -312,5 +315,23 @@ public class Chunk {
 		}
 		// Return any modification made to the item in its use.
 		return modification;
+	}
+	
+	/**
+	 * Converts a world postition to a local chunk position.
+	 * @param position The world position.
+	 * @return The local chunk position.
+	 */
+	public static short convertWorldToLocalPosition(short position) {
+		return convertWorldToLocalPosition(position);
+	}
+	
+	/**
+	 * Converts a world postition to a local chunk position.
+	 * @param position The world position.
+	 * @return The local chunk position.
+	 */
+	public static int convertWorldToLocalPosition(int position) {
+		return (position + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE;
 	}
 }

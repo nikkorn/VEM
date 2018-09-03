@@ -78,8 +78,20 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onPlacementChange(int x, int y, IPlacementDetails placement) {
-		// Broadcast the placement change details.
-		this.clientProxyManager.broadcastMessage(new PlacementUpdated(new Position((short)x, (short)y), placement.asPackedInt()));
+	public void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement) {
+		// Get the placement position.
+		Position position = new Position(x, y);
+		// Get the packed placement composition.
+		int packedPlacement = placement.asPackedInt();
+		// Let each player that cares about this placement change know about it.
+		for (String playerId : playerIds) {
+			this.clientProxyManager.sendMessage(playerId, new PlacementUpdated(position, packedPlacement));
+		}
+	}
+
+	@Override
+	public void onPlacementLoad(String playerId, int x, int y, IPlacementDetails placement) {
+		// Let the player know about the placement load.
+		this.clientProxyManager.sendMessage(playerId, new PlacementUpdated(new Position(x, y), placement.asPackedInt()));
 	}
 }

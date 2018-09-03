@@ -5,6 +5,8 @@ import java.util.HashMap;
 import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.placements.Placement;
+import gaia.world.Position;
 
 /**
  * Represents the collection of chunks that the world is composed of.
@@ -105,6 +107,20 @@ public class Chunks {
 			// Return our newly created chunk.
 			return chunk;
 		}
+	}
+	
+	/**
+	 * Get the placement at the x/y position.
+	 * An error will be thrown if the chunk that the placement has not already been cached.
+	 * @param x The x position of the placement.
+	 * @param y The y position of the placement.
+	 * @return The placement.
+	 */
+	public Placement getPlacement(int x, int y) {
+		// Get the chunk that this placement is in, we expect it to be cached.
+		Chunk targetChunk = this.getCachedChunk(Position.convertWorldToChunkPosition(x), Position.convertWorldToChunkPosition(y));
+		// Get the placement at the position, or null if there is no placement.
+		return targetChunk.getPlacements().get(Chunk.convertWorldToLocalPosition(x), Chunk.convertWorldToLocalPosition(y));
 	}
 	
 	/**

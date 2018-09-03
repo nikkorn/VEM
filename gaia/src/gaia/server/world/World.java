@@ -7,6 +7,8 @@ import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.messaging.messages.PlacementLoadedMessage;
+import gaia.server.world.placements.Placement;
 import gaia.server.world.players.Player;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
@@ -15,7 +17,7 @@ import gaia.world.Position;
 /**
  * A game world composed of separate chunks.
  */
-public class World {
+public class World implements IPlacementUpdateHandler {
 	/**
 	 * The chunks that the world is composed of.
 	 */
@@ -126,7 +128,7 @@ public class World {
 		// to create a new chunk if the position is within an uncached chunk.
 		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Use the item at the position in the chunk and return any modification made in its use.
-		return targetChunk.useItem(item, (position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
+		return targetChunk.useItem(item, Chunk.convertWorldToLocalPosition(position.getX()), Chunk.convertWorldToLocalPosition(position.getY()), this);
 	}
 	
 	/**
@@ -160,6 +162,7 @@ public class World {
 		// TODO Get the direction that the player has moved in.
 		// TODO For each position in the row of tiles that we have moved towards at the edge of the player view distance:
 		//    - Check whether the position differs from what the player thinks is there.
+		// Add a placement loaded message for the moving player for each one.
 	}
 	
 	/**
@@ -167,9 +170,34 @@ public class World {
 	 * @param player The player that has spawned.
 	 */
 	public void onPlayerSpawn(Player player) {
+		// Get the player position.
+		Position playerPosition = player.getPosition();
 		// The player has spawned into a chunk. We may might need to load some chunks that have not already been cached.
-		this.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
-		// TODO For every position in the view distance of the player we will have to sent placement updates.
+		this.getChunks().onPlayerChunkVisit(playerPosition.getChunkX(), playerPosition.getChunkY());
+		// We will have to sent placement updates for every position in the view distance of the player.
+		for (int x = playerPosition.getX() - Constants.PLAYER_VIEW_DISTANCE; x < playerPosition.getX() + Constants.PLAYER_VIEW_DISTANCE; x++ ) {
+			for (int y = playerPosition.getY() - Constants.PLAYER_VIEW_DISTANCE; y < playerPosition.getY() + Constants.PLAYER_VIEW_DISTANCE; y++ ) {
+				// Do nothing if this is not a valid position.
+				if (!Position.isValid(x, y)) {
+					continue;
+				}
+				// Get the placement at this position, or null if there is no placement.
+				Placement placement = chunks.getPlacement(x, y);
+				// If there is a placement at this position then create a placement loaded message for the spawning player.
+				if (placement != null) {
+					worldMessageQueue.add(new PlacementLoadedMessage(player.getPlayerId(), placement, new Position(x, y)));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Called when a placement changes at a position.
+	 * @param placement The placement that has changed.
+	 * @param position The position of the changed placmement.
+	 */
+	public void onPlacementChange(Placement placement, Position position) {
+		// TODO Get players that care!
 	}
 	
 	/**

@@ -8,6 +8,10 @@ import gaia.utils.BitPacker;
  * Represents a world position.
  */
 public class Position {
+	/** 
+	 * The number of tiles on either axis from the world origin to world edge.
+	 */
+	private static int WORLD_ORIGIN_TO_EDGE_TILES = Constants.WORLD_SIZE / 2;
 	/**
 	 * The x position.
 	 */
@@ -30,7 +34,20 @@ public class Position {
 	 * @param x The x position.
 	 * @param y The y position.
 	 */
+	public Position(int x, int y) {
+		this((short)x, (short)y);
+	}
+	
+	/**
+	 * Creates a new instance of the Position class.
+	 * @param x The x position.
+	 * @param y The y position.
+	 */
 	public Position(short x, short y) {
+		// Check to make sure that the position is valid.
+		if (!Position.isValid(x, y)) {
+			throw new InvalidPositionException(x, y);
+		}
 		this.setX(x);
 		this.setY(y);
 	}
@@ -48,6 +65,10 @@ public class Position {
 	 * @param x The x position.
 	 */
 	public void setX(short x) {
+		// Check to make sure that the position is valid.
+		if (!Position.isValid(x, y)) {
+			throw new InvalidPositionException(x, y);
+		}
 		this.x      = x;
 		this.chunkX = convertWorldToChunkPosition(x);
 	}
@@ -65,6 +86,10 @@ public class Position {
 	 * @param y The y position.
 	 */
 	public void setY(short y) {
+		// Check to make sure that the position is valid.
+		if (!Position.isValid(x, y)) {
+			throw new InvalidPositionException(x, y);
+		}
 		this.y      = y;
 		this.chunkY = convertWorldToChunkPosition(y);
 	}
@@ -141,7 +166,40 @@ public class Position {
 	 * @param position The world position.
 	 * @return The chunk position.
 	 */
-	private static short convertWorldToChunkPosition(short position) {
+	public static short convertWorldToChunkPosition(short position) {
+		return convertWorldToChunkPosition(position);
+	}
+	
+	/**
+	 * Converts a world postition to a chunk position.
+	 * @param position The world position.
+	 * @return The chunk position.
+	 */
+	public static short convertWorldToChunkPosition(int position) {
 		return (short) Math.floor(position / (double) Constants.WORLD_CHUNK_SIZE);
+	}
+	
+	/**
+	 * Gets whether the specified x/y position is valid and within the world bounds.
+	 * @param x The x position.
+	 * @param y The y position.
+	 * @return Whether the specified x/y position is valid and within the world bounds.
+	 */
+	public static boolean isValid(short x, short y) {
+		return isValid(x, y);
+	}
+	
+	/**
+	 * Gets whether the specified x/y position is valid and within the world bounds.
+	 * @param x The x position.
+	 * @param y The y position.
+	 * @return Whether the specified x/y position is valid and within the world bounds.
+	 */
+	public static boolean isValid(int x, int y) {
+		// Return whether either the x or y positions exceed the world boundaries.
+		return x > -WORLD_ORIGIN_TO_EDGE_TILES &&
+				x < WORLD_ORIGIN_TO_EDGE_TILES &&
+				y > -WORLD_ORIGIN_TO_EDGE_TILES &&
+				y < WORLD_ORIGIN_TO_EDGE_TILES;
 	}
 }

@@ -59,9 +59,19 @@ public interface IWorldEventsHandler {
 	
 	/**
 	 * Called when the state of a placement changes.
+	 * @param playerIds The ids of any players who are in the vicinity of the changing placement.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 * @param placement The placement details.
 	 */
-	void onPlacementChange(int x, int y, IPlacementDetails placement);
+	void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement);
+
+	/**
+	 * Called when a placement is loaded for a player.
+	 * @param playerId The id of the player that cares about the load.
+	 * @param x The x position of the placement.
+	 * @param y The y position of the placement.
+	 * @param placement The placement details.
+	 */
+	void onPlacementLoad(String playerId, int x, int y, IPlacementDetails placement);
 }
