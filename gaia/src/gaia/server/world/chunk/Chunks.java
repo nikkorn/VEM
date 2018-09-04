@@ -6,6 +6,7 @@ import gaia.Constants;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.placements.Placement;
+import gaia.server.world.placements.Placements;
 import gaia.world.Position;
 
 /**
@@ -121,6 +122,36 @@ public class Chunks {
 		Chunk targetChunk = this.getCachedChunk(Position.convertWorldToChunkPosition(x), Position.convertWorldToChunkPosition(y));
 		// Get the placement at the position, or null if there is no placement.
 		return targetChunk.getPlacements().get(Chunk.convertWorldToLocalPosition(x), Chunk.convertWorldToLocalPosition(y));
+	}
+	
+	/**
+	 * Visit each tile within the specified area.
+	 * @param x The x position of the bottom-left area position. 
+	 * @param y The y position of the bottom-left area position. 
+	 * @param width The width of the area.
+	 * @param height The height of the area.
+	 * @param visitor The tile visitor.
+	 */
+	public void visitTiles(int x, int y, int width, int height, ITileVisitor visitor) {
+		for (int currentX = x; currentX < (x + width); currentX++) {
+			for (int currentY = y; currentY < (y + height); currentY++) {
+				// Do nothing if this is not a valid world position.
+				if (!Position.isValid(currentX, currentY)) {
+					continue;
+				}
+				// Get the position of the chunk that this tile is within.
+				int chunkX = Position.convertWorldToChunkPosition(currentX);
+				int chunkY = Position.convertWorldToChunkPosition(currentY);
+				// We cannot visit a tile if the chunk that it resides in has not been loaded.
+				if (!isChunkCached(chunkX, chunkY)) {
+					continue;
+				}
+				// Get the placements for the target chunk.
+				Placements placements = this.getCachedChunk(chunkX, chunkY).getPlacements();
+				// The visitor can visit the tile.
+				visitor.onVisit(currentX, currentY, placements.get(Chunk.convertWorldToLocalPosition(currentX), Chunk.convertWorldToLocalPosition(currentY)));
+			}
+		}
 	}
 	
 	/**

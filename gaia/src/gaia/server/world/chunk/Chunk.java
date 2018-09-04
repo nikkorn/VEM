@@ -323,7 +323,7 @@ public class Chunk {
 	 * @return The local chunk position.
 	 */
 	public static short convertWorldToLocalPosition(short position) {
-		return convertWorldToLocalPosition(position);
+		return (short)convertWorldToLocalPosition((int)position);
 	}
 	
 	/**

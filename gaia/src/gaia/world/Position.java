@@ -186,7 +186,7 @@ public class Position {
 	 * @return The chunk position.
 	 */
 	public static short convertWorldToChunkPosition(short position) {
-		return convertWorldToChunkPosition(position);
+		return convertWorldToChunkPosition((int)position);
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class Position {
 	 * @return Whether the specified x/y position is valid and within the world bounds.
 	 */
 	public static boolean isValid(short x, short y) {
-		return isValid(x, y);
+		return isValid((int)x, (int)y);
 	}
 	
 	/**

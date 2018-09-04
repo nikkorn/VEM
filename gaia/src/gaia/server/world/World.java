@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
+import gaia.server.world.chunk.ITileVisitor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementLoadedMessage;
@@ -161,10 +162,34 @@ public class World implements IPlacementUpdateHandler {
 		if (hasChangedChunks) {
 			this.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
 		}
+		// Get the player position.
+		Position playerPosition = player.getPosition();
 		// TODO Get the direction that the player has moved in.
 		// TODO For each position in the row of tiles that we have moved towards at the edge of the player view distance:
 		//    - Check whether the position differs from what the player thinks is there.
 		// Add a placement loaded message for the moving player for each one.
+		// TODO This currently looks at every tile within the view of the player, it should only 
+		// care about ones that have just moved into view.
+		chunks.visitTiles(playerPosition.getX() - Constants.PLAYER_VIEW_DISTANCE, playerPosition.getY() - Constants.PLAYER_VIEW_DISTANCE, 
+				(Constants.PLAYER_VIEW_DISTANCE * 2) + 1, (Constants.PLAYER_VIEW_DISTANCE * 2) + 1, new ITileVisitor() {
+					@Override
+					public void onVisit(int x, int y, Placement placement) {
+						// Get whether the tile was as the player expected and update their familiarity with it.
+						boolean isTileAsExpected = player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y);
+						// If the tile was as the player expected then they will not need to be notified.
+						if (isTileAsExpected) {
+							return;
+						}
+						// Is the player expecting a placement here?
+						if (placement != null) {
+							// Add a world message to notify the spawning player of the placement load.
+							worldMessageQueue.add(new PlacementLoadedMessage(player.getPlayerId(), placement, new Position(x, y)));
+						} else {
+							// TODO Not too sure here. Is it a placement load if the player was expecting a placement here?
+							// TODO Maybe a placement unload or delete message?
+						}
+					}
+		});
 	}
 	
 	/**
@@ -176,24 +201,20 @@ public class World implements IPlacementUpdateHandler {
 		Position playerPosition = player.getPosition();
 		// The player has spawned into a chunk. We may might need to load some chunks that have not already been cached.
 		this.getChunks().onPlayerChunkVisit(playerPosition.getChunkX(), playerPosition.getChunkY());
-		// We will have to sent placement updates for every position in the view distance of the player.
-		for (int x = playerPosition.getX() - Constants.PLAYER_VIEW_DISTANCE; x < playerPosition.getX() + Constants.PLAYER_VIEW_DISTANCE; x++ ) {
-			for (int y = playerPosition.getY() - Constants.PLAYER_VIEW_DISTANCE; y < playerPosition.getY() + Constants.PLAYER_VIEW_DISTANCE; y++ ) {
-				// Do nothing if this is not a valid position.
-				if (!Position.isValid(x, y)) {
-					continue;
-				}
-				// Get the placement at this position, or null if there is no placement.
-				Placement placement = chunks.getPlacement(x, y);
-				// Is there is a placement at this position?
-				if (placement != null) {
-					// Update the player's familiarity with the placement.
-					player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y);
-					// Add a world message to notify the spawning player of the placement load.
-					worldMessageQueue.add(new PlacementLoadedMessage(player.getPlayerId(), placement, new Position(x, y)));
-				}
-			}
-		}
+		// We will have to send placement updates for every position in the view distance of the player.
+		chunks.visitTiles(playerPosition.getX() - Constants.PLAYER_VIEW_DISTANCE, playerPosition.getY() - Constants.PLAYER_VIEW_DISTANCE, 
+				(Constants.PLAYER_VIEW_DISTANCE * 2) + 1, (Constants.PLAYER_VIEW_DISTANCE * 2) + 1, new ITileVisitor() {
+					@Override
+					public void onVisit(int x, int y, Placement placement) {
+						// Is there is a placement at this position?
+						if (placement != null) {
+							// Update the player's familiarity with the placement.
+							player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y);
+							// Add a world message to notify the spawning player of the placement load.
+							worldMessageQueue.add(new PlacementLoadedMessage(player.getPlayerId(), placement, new Position(x, y)));
+						}
+					}
+		});
 	}
 	
 	/**
