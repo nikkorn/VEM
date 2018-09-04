@@ -1,6 +1,5 @@
 package gaia.networking;
 
-import gaia.networking.marshallers.ChunkLoadedMarshaller;
 import gaia.networking.marshallers.HandshakeMarshaller;
 import gaia.networking.marshallers.InventorySlotSetMarshaller;
 import gaia.networking.marshallers.JoinFailureMarshaller;
@@ -35,8 +34,6 @@ public class ClientServerMessageMarshallerProviderFactory {
 		provider.addMarshaller(new PlayerMovedMarshaller());
 		// Add the marshaller used for reading/writing player spawn messages.
 		provider.addMarshaller(new PlayerSpawnedMarshaller());
-		// Add the marshaller used for reading/writing chunk loaded messages.
-		provider.addMarshaller(new ChunkLoadedMarshaller());
 		// Add the marshaller used for reading/writing placement updated messages.
 		provider.addMarshaller(new PlacementUpdatedMarshaller());
 		// Add the marshaller used for reading/writing inventory slot set messages.

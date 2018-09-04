@@ -7,7 +7,6 @@ import gaia.networking.IMessage;
 import gaia.networking.messages.*;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
-import gaia.Constants;
 
 /**
  * Processor of messages sent from the server.
@@ -54,20 +53,6 @@ public class ServerMessageProcessor {
 			case MessageIdentifier.PLAYER_MOVED:
 				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
 				break;
-				
-			case MessageIdentifier.CHUNK_LOADED:
-				ChunkLoaded chunkLoadedMessage = ((ChunkLoaded)message);
-				// Process this chunk load as individual placement loads.
-				for (PackedPlacement packedPlacement : chunkLoadedMessage.getPackedPlacements()) {
-					// Determine the absolute x/y placement position.
-					short placementX = (short) ((chunkLoadedMessage.getX() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getX());
-					short placementY = (short) ((chunkLoadedMessage.getY() * Constants.WORLD_CHUNK_SIZE) + packedPlacement.getY());
-					// Create the client-side representation of the placement.
-					Placement placement = Placement.fromPackedInt(packedPlacement.getComposition());
-					// Handle the placement load.
-					onPlacementLoad(placement, new Position(placementX, placementY));
-				}
-				break;
 	
 			default:
 				throw new RuntimeException("error: cannot process message with id '" + message.getTypeId() + "'.");
@@ -106,28 +91,21 @@ public class ServerMessageProcessor {
 	}
 	
 	/**
-	 * Called in response to a placement load.
-	 * @param placement The loaded placement.
-	 * @param position The placement position.
-	 */
-	private void onPlacementLoad(Placement placement, Position position) {
-		this.serverState.getPlacements().add(placement, position.getX(), position.getY());
-	}
-	
-	/**
 	 * Called in response to a placement update.
 	 * @param placement The updated placement.
 	 * @param position The placement position.
 	 */
 	private void onPlacementUpdate(Placement updated, Position position) {
-		// Get the exisitng placement at tthe specified position.
+		// Get the existing placement at the specified position.
 		Placement target = this.serverState.getPlacements().getPlacementAt(position.getX(), position.getY());
-		// If the placement does not exist or the types do not match then do nothing.
+		// Check whether this is a new placement or whether we are just updating an existing one.
 		if (target == null || target.getType() != updated.getType()) {
-			return;
+			// This update involves a new placement that we do not know about.
+			this.serverState.getPlacements().add(updated, position.getX(), position.getY());
+		} else {
+			// We are updating the state of an existing placement.
+			target.setUnderlay(updated.getUnderlay());
+			target.setOverlay(updated.getOverlay());
 		}
-		// Update the state of the target placement.
-		target.setUnderlay(updated.getUnderlay());
-		target.setOverlay(updated.getOverlay());
 	}
 }

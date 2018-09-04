@@ -1,9 +1,7 @@
 package gaia.server.networking;
 
 import java.util.ArrayList;
-import gaia.networking.messages.ChunkLoaded;
 import gaia.networking.messages.InventorySlotSet;
-import gaia.networking.messages.PackedPlacement;
 import gaia.networking.messages.PlacementUpdated;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
@@ -66,16 +64,7 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onChunkLoad(int x, int y, ArrayList<IPlacementDetails> placements, String instigator) {
-		// Create a list to hold the packed placements.
-		ArrayList<PackedPlacement> packedPlacements = new ArrayList<PackedPlacement>();
-		// Add each packed placement to the packed placement list.
-		for (IPlacementDetails placement : placements) {
-			packedPlacements.add(new PackedPlacement(placement.getX(), placement.getY(), placement.asPackedInt()));
-		}
-		// Send the chunk load details to the client that instigated the load.
-		this.clientProxyManager.sendMessage(instigator, new ChunkLoaded((short)x, (short)y, packedPlacements));
-	}
+	public void onChunkLoad(int x, int y, ArrayList<IPlacementDetails> placements, String instigator) {}
 
 	@Override
 	public void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement) {
