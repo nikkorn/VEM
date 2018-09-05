@@ -1,6 +1,6 @@
 package gaia.server.world;
 
-import gaia.server.world.placements.Placement;
+import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.Position;
 
 /**
@@ -13,5 +13,12 @@ public interface IPlacementUpdateHandler {
 	 * @param placement The placement that has changed.
 	 * @param position The position of the changed placmement.
 	 */
-	void onPlacementChange(Placement placement, Position position);
+	void onPlacementChange(IPlacementDetails placement, Position position);
+	
+	/**
+	 * Called when a placement at a position is deleted.
+	 * @param placement The placement that has been deleted.
+	 * @param position The position of the deleted placement.
+	 */
+	void onPlacementDelete(IPlacementDetails placement, Position position);
 }

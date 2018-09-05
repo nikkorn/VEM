@@ -21,4 +21,6 @@ public class MessageIdentifier {
 	public static final int INVENTORY_SLOT_CHANGED   = 10;
 	public static final int CHUNK_LOADED             = 11;
 	public static final int PLACEMENT_UPDATED        = 12;
+	public static final int PLACEMENT_ADDED          = 13;
+	public static final int PLACEMENT_REMOVED        = 14;
 }

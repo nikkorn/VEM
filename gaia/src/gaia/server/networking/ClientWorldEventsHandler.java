@@ -9,6 +9,8 @@ import gaia.server.ServerConsole;
 import gaia.server.engine.IWorldEventsHandler;
 import gaia.server.engine.WelcomePackage;
 import gaia.server.world.placements.IPlacementDetails;
+import gaia.server.world.placements.PlacementModification;
+import gaia.world.PlacementType;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
 
@@ -67,7 +69,7 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	public void onChunkLoad(int x, int y, ArrayList<IPlacementDetails> placements, String instigator) {}
 
 	@Override
-	public void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement) {
+	public void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement, PlacementModification modification) {
 		// Get the placement position.
 		Position position = new Position(x, y);
 		// Get the packed placement composition.
@@ -79,8 +81,8 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onPlacementLoad(String playerId, int x, int y, IPlacementDetails placement) {
-		// Let the player know about the placement load.
-		this.clientProxyManager.sendMessage(playerId, new PlacementUpdated(new Position(x, y), placement.asPackedInt()));
+	public void onPlacementRemove(String[] playerIds, int x, int y, PlacementType expectedType) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -2,6 +2,8 @@ package gaia.server.engine;
 
 import java.util.ArrayList;
 import gaia.server.world.placements.IPlacementDetails;
+import gaia.server.world.placements.PlacementModification;
+import gaia.world.PlacementType;
 import gaia.world.items.ItemType;
 
 /**
@@ -63,15 +65,16 @@ public interface IWorldEventsHandler {
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 * @param placement The placement details.
+	 * @param modification The type of the placement modification.
 	 */
-	void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement);
+	void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement, PlacementModification modification);
 
 	/**
-	 * Called when a placement is loaded for a player.
-	 * @param playerId The id of the player that cares about the load.
+	 * Called when a placement is removed from the world.
+	 * @param playerIds The ids of any players who are in the vicinity of the placement being removed.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
-	 * @param placement The placement details.
+	 * @param expectedType The expected placement type.
 	 */
-	void onPlacementLoad(String playerId, int x, int y, IPlacementDetails placement);
+	void onPlacementRemove(String[] playerIds, int x, int y, PlacementType expectedType);
 }

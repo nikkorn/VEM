@@ -30,13 +30,26 @@ public class PlayerWorldFamiliarity {
 	}
 	
 	/**
-	 * Compare a placement at a position with what the player expects at the positition.
+	 * Update the player's familiarity with a position.
+	 * @param placement The placement at the position, or null if there is no placement.
+	 * @param x The x position of the placement.
+	 * @param y The y position of the placement.
+	 */
+	public void update(IPlacementDetails placement, short x, short y) {
+		// Get the placement position key.
+		String key = Placements.getPlacementKey(x, y);
+		// Update the player's familiarity with the placement at the position.
+		placementFamiliarities.put(key, new PlacementFamiliarity(placement));
+	}
+	
+	/**
+	 * Compare a placement at a position with what the player expects at the position.
 	 * @param placement The placement we are comparing to the player's familiarity, or null if there is no placement.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
-	 * @return Whether the player's expectation of what is at the position matches reality. 
+	 * @return The player's expectation of what is at the position. 
 	 */
-	public boolean compareAndUpdate(IPlacementDetails placement, short x, short y) {
+	public WorldFamiliarityExpectation compareAndUpdate(IPlacementDetails placement, short x, short y) {
 		// Get the placement position key.
 		String key = Placements.getPlacementKey(x, y);
 		// Is there a placement at the position?
@@ -44,22 +57,28 @@ public class PlayerWorldFamiliarity {
 			// Does the player know that there is no placement at this position?
 			if (placementFamiliarities.containsKey(key)) {
 				// The player knows that there is a placement at the position, but do they match?
-				return placementFamiliarities.get(key).compareAndUpdate(placement);
+				if (placementFamiliarities.get(key).compareAndUpdate(placement)) {
+					// They match!
+					return WorldFamiliarityExpectation.AS_EXPECTED;
+				} else {
+					// They do not match!
+					return WorldFamiliarityExpectation.EXPECTED_DIFFERENT_PLACEMENT_STATE;
+				}
 			} else {
 				// The player thought that there was no placement at this position but there is.
 				// Update the familiarities to reflect the fact that there is a placement at the position.
 				placementFamiliarities.put(key, new PlacementFamiliarity(placement));
-				return false;
+				return WorldFamiliarityExpectation.EXPECTED_NO_PLACEMENT;
 			}
 		} else {
 			// Does the player know that there is no placement at this position?
 			if (!placementFamiliarities.containsKey(key)) {
-				return true;
+				return WorldFamiliarityExpectation.AS_EXPECTED;
 			} else {
 				// The player thought that there was a placement at this position but there isn't.
 				// Update the familiarities to reflect the fact that there is no placement at the position.
 				placementFamiliarities.remove(key);
-				return false;
+				return WorldFamiliarityExpectation.EXPECTED_PLACEMENT;
 			}
 		}
 	}

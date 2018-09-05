@@ -1,8 +1,10 @@
 package gaia.server.world.messaging.messages;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import gaia.server.engine.IWorldEventsHandler;
 import gaia.server.world.placements.IPlacementDetails;
+import gaia.server.world.placements.PlacementModification;
 import gaia.world.Position;
 
 /**
@@ -21,45 +23,41 @@ public class PlacementChangedMessage implements IWorldMessage {
 	 * The placement details.
 	 */
 	private IPlacementDetails placement;
+	/**
+	 * The placement modification.
+	 */
+	private PlacementModification modification;
 	
 	/**
 	 * Create a new instance of the PlacementChangedMessage class.
 	 * @param playerIds The ids of any players who care about the placement change.
 	 * @param placement The placement details.
 	 * @param position The position of the placement.
+	 * @param modification The type of the placement modification.
 	 */
-	public PlacementChangedMessage(ArrayList<String> playerIds, IPlacementDetails placement, Position position) {
-		this.playerIds = playerIds.toArray(new String[playerIds.size()]);
-		this.position  = position;
-		this.placement = placement;
+	public PlacementChangedMessage(List<String> playerIds, IPlacementDetails placement, Position position, PlacementModification modification) {
+		this.playerIds    = playerIds.toArray(new String[playerIds.size()]);
+		this.position     = position;
+		this.placement    = placement;
+		this.modification = modification;
 	}
 	
 	/**
-	 * Get the ids of any players who care about the placement change.
-	 * @return The ids of any players who care about the placement change.
+	 * Create a new instance of the PlacementChangedMessage class.
+	 * @param playerId The id of the player who cares about the placement change.
+	 * @param placement The placement details.
+	 * @param position The position of the placement.
+	 * @param modification The type of the placement modification.
 	 */
-	public String[] getPlayerIds() {
-		return this.playerIds;
-	}
-	
-	/**
-	 * Get the placement details.
-	 * @return The placement details.
-	 */
-	public IPlacementDetails getPlacement() {
-		return this.placement;
-	}
-
-	/**
-	 * Get the position of the placement.
-	 * @return The position of the placement.
-	 */
-	public Position getPosition() {
-		return position;
+	public PlacementChangedMessage(String playerId, IPlacementDetails placement, Position position, PlacementModification modification) {
+		this(Arrays.asList(playerId), placement, position, modification);
 	}
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlacementChange(playerIds, (int)position.getX(), (int)position.getY(), placement);
+		// There is nothing to do if there are no players that care about the placement change.
+		if (playerIds.length > 0) {
+			handler.onPlacementChange(playerIds, (int)position.getX(), (int)position.getY(), placement, modification);
+		}
 	}
 }
