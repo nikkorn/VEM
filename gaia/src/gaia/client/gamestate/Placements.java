@@ -32,6 +32,16 @@ public class Placements {
 	}
 	
 	/**
+	 * Remove and return the placement at the specified x/z position. 
+	 * @param x The x position to remove the placement from.
+	 * @param z The z position to remove the placement from.
+	 * @return The removed placement, or null if there was no placement at the position.
+	 */
+	public Placement remove(int x, int z) {
+		return this.placements.remove(createKey(x, z));
+	}
+	
+	/**
 	 * Create a placement key based on position.
 	 * @param x The placement x position.
 	 * @param z The placement z position.

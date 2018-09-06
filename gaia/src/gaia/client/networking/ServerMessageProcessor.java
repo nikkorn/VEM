@@ -5,6 +5,7 @@ import gaia.client.gamestate.Player;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.IMessage;
 import gaia.networking.messages.*;
+import gaia.world.PlacementType;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
 
@@ -33,13 +34,31 @@ public class ServerMessageProcessor {
 		// How we process this message depends on its type.
 		switch (message.getTypeId()) {
 		
+			case MessageIdentifier.PLACEMENT_CREATED:
+				// Get the newly created placement.
+				Placement created = Placement.fromPackedInt(((PlacementCreated)message).getComposition());
+				// Get the position of the created placement.
+				Position createdPlacementPosition = ((PlacementCreated)message).getPosition();
+				// Handle the placement creation.
+				onPlacementCreate(created, createdPlacementPosition);
+				break;
+				
 			case MessageIdentifier.PLACEMENT_UPDATED:
 				// Get the updated version of the placement.
 				Placement updated = Placement.fromPackedInt(((PlacementUpdated)message).getComposition());
 				// Get the position of the placement.
-				Position position = ((PlacementUpdated)message).getPosition();
+				Position updatedPlacementPosition = ((PlacementUpdated)message).getPosition();
 				// Handle the placement update.
-				onPlacementUpdate(updated, position);
+				onPlacementUpdate(updated, updatedPlacementPosition);
+				break;
+				
+			case MessageIdentifier.PLACEMENT_REMOVED:
+				// Get the expected type of the removed placement.
+				PlacementType removedType = ((PlacementRemoved)message).getExpectedPlacementType();
+				// Get the position of the removed placement.
+				Position removedPlacementPosition = ((PlacementRemoved)message).getPosition();
+				// Handle the placement removal.
+				onPlacementRemoved(removedType, removedPlacementPosition);
 				break;
 			
 			case MessageIdentifier.INVENTORY_SLOT_CHANGED:
@@ -58,7 +77,7 @@ public class ServerMessageProcessor {
 				throw new RuntimeException("error: cannot process message with id '" + message.getTypeId() + "'.");
 		}
 	}
-	
+
 	/**
 	 * Set the item type for an inventory slot.
 	 * @param itemType The item type.
@@ -91,21 +110,45 @@ public class ServerMessageProcessor {
 	}
 	
 	/**
+	 * Called in response to a placement creation.
+	 * @param placement The newly created placement.
+	 * @param position The placement position.
+	 */
+	private void onPlacementCreate(Placement created, Position position) {
+		// Update the server state to reflect the placement creation.
+		this.serverState.getPlacements().add(created, position.getX(), position.getY());
+	}
+	
+	/**
 	 * Called in response to a placement update.
-	 * @param placement The updated placement.
+	 * @param updated The updated placement.
 	 * @param position The placement position.
 	 */
 	private void onPlacementUpdate(Placement updated, Position position) {
 		// Get the existing placement at the specified position.
-		Placement target = this.serverState.getPlacements().getPlacementAt(position.getX(), position.getY());
-		// Check whether this is a new placement or whether we are just updating an existing one.
-		if (target == null || target.getType() != updated.getType()) {
-			// This update involves a new placement that we do not know about.
-			this.serverState.getPlacements().add(updated, position.getX(), position.getY());
-		} else {
-			// We are updating the state of an existing placement.
-			target.setUnderlay(updated.getUnderlay());
-			target.setOverlay(updated.getOverlay());
+		Placement existing = this.serverState.getPlacements().getPlacementAt(position.getX(), position.getY());
+		// We only want to update the placement at this position if it exists and it shares a placement type with the updated one.
+		if (existing != null && existing.getType() == updated.getType()) {
+			// Update the underlay of the existing placement.
+			existing.setUnderlay(updated.getUnderlay());
+			// Update the overlay of the existing placement.
+			existing.setOverlay(updated.getOverlay());
 		}
+	}
+
+	/**
+	 * Called in response to a placement removal.
+	 * @param removedType The type of the removed placement.
+	 * @param position The position of the removed placement.
+	 */
+	private void onPlacementRemoved(PlacementType removedType, Position position) {
+		// Get the existing placement at the specified position.
+		Placement existing = this.serverState.getPlacements().getPlacementAt(position.getX(), position.getY());
+		// If there is no placement here or the types of the placement do not match then there is nothing to do.
+		if (existing == null || existing.getType() != removedType) {
+			return;
+		}
+		// There is a placement of the expected type at the position where the placement was removed from, so remove it.
+		this.serverState.getPlacements().remove(position.getX(), position.getY());
 	}
 }

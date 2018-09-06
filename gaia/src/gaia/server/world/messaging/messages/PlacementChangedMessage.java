@@ -56,8 +56,19 @@ public class PlacementChangedMessage implements IWorldMessage {
 	@Override
 	public void process(IWorldEventsHandler handler) {
 		// There is nothing to do if there are no players that care about the placement change.
-		if (playerIds.length > 0) {
-			handler.onPlacementChange(playerIds, (int)position.getX(), (int)position.getY(), placement, modification);
+		if (playerIds.length == 0) {
+			return;
+		}
+		// Was this message created in response to a placement creation or update?
+		switch (modification) {
+			case CREATE:
+				handler.onPlacementCreate(playerIds, (int)position.getX(), (int)position.getY(), placement);
+				break;
+			case UPDATE:
+				handler.onPlacementUpdate(playerIds, (int)position.getX(), (int)position.getY(), placement);
+				break;
+			default:
+				throw new RuntimeException("unexpected placement modification value: " + modification);
 		}
 	}
 }

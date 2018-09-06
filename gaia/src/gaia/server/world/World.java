@@ -180,7 +180,7 @@ public class World implements IPlacementUpdateHandler {
 						// Get whether the tile was as the player expected and update their familiarity with it.
 						switch (player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y)) {
 							case EXPECTED_NO_PLACEMENT:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.ADD));
+								worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.CREATE));
 								break;
 							case EXPECTED_PLACEMENT:
 								worldMessageQueue.add(new PlacementRemovedMessage(player.getPlayerId(), null, new Position(x, y)));
@@ -214,7 +214,7 @@ public class World implements IPlacementUpdateHandler {
 							// Update the player's familiarity with the placement.
 							player.getWorldFamiliarity().update(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
-							worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.ADD));
+							worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.CREATE));
 						}
 					}
 		});

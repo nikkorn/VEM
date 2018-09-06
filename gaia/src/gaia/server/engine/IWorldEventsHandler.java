@@ -2,7 +2,6 @@ package gaia.server.engine;
 
 import java.util.ArrayList;
 import gaia.server.world.placements.IPlacementDetails;
-import gaia.server.world.placements.PlacementModification;
 import gaia.world.PlacementType;
 import gaia.world.items.ItemType;
 
@@ -60,14 +59,22 @@ public interface IWorldEventsHandler {
 	void onChunkLoad(int x, int y, ArrayList<IPlacementDetails> placements, String instigator);
 	
 	/**
-	 * Called when the state of a placement changes.
-	 * @param playerIds The ids of any players who are in the vicinity of the changing placement.
+	 * Called when a placement is created.
+	 * @param playerIds The ids of any players who are in the vicinity of the created placement.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 * @param placement The placement details.
-	 * @param modification The type of the placement modification.
 	 */
-	void onPlacementChange(String[] playerIds, int x, int y, IPlacementDetails placement, PlacementModification modification);
+	void onPlacementCreate(String[] playerIds, int x, int y, IPlacementDetails placement);
+	
+	/**
+	 * Called when the state of a placement is updated.
+	 * @param playerIds The ids of any players who are in the vicinity of the updated placement.
+	 * @param x The x position of the placement.
+	 * @param y The y position of the placement.
+	 * @param placement The placement details.
+	 */
+	void onPlacementUpdate(String[] playerIds, int x, int y, IPlacementDetails placement);
 
 	/**
 	 * Called when a placement is removed from the world.
