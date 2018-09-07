@@ -1,5 +1,6 @@
 package gaia.client.gamestate;
 
+import gaia.client.gamestate.players.Players;
 import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;

@@ -1,4 +1,4 @@
-package gaia.client.gamestate;
+package gaia.client.gamestate.players;
 
 import java.util.HashMap;
 

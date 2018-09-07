@@ -1,8 +1,8 @@
 package gaia.client.networking;
 
 import gaia.client.gamestate.Placement;
-import gaia.client.gamestate.Player;
 import gaia.client.gamestate.ServerState;
+import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.messages.*;
 import gaia.world.PlacementType;
