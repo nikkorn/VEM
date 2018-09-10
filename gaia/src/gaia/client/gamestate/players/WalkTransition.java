@@ -16,24 +16,32 @@ public class WalkTransition {
 	 * The origin from where the transition started.
 	 */
 	private Position origin;
+	/**
+	 * The target where the transition will end.
+	 */
+	private Position target;
 	
 	/**
 	 * Create a new instance of the WalkTransition class.
 	 * @param origin The origin at which the transition started.
+	 * @param target The target where the transition will end.
 	 */
-	private WalkTransition(Position origin) {
+	private WalkTransition(Position origin, Position target) {
 		this.began  = System.currentTimeMillis();
 		this.origin = origin;
+		this.target = target; 
 	}
 	
 	/**
 	 * Create a WalkTransition instance. 
 	 * @param originX The x position at which the transition started.
 	 * @param originY The y position at which the transition started.
+	 * @param targetX The x position at which the transition ends.
+	 * @param targetY The y position at which the transition ends.
 	 * @return A WalkTransition instance. 
 	 */
-	public static WalkTransition begin(int originX, int originY) { 
-		return new WalkTransition(new Position(originX, originY));
+	public static WalkTransition begin(int originX, int originY, int targetX, int targetY) { 
+		return new WalkTransition(new Position(originX, originY), new Position(targetX, targetY));
 	}
 	
 	/**
@@ -42,6 +50,14 @@ public class WalkTransition {
 	 */
 	public IPositionDetails getOrigin() {
 		return this.origin;
+	}
+	
+	/**
+	 * Get the target of the walk transition.
+	 * @return The target of the walk transition.
+	 */
+	public IPositionDetails getTarget() {
+		return this.target;
 	}
 	
 	/**

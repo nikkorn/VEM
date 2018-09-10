@@ -118,20 +118,37 @@ public class Player implements IPlayerDetails {
     }
     
     /**
-     * Walk to the tile position from the specified direction.
-     * @param targetX The x position of the tile the player is walking to.
-     * @param targetY The y position of the tile the player is walking to.
+     * Move to a neighbouring cell in the specified direction.
      * @param direction The direction in which the player is walking.
      */
-    public void walkTo(int targetX, int targetY, Direction direction) {
+    public void move(Direction direction) {
     	// There is nothing to do if we are already walking.
     	if (this.isWalking()) {
     		return;
     	}
     	// Update the player's facing direction to reflect the movement they are about to make.
     	this.setFacingDirection(direction);
+    	// Find the target position based on the direction we are moving and our current position.
+    	int targetX = position.getX();
+    	int targetY = position.getY();
+    	switch (direction) {
+	    	case UP:
+	    		targetY += 1;
+				break;
+			case DOWN:
+				targetY -= 1;
+				break;
+			case LEFT:
+				targetX -= 1;
+				break;
+			case RIGHT:
+				targetX += 1;
+				break;
+			default:
+				throw new RuntimeException("unexpected direction: " + direction);
+    	}
     	// Begin the walk transition for the player, passing their original position.
-    	this.walkTransition = WalkTransition.begin(position.getX(), position.getY());
+    	this.walkTransition = WalkTransition.begin(position.getX(), position.getY(), targetX, targetY);
     	// Update the player's actual position.
     	this.position.setX((short)targetX);
     	this.position.setY((short)targetY);

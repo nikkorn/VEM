@@ -2,6 +2,7 @@ package gaia.client.networking;
 
 import java.io.IOException;
 import gaia.client.gamestate.ServerState;
+import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.MovePlayer;
@@ -35,16 +36,28 @@ public class PlayerActions {
     }
 
     /**
-     * Move in the specified direction.
+     * Move the player in the specified direction.
      * The player will not be able to move to this position if it is blocked.
      * @param direction The direction to move in.
      */
     public void move(Direction direction) {
     	// Refresh the server state to ensure we have the latest placement info.
     	this.serverState.refresh();
+    	// Get the client's player.
+    	Player player = this.serverState.getPlayers().getClientsPlayer();
     	// TODO Do nothing if there is a non-walkable placement in the way of the player.
     	// TODO Do nothing if there is another player in the way of the player.
-        send(new MovePlayer(direction));
+    	// There is nothing to do if the player is already moving.
+    	if (player.isWalking()) {
+    		return;
+    	}
+    	// Start our player moving right away.
+    	player.move(direction);
+    	// Make a request to the server to move in the same direction. Hopefully the server will
+    	// respond with a 'PlayerMoved' message with the details of the position we are moving to.
+    	// However, the server may also return a 'PlayerMoved' with details of a positon that is not
+    	// the position we were targeting. This is OK though, we will just move the player there instead. 
+    	send(new MovePlayer(direction));
     }
     
     /**
