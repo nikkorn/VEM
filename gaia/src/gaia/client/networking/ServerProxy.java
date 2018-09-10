@@ -2,6 +2,7 @@ package gaia.client.networking;
 
 import java.io.IOException;
 import java.net.Socket;
+import gaia.client.gamestate.IServerState;
 import gaia.client.gamestate.ServerState;
 import gaia.networking.ClientServerMessageMarshallerProviderFactory;
 import gaia.networking.IMessage;
@@ -17,7 +18,7 @@ import gaia.networking.messages.MessageIdentifier;
 /**
  * A client-side representation of a server instance.
  */
-public class ServerProxy {
+public class ServerProxy implements IServerProxy {
 	/**
 	 * The message reader used to read messages from a message input stream into a queue.
 	 */
@@ -48,7 +49,8 @@ public class ServerProxy {
 	 * Get a snapshot of the server state.
 	 * @return A snapshot of the server state.
      */
-	public ServerState getServerState() {
+	@Override
+	public IServerState getServerState() {
 		return serverState;
 	}
 
@@ -56,6 +58,7 @@ public class ServerProxy {
 	 * Get the actions that can be taken by the player.
 	 * @return The actions that can be taken by the player.
      */
+	@Override
 	public PlayerActions getPlayerActions() {
 		return this.playerActions;
 	}
@@ -64,6 +67,7 @@ public class ServerProxy {
 	 * Get whether we are still connected with the server.
 	 * @return Whether we are still connected with the server.
 	 */
+	@Override
 	public boolean isConnected() {
 		// For now, we will check whether we are still connected by checking if our reader is still connected.
 		return this.queuedMessageReader.isConnected();
@@ -78,7 +82,7 @@ public class ServerProxy {
 	 * @throws IOException
 	 * @throws ServerJoinRequestRejectedException 
 	 */
-	public static ServerProxy create(String host, int port, String playerId) throws  IOException, ServerJoinRequestRejectedException  {
+	public static IServerProxy create(String host, int port, String playerId) throws IOException, ServerJoinRequestRejectedException  {
 		// Create the socket on which to connect to the server.
 		Socket connectionSocket = new Socket(host, port);
 		// Create the message marshaller provider for our message stream.

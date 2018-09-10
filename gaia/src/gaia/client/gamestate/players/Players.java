@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * The client-side representation of the collection of connected clients.
  */
-public class Players {
+public class Players implements IPlayersDetails {
 	/**
 	 * The map of players.
 	 */
@@ -46,5 +46,24 @@ public class Players {
 	 */
 	public void addPlayer(Player player) {
 		this.players.put(player.getPlayerId(), player);
+	}
+
+	/**
+	 * Get the clients player details.
+	 * @return The clients player details.
+	 */
+	@Override
+	public IPlayerDetails getClientsPlayerDetails() {
+		return getClientsPlayer();
+	}
+
+	/**
+	 * Get the details of the player with the player id.
+	 * @param playerId The player id.
+	 * @return The details of the  player with the player id.
+	 */
+	@Override
+	public IPlayerDetails getPlayerDetails(String playerId) {
+		return getPlayer(playerId);
 	}
 }

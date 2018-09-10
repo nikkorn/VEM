@@ -7,7 +7,7 @@ import gaia.utils.BitPacker;
 /**
  * Represents a world position.
  */
-public class Position {
+public class Position implements IPositionDetails {
 	/** 
 	 * The number of tiles on either axis from the world origin to world edge.
 	 */
@@ -56,6 +56,7 @@ public class Position {
 	 * Get the x position.
 	 * @return The x position.
 	 */
+	@Override
 	public short getX() {
 		return x;
 	}
@@ -77,6 +78,7 @@ public class Position {
 	 * Get the y position.
 	 * @return The y position.
 	 */
+	@Override
 	public short getY() {
 		return y;
 	}
@@ -98,6 +100,7 @@ public class Position {
 	 * Gets the x position of the chunk that this position is within.
 	 * @return The x position of the chunk that this position is within. 
 	 */
+	@Override
 	public short getChunkX() {
 		return this.chunkX;
 	}
@@ -106,6 +109,7 @@ public class Position {
 	 * Gets the y position of the chunk that this position is within.
 	 * @return The y position of the chunk that this position is within. 
 	 */
+	@Override
 	public short getChunkY() {
 		return this.chunkY;
 	}

@@ -1,5 +1,6 @@
 package gaia.client.gamestate;
 
+import gaia.client.gamestate.players.IPlayersDetails;
 import gaia.client.gamestate.players.Players;
 import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
@@ -9,7 +10,7 @@ import gaia.world.generation.TileGenerator;
 /**
  * Represents a snapshot of the server state.
  */
-public class ServerState {
+public class ServerState implements IServerState {
 	/**
 	 * The reader of messages sent form the server.
 	 */
@@ -55,6 +56,15 @@ public class ServerState {
 	 * @return The players.
 	 */
 	public Players getPlayers() {
+		return this.players;
+	}
+	
+	/**
+	 * Get the details of all the players.
+	 * @return The details of all the players.
+	 */
+	@Override
+	public IPlayersDetails getPlayersDetails() {
 		return this.players;
 	}
 	
