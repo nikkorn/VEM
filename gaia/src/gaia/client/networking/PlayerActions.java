@@ -44,7 +44,7 @@ public class PlayerActions {
     	// Refresh the server state to ensure we have the latest placement info.
     	this.serverState.refresh();
     	// Get the client's player.
-    	Player player = this.serverState.getPlayers().getClientsPlayer();
+    	Player player = serverState.getPlayers().getClientsPlayer();
     	// TODO Do nothing if there is a non-walkable placement in the way of the player.
     	// TODO Do nothing if there is another player in the way of the player.
     	// There is nothing to do if the player is already moving.
@@ -72,7 +72,7 @@ public class PlayerActions {
     	// Refresh the server state to ensure we have the latest inventory slots.
     	this.serverState.refresh();
     	// Get the item at the specified index.
-    	ItemType itemType = this.serverState.getPlayers().getClientsPlayer().getInventory().get(slot);
+    	ItemType itemType = serverState.getPlayers().getClientsPlayer().getInventory().get(slot);
     	// We do not want to do anything if there is no target of use for the item in the slot.
     	if (itemType.getTarget() == ItemTarget.NONE) {
     		return;

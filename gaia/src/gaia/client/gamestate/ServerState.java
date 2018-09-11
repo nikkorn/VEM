@@ -52,16 +52,16 @@ public class ServerState implements IServerState {
 	}
 	
 	/**
-	 * Get the players.
-	 * @return The players.
+	 * Get the details of all the players.
+	 * @return The details of all the players.
 	 */
 	public Players getPlayers() {
 		return this.players;
 	}
 	
 	/**
-	 * Get the details of all the players.
-	 * @return The details of all the players.
+	 * Get the players.
+	 * @return The players.
 	 */
 	@Override
 	public IPlayersDetails getPlayersDetails() {
@@ -72,6 +72,7 @@ public class ServerState implements IServerState {
 	 * Get the tiles.
 	 * @return The tiles.
 	 */
+	@Override
 	public Tiles getTiles() {
 		return this.tiles;
 	}
@@ -80,6 +81,7 @@ public class ServerState implements IServerState {
 	 * Get the placements.
 	 * @return The placements.
 	 */
+	@Override
 	public Placements getPlacements() {
 		return this.placements;
 	}
@@ -88,6 +90,7 @@ public class ServerState implements IServerState {
 	 * Get the world seed.
 	 * @return the world seed.
 	 */
+	@Override
 	public long getWorldSeed() {
 		return this.worldSeed;
 	}
@@ -96,6 +99,7 @@ public class ServerState implements IServerState {
      * Gets whether this server state snapshot is stale.
      * @return Whether this server state snapshot is stale.
      */
+	@Override
     public boolean isStale() {
     	// If we have unprocessed messages form the server then we can regard this state as stale.
     	return this.queuedMessageReader.hasQueuedMessages();
@@ -104,6 +108,7 @@ public class ServerState implements IServerState {
     /**
      * Refresh this state.
      */
+    @Override
     public void refresh() {
     	// There is no point in doing anything if the server has not told us about any changes.
     	if (!this.isStale()) {

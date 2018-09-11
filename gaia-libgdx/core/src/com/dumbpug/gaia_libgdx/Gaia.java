@@ -7,8 +7,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import gaia.Constants;
+import gaia.client.gamestate.IPlacementDetails;
 import gaia.client.gamestate.Placement;
-import gaia.client.gamestate.Player;
+import gaia.client.gamestate.players.IPlayerDetails;
+import gaia.client.networking.IServerProxy;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
 import gaia.world.Direction;
@@ -25,7 +27,7 @@ public class Gaia extends ApplicationAdapter {
 	 * The resources to draw the scene with.
 	 */
 	private SpriteBatch batch;
-	private ServerProxy server                    = null;
+	private IServerProxy server                   = null;
 	private TileResources tileResources           = null;
 	private PlacementResources placementResources = null;
 	private ItemResources itemResources           = null;
@@ -95,14 +97,14 @@ public class Gaia extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		// Get the clients player.
-		Player player = server.getServerState().getPlayers().getClientsPlayer();
+		IPlayerDetails player = server.getServerState().getPlayersDetails().getClientsPlayerDetails();
 		// Do nothing if we havent heard about our player spawn yet.
 		if (player == null) {
 			return;
 		}
 		// Get the player position.
-		int playerX = player.getPosition().getX();
-		int playerZ = player.getPosition().getY();
+		int playerX = player.getX();
+		int playerZ = player.getY();
 		// Begin drawing the scene.
 		batch.begin();
 		// Draw the tiles and placements around the player!
@@ -117,7 +119,7 @@ public class Gaia extends ApplicationAdapter {
 				// Draw the tile!
 				batch.draw(this.tileResources.get(tileType), (x - playerX + 6) * Constants.WORLD_CHUNK_SIZE, (z - playerZ + 6) * Constants.WORLD_CHUNK_SIZE);
 				// Get the placement at this position.
-				Placement placement = server.getServerState().getPlacements().getPlacementAt(x, z);
+				IPlacementDetails placement = server.getServerState().getPlacements().getPlacementDetails(x, z);
 				// Do nothing if there is no placement at this position.
 				if (placement != null) {
 					// Draw the placement underlay if there is one!
@@ -138,7 +140,7 @@ public class Gaia extends ApplicationAdapter {
 		// Draw the Inventory bar active slot!
 		batch.draw(HUDResources.INVENTORY_BAR_ACTIVE_SLOT, activeInventorySlot * 16, 0);
 		// Get the player inventory.
-		Inventory inventory = server.getServerState().getPlayers().getClientsPlayer().getInventory();
+		Inventory inventory = server.getServerState().getPlayersDetails().getClientsPlayerDetails().getInventory();
 		// Draw the items in the inventory bar!
 		for (int slotIndex = 0; slotIndex < Constants.PLAYER_INVENTORY_SIZE; slotIndex++) {
 			// Draw the item in this slot.

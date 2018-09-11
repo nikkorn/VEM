@@ -20,6 +20,12 @@ public interface IServerState {
 	Tiles getTiles();
 	
 	/**
+	 * Get the details of all the placements.
+	 * @return The the details of all placements.
+	 */
+	IPlacements getPlacements();
+	
+	/**
 	 * Get the world seed.
 	 * @return the world seed.
 	 */

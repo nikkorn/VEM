@@ -8,7 +8,7 @@ import gaia.world.PlacementUnderlay;
 /**
  * A client-side representation of a tile-positioned world placement.
  */
-public class Placement {
+public class Placement implements IPlacementDetails {
 	/**
 	 * The placement type.
 	 */
@@ -38,6 +38,7 @@ public class Placement {
 	 * Get the placement type.
 	 * @return The placement type.
 	 */
+	@Override
 	public PlacementType getType() {
 		return this.type;
 	}
@@ -46,6 +47,7 @@ public class Placement {
 	 * Get the placement underlay.
 	 * @return The placement underlay.
 	 */
+	@Override
 	public PlacementUnderlay getUnderlay() {
 		return this.underlay;
 	}
@@ -62,6 +64,7 @@ public class Placement {
 	 * Get the placement overlay.
 	 * @return The placement overlay.
 	 */
+	@Override
 	public PlacementOverlay getOverlay() {
 		return this.overlay;
 	}
