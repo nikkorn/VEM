@@ -15,15 +15,21 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	 * The new position of the moving player.
 	 */
 	private Position newPosition;
+	/**
+	 * Whether this is a correction to a player's position.
+	 */
+	private boolean isCorrection;
 	
 	/**
 	 * Create a new instance of the PlayerPositionChangedMessage class.
 	 * @param playerId The id of the player.
 	 * @param position The new position of the player.
+	 * @param isCorrection Whether this is a correction to a player's position.
 	 */
-	public PlayerPositionChangedMessage(String playerId, Position position) {
-		this.playerId    = playerId;
-		this.newPosition = position;
+	public PlayerPositionChangedMessage(String playerId, Position position, boolean isCorrection) {
+		this.playerId     = playerId;
+		this.newPosition  = position;
+		this.isCorrection = isCorrection;
 	}
 	
 	/**
@@ -44,7 +50,7 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlayerPositionChange(playerId, newPosition.getX(), newPosition.getY());
+		handler.onPlayerMove(playerId, newPosition.getX(), newPosition.getY(), isCorrection);
 	}
 }
 

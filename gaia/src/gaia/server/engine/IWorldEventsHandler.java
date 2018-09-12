@@ -34,12 +34,13 @@ public interface IWorldEventsHandler {
 	void onPlayerSpawn(String playerId, int x, int y);
 	
 	/**
-	 * Called when a player changes positions.
+	 * Called when a player moves to a position.
 	 * @param playerId The id of the player that changed positions.
 	 * @param x The x position of the player.
 	 * @param y The y position of the player.
+	 * @param isCorrection Whether this move mas made in order to correct the player's position.
 	 */
-	void onPlayerPositionChange(String playerId, int x, int y);
+	void onPlayerMove(String playerId, int x, int y, boolean isCorrection);
 	
 	/**
 	 * Called when a slot in a player inventory changes.

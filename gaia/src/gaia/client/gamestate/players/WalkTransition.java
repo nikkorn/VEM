@@ -70,7 +70,7 @@ public class WalkTransition {
 			return 1f;
 		}
 		// Return how much progress we have made.
-		return (System.currentTimeMillis() - began) / Constants.PLAYER_MOVE_DURATION;
+		return (System.currentTimeMillis() - began) / (float)Constants.PLAYER_MOVE_DURATION;
 	}
 	
 	/**

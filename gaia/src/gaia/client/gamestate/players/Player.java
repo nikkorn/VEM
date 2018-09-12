@@ -3,6 +3,7 @@ package gaia.client.gamestate.players;
 import gaia.world.Direction;
 import gaia.world.Position;
 import gaia.world.items.Inventory;
+import gaia.world.items.ItemType;
 
 /**
  * Represents a player.
@@ -108,6 +109,16 @@ public class Player implements IPlayerDetails {
     }
     
     /**
+	 * Get the item at the specified slot index of the player's inventory. 
+	 * @param slotIndex the slot index.
+	 * @return The item at the specified slot index of the player's inventory. 
+	 */
+    @Override
+	public ItemType getInventorySlot(int slotIndex) {
+		return Inventory.isValidSlotIndex(slotIndex) ? this.inventory.get(slotIndex) : ItemType.NONE;
+	}
+    
+    /**
      * Get whether the player is currently walking.
      * @return Whether the player is currently walking.
      */
@@ -118,7 +129,7 @@ public class Player implements IPlayerDetails {
     }
     
     /**
-     * Move to a neighbouring cell in the specified direction.
+     * Move to a neighbouring tile in the specified direction.
      * @param direction The direction in which the player is walking.
      */
     public void move(Direction direction) {
@@ -152,5 +163,21 @@ public class Player implements IPlayerDetails {
     	// Update the player's actual position.
     	this.position.setX((short)targetX);
     	this.position.setY((short)targetY);
+    }
+    
+    /**
+     * Move the player to the tile at the x/y position.
+     * @param x The x position to move the player to.
+     * @param y The y position to move the player to.
+     * @param direction The direction should face after moving the the position.
+     */
+    public void moveTo(int x, int y, Direction direction) {
+    	// We are being moved to a tile and should not be walking.
+    	this.walkTransition = null;
+    	// Update the player's facing direction.
+    	this.setFacingDirection(direction);
+    	// Update the player's actual position.
+    	this.position.setX((short)x);
+    	this.position.setY((short)y);
     }
 }

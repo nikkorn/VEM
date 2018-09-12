@@ -19,16 +19,20 @@ public class PlayerMovedMarshaller implements IMessageMarshaller<PlayerMoved> {
 		String playerId = dataInputStream.readUTF();
 		// Get the new packed x/y position of the moving player.
 		int position = dataInputStream.readInt();
+		// Get whether this is a correction being made to the player position.
+		boolean isCorrection = dataInputStream.readBoolean();
 		// Return the constructed message.
-		return new PlayerMoved(playerId, Position.fromPackedInt(position));
+		return new PlayerMoved(playerId, Position.fromPackedInt(position),isCorrection);
 	}
 
 	@Override
 	public void write(PlayerMoved message, DataOutputStream dataOutputStream) throws IOException {
 		// Write the id of the moving player.
 		dataOutputStream.writeUTF(message.getPlayerId());
-		// Write the new packed x/y position of the player.
-		dataOutputStream.writeInt(message.getNewPosition().asPackedInt());
+		// Write the target packed x/y position of the player.
+		dataOutputStream.writeInt(message.getTargetPosition().asPackedInt());
+		// Write whether this is a correction being made to the player position.
+		dataOutputStream.writeBoolean(message.isCorrection());
 	}
 	
 	@Override

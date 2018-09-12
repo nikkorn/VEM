@@ -12,18 +12,24 @@ public class PlayerMoved implements IMessage {
 	 */
 	private String playerId;
 	/**
-	 * The direction of movement.
+	 * The target position.
 	 */
-	private Position newPosition;
+	private Position target;
+	/**
+	 * Whether this move is actually to correct a players position.
+	 */
+	private boolean isCorrection;
 	
 	/**
 	 * Create a new instance of the PlayerMoved class.
 	 * @param playerId The id of the player that has moved.
-	 * @param newPosition The new position of the player.
+	 * @param target The target position.
+	 * @param Whether this move is actually to correct a players position.
 	 */
-	public PlayerMoved(String playerId, Position newPosition) {
-		this.playerId    = playerId;
-		this.newPosition = newPosition;
+	public PlayerMoved(String playerId, Position target, boolean isCorrection) {
+		this.playerId     = playerId;
+		this.target       = target;
+		this.isCorrection = isCorrection;
 	}
 	
 	/**
@@ -35,11 +41,19 @@ public class PlayerMoved implements IMessage {
 	}
 
 	/**
-	 * Get the new position of the player.
-	 * @return The new position of the player.
+	 * Get the target position of the move.
+	 * @return The target position of the move.
 	 */
-	public Position getNewPosition() {
-		return newPosition;
+	public Position getTargetPosition() {
+		return target;
+	}
+	
+	/**
+	 * Get whether this move is actually to correct a players position.
+	 * @return Whether this move is actually to correct a players position.
+	 */
+	public boolean isCorrection() {
+		return this.isCorrection;
 	}
 
 	@Override

@@ -55,9 +55,14 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onPlayerPositionChange(String playerId, int x, int y) {
-		// Broadcast the player moved details.
-		this.clientProxyManager.broadcastMessage(new PlayerMoved(playerId, new Position((short)x, (short)y)));
+	public void onPlayerMove(String playerId, int x, int y, boolean isCorrection) {
+		// If this is a correction to be made to a player position then only that player needs to know about it.
+		if (isCorrection) {
+			this.clientProxyManager.sendMessage(playerId, new PlayerMoved(playerId, new Position((short)x, (short)y), isCorrection));
+		} else {
+			// Broadcast the player moved details to all players.
+			this.clientProxyManager.broadcastMessage(new PlayerMoved(playerId, new Position((short)x, (short)y), isCorrection));
+		}
 	}
 
 	@Override

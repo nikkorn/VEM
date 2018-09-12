@@ -1,6 +1,7 @@
 package gaia.client.gamestate.players;
 
 import gaia.world.Direction;
+import gaia.world.items.ItemType;
 
 /**
  * An interface to expose immutable player details.
@@ -30,6 +31,13 @@ public interface IPlayerDetails {
 	 * @return The walking transition of the player, or null if the player is not currently walking.
 	 */
 	WalkTransition getWalkingTransition();
+	
+	/**
+	 * Get the item at the specified slot index of the player's inventory. 
+	 * @param slotIndex the slot index.
+	 * @return The item at the specified slot index of the player's inventory. 
+	 */
+	ItemType getInventorySlot(int slotIndex);
 	
 	/**
 	 * Get whether the player is currently walking.

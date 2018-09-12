@@ -70,7 +70,14 @@ public class ServerMessageProcessor {
 				break;
 		
 			case MessageIdentifier.PLAYER_MOVED:
-				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
+				// Determine whether this message represents a corection for the client's player's position, or just a movement update.
+				if (((PlayerMoved)message).isCorrection()) {
+					// This message was sent by the server to correct the position of the client's player's position.
+					correctPlayerPosition(((PlayerMoved)message).getTargetPosition());
+				} else {
+					// This is just an update to a players position, sent when any client requests to move and the server approves the move.
+					updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getTargetPosition());
+				}
 				break;
 	
 			default:
@@ -99,7 +106,7 @@ public class ServerMessageProcessor {
 	/**
 	 * Update the position of a player.
 	 * @param playerId The id of the player.
-	 * @param position The positon of the player.
+	 * @param position The position of the player.
 	 */
 	private void updatePlayerPosition(String playerId, Position position) {
 		// Get the position of the player.
@@ -107,6 +114,18 @@ public class ServerMessageProcessor {
 		// Update the player position.
 		currentPosition.setX(position.getX());
 		currentPosition.setY(position.getY());
+	}
+	
+	/**
+	 * Correct the position of the client's player.
+	 * @param position The correct position of the player.
+	 */
+	private void correctPlayerPosition(Position position) {
+		// Get the client's player.
+		Player clientsPlayer = this.serverState.getPlayers().getClientsPlayer();
+		// Correct the player's position. This means moving them straight to the tile that the server
+		// says the player is positioned at. The direction the player is facing should stay the same.
+		clientsPlayer.moveTo(position.getX(), position.getY(), clientsPlayer.getFacingDirection());
 	}
 	
 	/**
