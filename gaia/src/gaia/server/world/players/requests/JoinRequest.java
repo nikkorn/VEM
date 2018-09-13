@@ -64,8 +64,8 @@ public class JoinRequest extends PlayerRequest {
 						world.getWorldMessageQueue().add(new InventorySlotSetMessage(this.getRequestingPlayerId(), item, slotIndex));
 					}
 				}
-				// As the player will be spawning into the world, we regard this as a chunk visit.
-				world.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
+				// Let the world handle the player spawn.
+				world.onPlayerSpawn(player);
 				break;
 			default:
 				throw new RuntimeException("Unexpected PlayerJoinRequestResult value: " + result.toString());

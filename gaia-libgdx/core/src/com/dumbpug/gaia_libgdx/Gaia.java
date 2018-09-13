@@ -22,19 +22,32 @@ import gaia.world.items.ItemType;
  * Visual Gaia client.
  */
 public class Gaia extends ApplicationAdapter {
-	/**
-	 * The resources to draw the scene with.
-	 */
+	/** The resources to draw the scene with. */
 	private SpriteBatch batch;
 	private IServerProxy server                   = null;
 	private TileResources tileResources           = null;
 	private PlacementResources placementResources = null;
 	private ItemResources itemResources           = null;
 	
-	/**
-	 * The current active inventory slot index.
-	 */
+	/** The current active inventory slot index. */
 	private int activeInventorySlot = 0;
+	
+	/** The server/player details. */
+	String address;
+	int port;
+	String playerId;
+	
+	/**
+	 * Create a new instance of the Gaia class.
+	 * @param address The server address.
+	 * @param port The server port.
+	 * @param playerId The player id.
+	 */
+	public Gaia(String address, int port, String playerId) {
+		this.address  = address;
+		this.port     = port;
+		this.playerId = playerId;
+	}
 	
 	@Override
 	public void create() {
@@ -44,7 +57,7 @@ public class Gaia extends ApplicationAdapter {
 		itemResources      = new ItemResources();
 		
 		try {
-			server = ServerProxy.create("localhost", 23445, "niko");
+			server = ServerProxy.create(address, port, playerId);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ServerJoinRequestRejectedException e) {
