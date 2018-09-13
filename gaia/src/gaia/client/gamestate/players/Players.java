@@ -1,6 +1,7 @@
 package gaia.client.gamestate.players;
 
 import java.util.HashMap;
+import gaia.world.Position;
 
 /**
  * The client-side representation of the collection of connected clients.
@@ -46,6 +47,21 @@ public class Players implements IPlayersDetails {
 	 */
 	public void addPlayer(Player player) {
 		this.players.put(player.getPlayerId(), player);
+	}
+	
+	/**
+	 * Get the player at the specified position, or null if there is no player at the position.
+	 * @param position The position to check for a player at.
+	 * @return The player at the specified position, or null if there is no player at the position.
+	 */
+	public Player getPlayerAtPosition(Position position) {
+		for (Player player : this.players.values()) {
+			if (player.getPosition().matches(position)) {
+				return player;
+			}
+		}
+		// There was no player at this position.
+		return null;
 	}
 
 	/**

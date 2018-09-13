@@ -3,7 +3,6 @@ package gaia.server.world.players;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.PlayerDespawnedMessage;
 import gaia.server.world.messaging.messages.PlayerPositionChangedMessage;
@@ -86,32 +85,17 @@ public class Players {
 		Player targetPlayer = this.getPlayer(playerId);
 		// Get the target player's current position.
 		Position currentPosition = targetPlayer.getPosition();
-		// Find the position the player is trying to move to based on their current position.
-		short newPositionX = currentPosition.getX();
-		short newPositionY = currentPosition.getY();
-		switch(direction) {
-			case DOWN:
-				newPositionY-=1;
-				break;
-			case LEFT:
-				newPositionX-=1;
-				break;
-			case RIGHT:
-				newPositionX+=1;
-				break;
-			case UP:
-				newPositionY+=1;
-				break;
-		}
-		// Is the position we are trying to move to in the world a valid one?
-		if (!world.isPositionWalkable(new Position(newPositionX, newPositionY))) {
+		// Find the position the player is trying to move to.
+		Position targetPosition = currentPosition.getAdjacentPosition(direction);
+		// Is the position we are trying to move to in the world not a valid or walkable one?
+		if (targetPosition == null || !world.isPositionWalkable(targetPosition)) {
 			// We cannot walk on this position. Send a message to the player telling them to correct their position.
 			world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(currentPosition.getX(), currentPosition.getY()), true));
 			return;
 		}
 		// Lastly, check to make sure that no other players are already at this new position.
 		for(Position playerPosition : this.getPlayerPositions()) {
-			if (playerPosition.getX() == newPositionX && playerPosition.getY() == newPositionY) {
+			if (playerPosition.matches(targetPosition)) {
 				// There is already a player at this position. Send a message to the player telling them to correct their position.
 				world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(currentPosition.getX(), currentPosition.getY()), true));
 				return;
@@ -121,12 +105,12 @@ public class Players {
 		short oldChunkXPosition = targetPlayer.getPosition().getChunkX();
 		short oldChunkYPosition = targetPlayer.getPosition().getChunkY();
 		// The player can move to this new position.
-		targetPlayer.getPosition().setX(newPositionX);
-		targetPlayer.getPosition().setY(newPositionY);
+		targetPlayer.getPosition().setX(targetPosition.getX());
+		targetPlayer.getPosition().setY(targetPosition.getY());
 		// Set the direction that the player is facing.
 		targetPlayer.setFacingDirection(direction);
 		// Add a world message to notify of the success.
-		world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, new Position(newPositionX, newPositionY), false));
+		world.getWorldMessageQueue().add(new PlayerPositionChangedMessage(playerId, targetPosition, false));
 		// Determine whether the player has moved into a different chunk?
 		boolean hasPlayerChangedChunks = oldChunkXPosition != targetPlayer.getPosition().getChunkX() || oldChunkYPosition != targetPlayer.getPosition().getChunkY();
 		// Allow the world to handle the player moving as a moving player will need to

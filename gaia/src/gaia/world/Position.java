@@ -115,6 +115,20 @@ public class Position implements IPositionDetails {
 	}
 	
 	/**
+	 * Gets whether this position references the same world tile as the specified position.
+	 * @param position The position to compare.
+	 * @return Whether this position references the same world tile as the specified position.
+	 */
+	public boolean matches(Position position) {
+		// There is no way the positions can match if one is null.
+		if (position == null) {
+			return false;
+		}
+		// Return whether the both positions reference the same world tile. 
+		return this.getX() == position.getX() && this.getY() == position.getY();
+	}
+	
+	/**
 	 * Gets whether this position is within the specified distance of another position.
 	 * @param position The positon to check.
 	 * @param distance The distance.
@@ -131,6 +145,32 @@ public class Position implements IPositionDetails {
 		}
 		// This position is within distance of the other position.
 		return true;
+	}
+	
+	/**
+	 * Get the adjacent position in the specified direction, or null if the adjacent position is not valid.
+	 * @param direction The direction of the adjacent position.
+	 * @return The adjacent position in the specified direction, or null if the adjacent position is not valid.
+	 */
+	public Position getAdjacentPosition(Direction direction) {
+		short adjacentPositionX = this.getX();
+		short adjacentPositionY = this.getY();
+		switch(direction) {
+			case UP:
+				adjacentPositionY += 1;
+				break;
+			case DOWN:
+				adjacentPositionY -= 1;
+				break;
+			case LEFT:
+				adjacentPositionX -= 1;
+				break;
+			case RIGHT:
+				adjacentPositionX += 1;
+				break;
+		}
+		// Return the adjacent position if it is valid, or null if it is not.
+		return Position.isValid(adjacentPositionX, adjacentPositionY) ? new Position(adjacentPositionX, adjacentPositionY) : null;
 	}
 	
 	/**

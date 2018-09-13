@@ -78,6 +78,15 @@ public class Placement implements IPlacementDetails {
 	}
 	
 	/**
+	 * Get whether this position is walkable.
+	 * @return Whether this position is walkable.
+	 */
+	public boolean isWalkable() {
+		// A position with a placement is walkable if both the placement overlay and underlay are walkable.
+		return this.getOverlay().isWalkable() && this.getUnderlay().isWalkable();
+	}
+	
+	/**
 	 * Create a placement based on information parsed from a packed integer.
 	 * @param packed The packed integer.
 	 * @return The placement.
