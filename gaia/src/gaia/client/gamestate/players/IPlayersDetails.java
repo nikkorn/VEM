@@ -17,4 +17,10 @@ public interface IPlayersDetails {
 	 * @return The details of the  player with the player id.
 	 */
 	public IPlayerDetails getPlayerDetails(String playerId);
+	
+	/**
+	 * Get the details of all of the players.
+	 * @return The details of all of the players.
+	 */
+	public IPlayerDetails[] getAll();
 }

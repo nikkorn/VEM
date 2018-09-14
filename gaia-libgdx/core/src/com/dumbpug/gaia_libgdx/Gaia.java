@@ -22,6 +22,9 @@ import gaia.world.items.ItemType;
  * Visual Gaia client.
  */
 public class Gaia extends ApplicationAdapter {
+	/** The size at which to draw tiles. */
+	private static final int TILE_SIZE = 16;
+	
 	/** The resources to draw the scene with. */
 	private SpriteBatch batch;
 	private IServerProxy server                   = null;
@@ -111,7 +114,7 @@ public class Gaia extends ApplicationAdapter {
 		// Get the clients player.
 		IPlayerDetails player = server.getServerState().getPlayersDetails().getClientsPlayerDetails();
 		// Do nothing if we havent heard about our player spawn yet.
-		if (player == null) {
+		if (server.getServerState().getPlayersDetails().getClientsPlayerDetails() == null) {
 			return;
 		}
 		// Get the player position.
@@ -148,14 +151,14 @@ public class Gaia extends ApplicationAdapter {
 					continue;
 				}
 				// Draw the tile!
-				batch.draw(this.tileResources.get(tileType), ((x - playerX + 6) * Constants.WORLD_CHUNK_SIZE) + tileOffsetX, ((z - playerZ + 6) * Constants.WORLD_CHUNK_SIZE) + tileOffsetY);
+				batch.draw(this.tileResources.get(tileType), ((x - playerX + 6) * TILE_SIZE) + tileOffsetX, ((z - playerZ + 6) * TILE_SIZE) + tileOffsetY);
 				// Get the placement at this position.
 				IPlacementDetails placement = server.getServerState().getPlacements().getPlacementDetails(x, z);
 				// Do nothing if there is no placement at this position.
 				if (placement != null) {
 					// Draw the placement underlay if there is one!
 					if (placement.getUnderlay() != PlacementUnderlay.NONE) {
-						batch.draw(this.placementResources.getUnderlayTexture(placement.getUnderlay()), (x - playerX + 6) * Constants.WORLD_CHUNK_SIZE, (z - playerZ + 6) * Constants.WORLD_CHUNK_SIZE);
+						batch.draw(this.placementResources.getUnderlayTexture(placement.getUnderlay()), ((x - playerX + 6) * TILE_SIZE) + tileOffsetX, ((z - playerZ + 6) * TILE_SIZE) + tileOffsetY);
 					}
 					// Draw the placement overlay if there is one!
 					if (placement.getOverlay() != PlacementOverlay.NONE) {
@@ -164,8 +167,14 @@ public class Gaia extends ApplicationAdapter {
 				}
 			}
 		}
-		// Draw the player!
-		batch.draw(PlayerResources.PLAYER_TEXTURE, 6 * Constants.WORLD_CHUNK_SIZE, 6 * Constants.WORLD_CHUNK_SIZE);
+		// Draw the players!
+		for (IPlayerDetails playerDetails : server.getServerState().getPlayersDetails().getAll()) {
+			// Get the offset of the player (potentially the client's player) from the client's player.
+			int playerOffsetX = playerDetails.getX() - player.getX();
+			int playerOffsetY = playerDetails.getY() - player.getY();
+			// Draw the player.
+			batch.draw(PlayerResources.PLAYER_TEXTURE, (playerOffsetX + 6) * TILE_SIZE, (playerOffsetY + 6) * TILE_SIZE);
+		}		
 		// Draw the Inventory bar!
 		batch.draw(HUDResources.INVENTORY_BAR, 0, 0);
 		// Draw the Inventory bar active slot!

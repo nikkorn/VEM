@@ -82,4 +82,13 @@ public class Players implements IPlayersDetails {
 	public IPlayerDetails getPlayerDetails(String playerId) {
 		return getPlayer(playerId);
 	}
+	
+	/**
+	 * Get the details of all of the players.
+	 * @return The details of all of the players.
+	 */
+	@Override
+	public IPlayerDetails[] getAll() {
+		return this.players.values().toArray(new IPlayerDetails[this.players.size()]);
+	}
 }
