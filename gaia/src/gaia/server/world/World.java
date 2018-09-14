@@ -103,7 +103,7 @@ public class World implements IPlacementUpdateHandler {
 	 * @return The player spawn.
 	 */
 	public Position getPlayerSpawn() {
-		return new Position(this.playerSpawn.getX(), this.playerSpawn.getY());
+		return this.playerSpawn.copy();
 	}
 	
 	/**

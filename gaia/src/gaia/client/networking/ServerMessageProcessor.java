@@ -3,6 +3,7 @@ package gaia.client.networking;
 import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
 import gaia.client.gamestate.players.Player;
+import gaia.client.gamestate.players.WalkTransition;
 import gaia.networking.IMessage;
 import gaia.networking.messages.*;
 import gaia.world.Direction;
@@ -110,11 +111,31 @@ public class ServerMessageProcessor {
 	 * @param position The position of the player.
 	 */
 	private void updatePlayerPosition(String playerId, Position position) {
-		// Get the position of the player.
-		Position currentPosition = this.serverState.getPlayers().getPlayer(playerId).getPosition();
+		// Get the player that has moved.
+		Player player = this.serverState.getPlayers().getPlayer(playerId);
+		// Get the current position of the player.
+		Position currentPosition = player.getPosition();
+		// If the player that has changed position is not the client's player then we need to give them a walk transition.
+		if (!this.serverState.getPlayers().getClientsPlayer().getPlayerId().equals(player.getPlayerId())) {
+			// Determine the facing direction of the player, based on the route to the position they have moved to.
+			Direction facingDirection = Direction.DOWN;
+			if (position.getX() > currentPosition.getX()) {
+				facingDirection = Direction.RIGHT;
+			} else if (position.getX() < currentPosition.getX()) {
+				facingDirection = Direction.LEFT;
+			} else if (position.getY() > currentPosition.getY()) {
+				facingDirection = Direction.UP;
+			} else if (position.getY() < currentPosition.getY()) {
+				facingDirection = Direction.DOWN;
+			} 
+			// Set the facing direction for this player.
+			player.setFacingDirection(facingDirection);
+			// Create a walk transition for this player.
+			player.setWalkingTransition(WalkTransition.begin(currentPosition.copy(), position));
+		}
 		// Update the player position.
-		currentPosition.setX(position.getX());
-		currentPosition.setY(position.getY());
+		player.getPosition().setX(position.getX());
+		player.getPosition().setY(position.getY());
 	}
 	
 	/**

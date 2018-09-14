@@ -167,13 +167,32 @@ public class Gaia extends ApplicationAdapter {
 				}
 			}
 		}
-		// Draw the players!
+		// Draw each of the players!
 		for (IPlayerDetails playerDetails : server.getServerState().getPlayersDetails().getAll()) {
 			// Get the offset of the player (potentially the client's player) from the client's player.
 			int playerOffsetX = playerDetails.getX() - player.getX();
 			int playerOffsetY = playerDetails.getY() - player.getY();
+			// Get the player walking tile offset.
+			float playerWalkingOffsetX = 0;
+			float playerWalkingOffsetY = 0;
+			if (playerDetails.isWalking()) {
+				switch (player.getFacingDirection()) {
+					case UP:
+						playerWalkingOffsetY += 16f - (playerDetails.getWalkingTransition().getProgress() * 16f);
+						break;
+					case DOWN:
+						playerWalkingOffsetY -= playerDetails.getWalkingTransition().getProgress() * 16f;
+						break;
+					case LEFT:
+						playerWalkingOffsetX -= playerDetails.getWalkingTransition().getProgress() * 16f;
+						break;
+					case RIGHT:
+						playerWalkingOffsetX += 16f - (playerDetails.getWalkingTransition().getProgress() * 16f);
+						break;
+				}
+			}
 			// Draw the player.
-			batch.draw(PlayerResources.PLAYER_TEXTURE, (playerOffsetX + 6) * TILE_SIZE, (playerOffsetY + 6) * TILE_SIZE);
+			batch.draw(PlayerResources.PLAYER_TEXTURE, ((playerOffsetX + 6) * TILE_SIZE) + playerWalkingOffsetX, ((playerOffsetY + 6) * TILE_SIZE) + playerWalkingOffsetY);
 		}		
 		// Draw the Inventory bar!
 		batch.draw(HUDResources.INVENTORY_BAR, 0, 0);

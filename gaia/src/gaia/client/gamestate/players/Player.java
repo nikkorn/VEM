@@ -103,6 +103,14 @@ public class Player implements IPlayerDetails {
     }
     
     /**
+     * Set the walking transition of the player, or null to stop the transition.
+     * @param walkTransition The walking transition of the player, or null to stop the transition.
+     */
+    public void setWalkingTransition(WalkTransition walkTransition) {
+    	this.walkTransition = walkTransition;
+    }
+    
+    /**
      * Get the player inventory.
      * @return The player inventory.
      */

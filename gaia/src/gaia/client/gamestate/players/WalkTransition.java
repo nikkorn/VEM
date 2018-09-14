@@ -45,6 +45,16 @@ public class WalkTransition {
 	}
 	
 	/**
+	 * Create a WalkTransition instance. 
+	 * @param origin The origin at which the transition started.
+	 * @param target The target where the transition will end.
+	 * @return A WalkTransition instance. 
+	 */
+	public static WalkTransition begin(Position origin, Position target) { 
+		return new WalkTransition(origin, target);
+	}
+	
+	/**
 	 * Get the origin of the walk transition.
 	 * @return The origin of the walk transition.
 	 */

@@ -115,6 +115,15 @@ public class Position implements IPositionDetails {
 	}
 	
 	/**
+	 * Get a copy of this position.
+	 * The state of the copy will not be changed if the original is modified.
+	 * @return A copy of this position.
+	 */
+	public Position copy() {
+		return new Position(this.getX(), this.getY());
+	}
+	
+	/**
 	 * Gets whether this position references the same world tile as the specified position.
 	 * @param position The position to compare.
 	 * @return Whether this position references the same world tile as the specified position.
