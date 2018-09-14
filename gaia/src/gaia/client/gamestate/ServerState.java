@@ -1,11 +1,14 @@
 package gaia.client.gamestate;
 
+import java.util.ArrayList;
 import gaia.client.gamestate.players.IPlayersDetails;
+import gaia.client.gamestate.players.Player;
 import gaia.client.gamestate.players.Players;
 import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
 import gaia.world.generation.TileGenerator;
+import gaia.world.players.PositionedPlayer;
 
 /**
  * Represents a snapshot of the server state.
@@ -41,14 +44,20 @@ public class ServerState implements IServerState {
 	 * @param playerId The client's player id.
 	 * @param queuedMessageReader The reader of messages sent form the server.
 	 * @param worldSeed The world seed.
+	 * @param players The players positioned in the world.
 	 */
-	public ServerState(String playerId, QueuedMessageReader queuedMessageReader, long worldSeed) {
+	public ServerState(String playerId, QueuedMessageReader queuedMessageReader, long worldSeed, ArrayList<PositionedPlayer> players) {
 		this.queuedMessageReader    = queuedMessageReader;
 		this.serverMessageProcessor = new ServerMessageProcessor(this);
-		this.players                = new Players(playerId);
 		this.tiles                  = Tiles.generate(new TileGenerator(worldSeed));
 		this.placements             = new Placements();
 		this.worldSeed              = worldSeed;
+		// Create the players collection.
+		this.players = new Players(playerId);
+		// Add each player to the players collection.
+		for (PositionedPlayer player : players) {
+			this.players.addPlayer(new Player(player.getPlayerId(), player.getPosition(), player.getFacingDirection()));
+		}
 	}
 	
 	/**

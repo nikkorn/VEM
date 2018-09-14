@@ -5,6 +5,7 @@ import gaia.client.gamestate.ServerState;
 import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.messages.*;
+import gaia.world.Direction;
 import gaia.world.PlacementType;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
@@ -100,7 +101,7 @@ public class ServerMessageProcessor {
 	 * @param position The positon of the spawning player.
 	 */
 	private void addPlayer(String playerId, Position position) {
-		this.serverState.getPlayers().addPlayer(new Player(playerId, position));
+		this.serverState.getPlayers().addPlayer(new Player(playerId, position, Direction.DOWN));
 	}
 	
 	/**

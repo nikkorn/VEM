@@ -1,6 +1,7 @@
 package gaia.server.engine;
 
 import java.util.ArrayList;
+import gaia.server.welcomepackage.WelcomePackage;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.PlacementType;
 import gaia.world.items.ItemType;
@@ -14,7 +15,7 @@ public interface IWorldEventsHandler {
 	 * Called when a player successfully joins.
 	 * @param clientId The id of the joining client.
 	 * @param playerId The player id of the joining client.
-	 * @param welcomePackage The welcome package to give to the player.
+	 * @param welcomePackage The welcome package containing information to send to the player.
 	 */
 	void onPlayerJoinSuccess(String clientId, String playerId, WelcomePackage welcomePackage);
 	

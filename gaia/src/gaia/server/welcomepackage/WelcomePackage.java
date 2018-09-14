@@ -1,14 +1,14 @@
-package gaia.networking.messages;
+package gaia.server.welcomepackage;
 
 import java.util.ArrayList;
-import gaia.networking.IMessage;
 import gaia.time.Time;
 import gaia.world.players.PositionedPlayer;
 
 /**
- * The message sent to the client on a successful join.
+ * Contains details to be sent to joining players.
+ * This holds world information that a joining player will need to know about.
  */
-public class JoinSuccess implements IMessage {
+public class WelcomePackage {
 	/**
 	 * The world seed.
 	 */
@@ -20,18 +20,18 @@ public class JoinSuccess implements IMessage {
 	/**
 	 * The positioned players in the world at the time of joining.
 	 */
-	private ArrayList<PositionedPlayer> players;
+	private ArrayList<PositionedPlayer> positionedPlayers;
 	
 	/**
-	 * Create a new instance of the JoinSuccess class.
+	 * Create a new instance of the WelcomePackage class.
 	 * @param worldSeed The world seed.
 	 * @param time The current world time.
-	 * @param players The positioned players in the world at the time of joining.
+	 * @param positionedPlayers The positioned players in the world at the time of joining.
 	 */
-	public JoinSuccess(long worldSeed, Time time, ArrayList<PositionedPlayer> players) {
-		this.worldSeed = worldSeed;
-		this.time      = time;
-		this.players   = players;
+	public WelcomePackage(long worldSeed, Time time, ArrayList<PositionedPlayer> positionedPlayers) {
+		this.worldSeed         = worldSeed;
+		this.time              = time;
+		this.positionedPlayers = positionedPlayers;
 	}
 	
 	/**
@@ -55,11 +55,6 @@ public class JoinSuccess implements IMessage {
 	 * @return The positioned players in the world at the time of joining.
 	 */
 	public ArrayList<PositionedPlayer> getPositionedPlayers() {
-		return this.players;
-	}
-
-	@Override
-	public int getTypeId() {
-		return MessageIdentifier.JOIN_SUCCESS;
+		return this.positionedPlayers;
 	}
 }

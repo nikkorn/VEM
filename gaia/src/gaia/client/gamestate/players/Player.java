@@ -20,7 +20,7 @@ public class Player implements IPlayerDetails {
     /**
      * The direction in which the player is facing.
      */
-    private Direction facingDirection = Direction.DOWN;
+    private Direction facingDirection;
     /**
      * The walking transition for the player.
      */
@@ -34,10 +34,12 @@ public class Player implements IPlayerDetails {
      * Create an instance of the Player class.
      * @param id The player id.
      * @param position The player position.
+     * @param facingDirection The facing direction of the player.
      */
-    public Player(String id, Position position) {
-        this.id       = id;
-        this.position = position;
+    public Player(String id, Position position, Direction facingDirection) {
+        this.id              = id;
+        this.position        = position;
+        this.facingDirection = facingDirection;
     }
 
     /**

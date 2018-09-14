@@ -144,7 +144,7 @@ public class Players {
 	 */
 	public Player getPlayer(String playerId) {
 		for (Player player : this.players) {
-			if (player.getPlayerId().equals(playerId)) {
+			if (player.getId().equals(playerId)) {
 				return player;
 			}
 		}

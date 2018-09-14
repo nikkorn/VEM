@@ -9,7 +9,7 @@ import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
 import gaia.server.engine.IWorldEventsHandler;
-import gaia.server.engine.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackage;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.PlacementType;
 import gaia.world.Position;

@@ -37,11 +37,11 @@ public class ServerProxy implements IServerProxy {
 	 * @param playerId The player id.
 	 * @param queuedMessageReader The message reader used to read messages from a message input stream into a queue. 
 	 * @param messageOutputStream The message output stream used to write messages to the server.
-	 * @param worldSeed The world seed.
+	 * @param joinSuccessMessage The message returned from the server when a client successfully joins.
 	 */
-	private ServerProxy(String playerId, final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, long worldSeed) {
+	private ServerProxy(String playerId, final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, JoinSuccess joinSuccessMessage) {
 		this.queuedMessageReader = queuedMessageReader;
-		this.serverState         = new ServerState(playerId, queuedMessageReader, worldSeed);
+		this.serverState         = new ServerState(playerId, queuedMessageReader, joinSuccessMessage.getWorldSeed(), joinSuccessMessage.getPositionedPlayers());
 		this.playerActions       = new PlayerActions(messageOutputStream, serverState);
 	}
 
@@ -100,11 +100,10 @@ public class ServerProxy implements IServerProxy {
 		switch (response.getTypeId()) {
 			case MessageIdentifier.JOIN_SUCCESS:
 				// The server sent us a message to let us know we successfully joined!
-				JoinSuccess joinSuccessMessage = (JoinSuccess)response;
 				// Firstly, create the queued message reader that will be used by the server proxy.
 				QueuedMessageReader queuedMessageReader = new QueuedMessageReader(messageInputStream);
 				// Next, create the server proxy instance.
-				ServerProxy serverProxy = new ServerProxy(playerId, queuedMessageReader, messageOutputStream, joinSuccessMessage.getWorldSeed());
+				ServerProxy serverProxy = new ServerProxy(playerId, queuedMessageReader, messageOutputStream, (JoinSuccess)response);
 				// Lastly, our queued message reader needs to start reading incoming messages.
 				Thread messageReaderThread = new Thread(queuedMessageReader);
 				messageReaderThread.setDaemon(true);

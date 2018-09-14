@@ -180,13 +180,13 @@ public class World implements IPlacementUpdateHandler {
 						// Get whether the tile was as the player expected and update their familiarity with it.
 						switch (player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y)) {
 							case EXPECTED_NO_PLACEMENT:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.CREATE));
+								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
 								break;
 							case EXPECTED_PLACEMENT:
-								worldMessageQueue.add(new PlacementRemovedMessage(player.getPlayerId(), null, new Position(x, y)));
+								worldMessageQueue.add(new PlacementRemovedMessage(player.getId(), null, new Position(x, y)));
 								break;
 							case EXPECTED_DIFFERENT_PLACEMENT_STATE:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.UPDATE));
+								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.UPDATE));
 								break;
 							default:
 								break;
@@ -214,7 +214,7 @@ public class World implements IPlacementUpdateHandler {
 							// Update the player's familiarity with the placement.
 							player.getWorldFamiliarity().update(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
-							worldMessageQueue.add(new PlacementChangedMessage(player.getPlayerId(), placement, new Position(x, y), PlacementModification.CREATE));
+							worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
 						}
 					}
 		});
@@ -236,7 +236,7 @@ public class World implements IPlacementUpdateHandler {
 				continue;
 			}
 			// This player is close enough to the placement to care about it.
-			concernedPlayerIds.add(player.getPlayerId());
+			concernedPlayerIds.add(player.getId());
 			// Update the player's familiarity with the placement.
 			player.getWorldFamiliarity().update(placement, position.getX(), position.getY());
 		}
@@ -262,7 +262,7 @@ public class World implements IPlacementUpdateHandler {
 				continue;
 			}
 			// This player is close enough to the placement to care about it.
-			concernedPlayerIds.add(player.getPlayerId());
+			concernedPlayerIds.add(player.getId());
 			// Update the player's familiarity with the placement.
 			player.getWorldFamiliarity().update(null, position.getX(), position.getY());
 		}
