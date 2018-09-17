@@ -18,9 +18,10 @@ public class MessageIdentifier {
 	public static final int PLAYER_SPAWNED           = 7;
 	public static final int PLAYER_DESPAWNED         = 8;
 	public static final int PLAYER_MOVED             = 9;
-	public static final int INVENTORY_SLOT_CHANGED   = 10;
-	public static final int CHUNK_LOADED             = 11;
-	public static final int PLACEMENT_UPDATED        = 12;
-	public static final int PLACEMENT_CREATED        = 13;
-	public static final int PLACEMENT_REMOVED        = 14;
+	public static final int PLAYER_BLOCKED           = 10;
+	public static final int INVENTORY_SLOT_CHANGED   = 11;
+	public static final int CHUNK_LOADED             = 12;
+	public static final int PLACEMENT_UPDATED        = 13;
+	public static final int PLACEMENT_CREATED        = 14;
+	public static final int PLACEMENT_REMOVED        = 15;
 }

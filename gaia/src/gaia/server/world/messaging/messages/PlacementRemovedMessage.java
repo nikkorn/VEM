@@ -49,7 +49,7 @@ public class PlacementRemovedMessage implements IWorldMessage {
 	public void process(IWorldEventsHandler handler) {
 		// There is nothing to do if there are no players that care about the placement being removed.
 		if (playerIds.length > 0) {
-			handler.onPlacementRemove(playerIds, (int)position.getX(), (int)position.getY(), expectedPlacementType);
+			handler.onPlacementRemove(playerIds, position, expectedPlacementType);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package gaia.networking.messages;
 
 import gaia.networking.IMessage;
+import gaia.world.Direction;
 import gaia.world.Position;
 
 /**
@@ -12,24 +13,25 @@ public class PlayerMoved implements IMessage {
 	 */
 	private String playerId;
 	/**
-	 * The target position.
+	 * The new position.
 	 */
-	private Position target;
+	private Position position;
 	/**
-	 * Whether this move is actually to correct a players position.
+	 * The direction that the player has moved in to reach the new position.
 	 */
-	private boolean isCorrection;
+	private Direction direction;
 	
 	/**
 	 * Create a new instance of the PlayerMoved class.
 	 * @param playerId The id of the player that has moved.
 	 * @param target The target position.
+	 * @param direction The direction that the player has moved in to reach the new position.
 	 * @param Whether this move is actually to correct a players position.
 	 */
-	public PlayerMoved(String playerId, Position target, boolean isCorrection) {
-		this.playerId     = playerId;
-		this.target       = target;
-		this.isCorrection = isCorrection;
+	public PlayerMoved(String playerId, Position position, Direction direction) {
+		this.playerId  = playerId;
+		this.position  = position;
+		this.direction = direction;
 	}
 	
 	/**
@@ -44,16 +46,16 @@ public class PlayerMoved implements IMessage {
 	 * Get the target position of the move.
 	 * @return The target position of the move.
 	 */
-	public Position getTargetPosition() {
-		return target;
+	public Position getNewPosition() {
+		return position;
 	}
 	
 	/**
-	 * Get whether this move is actually to correct a players position.
-	 * @return Whether this move is actually to correct a players position.
+	 * Get the direction that the player has moved in to reach the new position.
+	 * @return The direction that the player has moved in to reach the new position.
 	 */
-	public boolean isCorrection() {
-		return this.isCorrection;
+	public Direction getDirectionOfMovement() {
+		return direction;
 	}
 
 	@Override

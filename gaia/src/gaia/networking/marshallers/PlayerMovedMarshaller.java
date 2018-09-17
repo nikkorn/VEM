@@ -6,6 +6,7 @@ import java.io.IOException;
 import gaia.networking.IMessageMarshaller;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.PlayerMoved;
+import gaia.world.Direction;
 import gaia.world.Position;
 
 /**
@@ -19,20 +20,20 @@ public class PlayerMovedMarshaller implements IMessageMarshaller<PlayerMoved> {
 		String playerId = dataInputStream.readUTF();
 		// Get the new packed x/y position of the moving player.
 		int position = dataInputStream.readInt();
-		// Get whether this is a correction being made to the player position.
-		boolean isCorrection = dataInputStream.readBoolean();
+		// Get the direction that the player has moved in to reach the position.
+		Direction direction = Direction.values()[dataInputStream.readShort()];
 		// Return the constructed message.
-		return new PlayerMoved(playerId, Position.fromPackedInt(position),isCorrection);
+		return new PlayerMoved(playerId, Position.fromPackedInt(position), direction);
 	}
 
 	@Override
 	public void write(PlayerMoved message, DataOutputStream dataOutputStream) throws IOException {
 		// Write the id of the moving player.
 		dataOutputStream.writeUTF(message.getPlayerId());
-		// Write the target packed x/y position of the player.
-		dataOutputStream.writeInt(message.getTargetPosition().asPackedInt());
-		// Write whether this is a correction being made to the player position.
-		dataOutputStream.writeBoolean(message.isCorrection());
+		// Write the new packed x/y position of the player.
+		dataOutputStream.writeInt(message.getNewPosition().asPackedInt());
+		// Write the direction that the player has moved in to reach the position.
+		dataOutputStream.writeShort(message.getDirectionOfMovement().ordinal());
 	}
 	
 	@Override

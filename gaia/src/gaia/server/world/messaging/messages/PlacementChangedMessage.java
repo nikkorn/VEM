@@ -62,10 +62,10 @@ public class PlacementChangedMessage implements IWorldMessage {
 		// Was this message created in response to a placement creation or update?
 		switch (modification) {
 			case CREATE:
-				handler.onPlacementCreate(playerIds, (int)position.getX(), (int)position.getY(), placement);
+				handler.onPlacementCreate(playerIds, position, placement);
 				break;
 			case UPDATE:
-				handler.onPlacementUpdate(playerIds, (int)position.getX(), (int)position.getY(), placement);
+				handler.onPlacementUpdate(playerIds, position, placement);
 				break;
 			default:
 				throw new RuntimeException("unexpected placement modification value: " + modification);

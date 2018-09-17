@@ -24,6 +24,8 @@ public class ClientServerMessageMarshallerProviderFactory {
 		provider.addMarshaller(new MovePlayerMarshaller());
 		// Add the marshaller used for reading/writing player moved messages.
 		provider.addMarshaller(new PlayerMovedMarshaller());
+		// Add the marshaller used for reading/writing player blocked messages.
+		provider.addMarshaller(new PlayerBlockedMarshaller());
 		// Add the marshaller used for reading/writing player spawn messages.
 		provider.addMarshaller(new PlayerSpawnedMarshaller());
 		// Add the marshaller used for reading/writing placement updated messages.

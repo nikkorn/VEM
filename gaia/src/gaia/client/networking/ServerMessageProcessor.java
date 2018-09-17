@@ -72,14 +72,13 @@ public class ServerMessageProcessor {
 				break;
 		
 			case MessageIdentifier.PLAYER_MOVED:
-				// Determine whether this message represents a corection for the client's player's position, or just a movement update.
-				if (((PlayerMoved)message).isCorrection()) {
-					// This message was sent by the server to correct the position of the client's player's position.
-					correctPlayerPosition(((PlayerMoved)message).getTargetPosition());
-				} else {
-					// This is just an update to a players position, sent when any client requests to move and the server approves the move.
-					updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getTargetPosition());
-				}
+				// This is just an update to a players position, sent when any client requests to move and the server approves the move.
+				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
+				break;
+				
+			case MessageIdentifier.PLAYER_BLOCKED:
+				// This message was sent by the server to correct the position of the client's player's position.
+				correctPlayerPosition(((PlayerBlocked)message).getPosition());
 				break;
 	
 			default:

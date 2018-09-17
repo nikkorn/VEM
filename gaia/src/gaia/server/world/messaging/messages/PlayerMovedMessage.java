@@ -1,12 +1,13 @@
 package gaia.server.world.messaging.messages;
 
 import gaia.server.engine.IWorldEventsHandler;
+import gaia.world.Direction;
 import gaia.world.Position;
 
 /**
  * A message containing the details of a successful player move.
  */
-public class PlayerPositionChangedMessage implements IWorldMessage {
+public class PlayerMovedMessage implements IWorldMessage {
 	/**
 	 * The id of the moving player.
 	 */
@@ -14,22 +15,22 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	/**
 	 * The new position of the moving player.
 	 */
-	private Position newPosition;
+	private Position target;
 	/**
-	 * Whether this is a correction to a player's position.
+	 * The direction of the movement.
 	 */
-	private boolean isCorrection;
+	private Direction direction;
 	
 	/**
 	 * Create a new instance of the PlayerPositionChangedMessage class.
 	 * @param playerId The id of the player.
-	 * @param position The new position of the player.
-	 * @param isCorrection Whether this is a correction to a player's position.
+	 * @param target The new position of the moving player.
+	 * @param direction The direction of the movement.
 	 */
-	public PlayerPositionChangedMessage(String playerId, Position position, boolean isCorrection) {
-		this.playerId     = playerId;
-		this.newPosition  = position;
-		this.isCorrection = isCorrection;
+	public PlayerMovedMessage(String playerId, Position target, Direction direction) {
+		this.playerId  = playerId;
+		this.target    = target;
+		this.direction = direction;
 	}
 	
 	/**
@@ -44,13 +45,21 @@ public class PlayerPositionChangedMessage implements IWorldMessage {
 	 * Get the new position of the player.
 	 * @return The new position of the player.
 	 */
-	public Position getNewPosition() {
-		return newPosition;
+	public Position getTarget() {
+		return this.target;
+	}
+	
+	/**
+	 * Get the direction of the movement.
+	 * @return The direction of the movement.
+	 */
+	public Direction getDirection() {
+		return this.direction;
 	}
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlayerMove(playerId, newPosition.getX(), newPosition.getY(), isCorrection);
+		handler.onPlayerMove(playerId, target, direction);
 	}
 }
 
