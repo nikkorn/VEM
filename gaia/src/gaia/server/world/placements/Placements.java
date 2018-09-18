@@ -53,7 +53,7 @@ public class Placements {
 	 * @param y The y position of the placements.
 	 * @return Whether the x/y position is a valid placements position.
 	 */
-	private boolean isValidPlacementPosition(int x, int y) {
+	private static boolean isValidPlacementPosition(int x, int y) {
 		return (x >= 0 && x < Constants.WORLD_CHUNK_SIZE) && (y >= 0 && y < Constants.WORLD_CHUNK_SIZE);
 	}
 	

@@ -18,7 +18,7 @@ import gaia.networking.messages.Handshake;
 import gaia.networking.messages.JoinFailure;
 import gaia.networking.messages.JoinSuccess;
 import gaia.server.ServerConsole;
-import gaia.server.engine.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackage;
 import gaia.server.world.players.requests.JoinRequest;
 import gaia.utils.Queue;
 
@@ -99,8 +99,8 @@ public class ClientProxyManager {
 				if (client.getClientId().equals(clientId)) {
 					// We found the client so set their status.
 					client.setStatus(ClientProxyStatus.JOINED);
-					// Let the client know that they have joined! This completes the handshake.
-					client.sendMessage(new JoinSuccess(welcomePackage.getWorldSeed(), welcomePackage.getWorldTime()));
+					// Let the client know that they have joined and pass them some info about the world! This completes a client-server handshake.
+					client.sendMessage(new JoinSuccess(welcomePackage.getWorldSeed(), welcomePackage.getWorldTime(), welcomePackage.getPositionedPlayers()));
 					break;
 				}
 			}

@@ -179,6 +179,15 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	}
 	
 	/**
+	 * Get whether this position is walkable.
+	 * @return Whether this position is walkable.
+	 */
+	public boolean isWalkable() {
+		// A position with a placement is walkable if both the placement overlay and underlay are walkable.
+		return this.getOverlay().isWalkable() && this.getUnderlay().isWalkable();
+	}
+	
+	/**
 	 * Get the placements as a packed integer.
 	 *   bits 0-9   - Underlay Type
 	 *   bits 10-19 - Overlay Type

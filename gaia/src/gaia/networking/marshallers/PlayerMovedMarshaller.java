@@ -6,6 +6,7 @@ import java.io.IOException;
 import gaia.networking.IMessageMarshaller;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.PlayerMoved;
+import gaia.world.Direction;
 import gaia.world.Position;
 
 /**
@@ -19,8 +20,10 @@ public class PlayerMovedMarshaller implements IMessageMarshaller<PlayerMoved> {
 		String playerId = dataInputStream.readUTF();
 		// Get the new packed x/y position of the moving player.
 		int position = dataInputStream.readInt();
+		// Get the direction that the player has moved in to reach the position.
+		Direction direction = Direction.values()[dataInputStream.readShort()];
 		// Return the constructed message.
-		return new PlayerMoved(playerId, Position.fromPackedInt(position));
+		return new PlayerMoved(playerId, Position.fromPackedInt(position), direction);
 	}
 
 	@Override
@@ -29,6 +32,8 @@ public class PlayerMovedMarshaller implements IMessageMarshaller<PlayerMoved> {
 		dataOutputStream.writeUTF(message.getPlayerId());
 		// Write the new packed x/y position of the player.
 		dataOutputStream.writeInt(message.getNewPosition().asPackedInt());
+		// Write the direction that the player has moved in to reach the position.
+		dataOutputStream.writeShort(message.getDirectionOfMovement().ordinal());
 	}
 	
 	@Override

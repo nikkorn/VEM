@@ -5,14 +5,16 @@ import gaia.networking.messages.InventorySlotSet;
 import gaia.networking.messages.PlacementCreated;
 import gaia.networking.messages.PlacementRemoved;
 import gaia.networking.messages.PlacementUpdated;
+import gaia.networking.messages.PlayerBlocked;
 import gaia.networking.messages.PlayerMoved;
 import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
 import gaia.server.engine.IWorldEventsHandler;
-import gaia.server.engine.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackage;
 import gaia.server.world.placements.IPlacementDetails;
+import gaia.world.Direction;
+import gaia.world.IPositionDetails;
 import gaia.world.PlacementType;
-import gaia.world.Position;
 import gaia.world.items.ItemType;
 
 /**
@@ -49,15 +51,21 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	}
 
 	@Override
-	public void onPlayerSpawn(String playerId, int x, int y) {
+	public void onPlayerSpawn(String playerId, IPositionDetails position) {
 		// Broadcast the player spawn details.
-		this.clientProxyManager.broadcastMessage(new PlayerSpawned(playerId, new Position((short)x, (short)y)));
+		this.clientProxyManager.broadcastMessage(new PlayerSpawned(playerId, position.copy()));
+	}
+	
+	@Override
+	public void onPlayerMove(String playerId, IPositionDetails position, Direction direction) {
+		// The player was able to move to a position, broadcast the player moved details to all players.
+		this.clientProxyManager.broadcastMessage(new PlayerMoved(playerId, position.copy(), direction));
 	}
 
 	@Override
-	public void onPlayerPositionChange(String playerId, int x, int y) {
-		// Broadcast the player moved details.
-		this.clientProxyManager.broadcastMessage(new PlayerMoved(playerId, new Position((short)x, (short)y)));
+	public void onPlayerBlocked(String playerId, IPositionDetails position) {
+		// The player has attempted to move to a position but was blocked from doing so.
+		this.clientProxyManager.sendMessage(playerId, new PlayerBlocked(position.copy()));
 	}
 
 	@Override
@@ -70,36 +78,30 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 	public void onChunkLoad(int x, int y, ArrayList<IPlacementDetails> placements, String instigator) {}
 
 	@Override
-	public void onPlacementCreate(String[] playerIds, int x, int y, IPlacementDetails placement) {
-		// Get the created placement position.
-		Position position = new Position(x, y);
+	public void onPlacementCreate(String[] playerIds, IPositionDetails position, IPlacementDetails placement) {
 		// Get the packed placement composition.
 		int packedPlacement = placement.asPackedInt();
 		// Let each player that cares about this placement creation know about it.
 		for (String playerId : playerIds) {
-			this.clientProxyManager.sendMessage(playerId, new PlacementCreated(position, packedPlacement));
+			this.clientProxyManager.sendMessage(playerId, new PlacementCreated(position.copy(), packedPlacement));
 		}
 	}
 	
 	@Override
-	public void onPlacementUpdate(String[] playerIds, int x, int y, IPlacementDetails placement) {
-		// Get the placement position.
-		Position position = new Position(x, y);
+	public void onPlacementUpdate(String[] playerIds, IPositionDetails position, IPlacementDetails placement) {
 		// Get the packed placement composition.
 		int packedPlacement = placement.asPackedInt();
 		// Let each player that cares about this placement change know about it.
 		for (String playerId : playerIds) {
-			this.clientProxyManager.sendMessage(playerId, new PlacementUpdated(position, packedPlacement));
+			this.clientProxyManager.sendMessage(playerId, new PlacementUpdated(position.copy(), packedPlacement));
 		}
 	}
 
 	@Override
-	public void onPlacementRemove(String[] playerIds, int x, int y, PlacementType expectedType) {
-		// Get the position of the removed placement.
-		Position position = new Position(x, y);
+	public void onPlacementRemove(String[] playerIds, IPositionDetails position, PlacementType expectedType) {
 		// Let each player that cares about this placement removal know about it.
 		for (String playerId : playerIds) {
-			this.clientProxyManager.sendMessage(playerId, new PlacementRemoved(position, expectedType));
+			this.clientProxyManager.sendMessage(playerId, new PlacementRemoved(position.copy(), expectedType));
 		}
 	}
 }

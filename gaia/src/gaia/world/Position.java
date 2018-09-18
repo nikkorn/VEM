@@ -7,7 +7,7 @@ import gaia.utils.BitPacker;
 /**
  * Represents a world position.
  */
-public class Position {
+public class Position implements IPositionDetails {
 	/** 
 	 * The number of tiles on either axis from the world origin to world edge.
 	 */
@@ -56,6 +56,7 @@ public class Position {
 	 * Get the x position.
 	 * @return The x position.
 	 */
+	@Override
 	public short getX() {
 		return x;
 	}
@@ -77,6 +78,7 @@ public class Position {
 	 * Get the y position.
 	 * @return The y position.
 	 */
+	@Override
 	public short getY() {
 		return y;
 	}
@@ -98,6 +100,7 @@ public class Position {
 	 * Gets the x position of the chunk that this position is within.
 	 * @return The x position of the chunk that this position is within. 
 	 */
+	@Override
 	public short getChunkX() {
 		return this.chunkX;
 	}
@@ -106,8 +109,32 @@ public class Position {
 	 * Gets the y position of the chunk that this position is within.
 	 * @return The y position of the chunk that this position is within. 
 	 */
+	@Override
 	public short getChunkY() {
 		return this.chunkY;
+	}
+	
+	/**
+	 * Get a copy of this position.
+	 * The state of the copy will not be changed if the original is modified.
+	 * @return A copy of this position.
+	 */
+	public Position copy() {
+		return new Position(this.getX(), this.getY());
+	}
+	
+	/**
+	 * Gets whether this position references the same world tile as the specified position.
+	 * @param position The position to compare.
+	 * @return Whether this position references the same world tile as the specified position.
+	 */
+	public boolean matches(Position position) {
+		// There is no way the positions can match if one is null.
+		if (position == null) {
+			return false;
+		}
+		// Return whether the both positions reference the same world tile. 
+		return this.getX() == position.getX() && this.getY() == position.getY();
 	}
 	
 	/**
@@ -127,6 +154,32 @@ public class Position {
 		}
 		// This position is within distance of the other position.
 		return true;
+	}
+	
+	/**
+	 * Get the adjacent position in the specified direction, or null if the adjacent position is not valid.
+	 * @param direction The direction of the adjacent position.
+	 * @return The adjacent position in the specified direction, or null if the adjacent position is not valid.
+	 */
+	public Position getAdjacentPosition(Direction direction) {
+		short adjacentPositionX = this.getX();
+		short adjacentPositionY = this.getY();
+		switch(direction) {
+			case UP:
+				adjacentPositionY += 1;
+				break;
+			case DOWN:
+				adjacentPositionY -= 1;
+				break;
+			case LEFT:
+				adjacentPositionX -= 1;
+				break;
+			case RIGHT:
+				adjacentPositionX += 1;
+				break;
+		}
+		// Return the adjacent position if it is valid, or null if it is not.
+		return Position.isValid(adjacentPositionX, adjacentPositionY) ? new Position(adjacentPositionX, adjacentPositionY) : null;
 	}
 	
 	/**

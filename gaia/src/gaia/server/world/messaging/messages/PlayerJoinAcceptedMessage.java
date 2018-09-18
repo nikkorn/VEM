@@ -1,7 +1,7 @@
 package gaia.server.world.messaging.messages;
 
 import gaia.server.engine.IWorldEventsHandler;
-import gaia.server.engine.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackage;
 
 /**
  * A message containing the details of a successful join attempt.

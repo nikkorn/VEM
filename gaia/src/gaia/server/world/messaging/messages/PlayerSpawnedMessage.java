@@ -44,6 +44,6 @@ public class PlayerSpawnedMessage implements IWorldMessage {
 	
 	@Override
 	public void process(IWorldEventsHandler handler) {
-		handler.onPlayerSpawn(playerId, spawnPosition.getX(), spawnPosition.getY());
+		handler.onPlayerSpawn(playerId, spawnPosition);
 	}
 }

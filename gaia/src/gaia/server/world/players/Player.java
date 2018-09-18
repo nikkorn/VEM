@@ -45,7 +45,7 @@ public class Player {
 	 * Get the player id.
 	 * @return The player id.
 	 */
-	public String getPlayerId() {
+	public String getId() {
 		return this.id;
 	}
 

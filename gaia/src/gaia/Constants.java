@@ -36,5 +36,8 @@ public class Constants {
 	
 	/** The view distance of players. */
 	public static int PLAYER_VIEW_DISTANCE = 9;
+	
+	/** The number of milliseconds it takes for a player to move between tiles. */
+	public static long PLAYER_MOVE_DURATION = 400l;
 	//---------------------------------------------------------------------------
 }

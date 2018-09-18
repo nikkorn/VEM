@@ -1,12 +1,15 @@
 package gaia.client.networking;
 
 import java.io.IOException;
+import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
+import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
 import gaia.networking.messages.MovePlayer;
 import gaia.networking.messages.UseInventoryItem;
 import gaia.world.Direction;
+import gaia.world.Position;
 import gaia.world.items.Inventory;
 import gaia.world.items.ItemTarget;
 import gaia.world.items.ItemType;
@@ -35,16 +38,42 @@ public class PlayerActions {
     }
 
     /**
-     * Move in the specified direction.
+     * Attempt to move the player in the specified direction.
      * The player will not be able to move to this position if it is blocked.
      * @param direction The direction to move in.
      */
     public void move(Direction direction) {
-    	// Refresh the server state to ensure we have the latest placement info.
+    	// Refresh the server state to ensure we have the latest info.
     	this.serverState.refresh();
-    	// TODO Do nothing if there is a non-walkable placement in the way of the player.
-    	// TODO Do nothing if there is another player in the way of the player.
-        send(new MovePlayer(direction));
+    	// Get the client's player.
+    	Player player = serverState.getPlayers().getClientsPlayer();
+    	// There is nothing to do if the player is already moving.
+    	if (player.isWalking()) {
+    		return;
+    	}
+    	// Get the position the player is trying to move to.
+    	Position targetPosition = player.getPosition().getAdjacentPosition(direction);
+    	// We cannot move to a position that is not valid.
+    	if (targetPosition == null) {
+    		return;
+    	}
+    	// Try to get the placement that is at the target position.
+    	Placement placementAtTarget = serverState.getPlacements().getPlacementAt(targetPosition.getX(), targetPosition.getY());
+    	// We cannot move to a position where there is a non-walkable placement in the way of the player.
+    	if (placementAtTarget != null && !placementAtTarget.isWalkable()) {
+    		return;
+    	}
+    	// Do nothing if there is already another player at this position.
+    	if (serverState.getPlayers().getPlayerAtPosition(targetPosition) != null) {
+    		return;
+    	}
+    	// Start our player moving right away.
+    	player.move(direction);
+    	// Make a request to the server to move in the same direction. Hopefully the server will
+    	// respond with a 'PlayerMoved' message with the details of the position we are moving to.
+    	// However, the server may also return a 'PlayerMoved' with details of a positon that is not
+    	// the position we were targeting. This is OK though, we will just move the player there instead. 
+    	send(new MovePlayer(direction));
     }
     
     /**
@@ -59,7 +88,7 @@ public class PlayerActions {
     	// Refresh the server state to ensure we have the latest inventory slots.
     	this.serverState.refresh();
     	// Get the item at the specified index.
-    	ItemType itemType = this.serverState.getPlayers().getClientsPlayer().getInventory().get(slot);
+    	ItemType itemType = serverState.getPlayers().getClientsPlayer().getInventory().get(slot);
     	// We do not want to do anything if there is no target of use for the item in the slot.
     	if (itemType.getTarget() == ItemTarget.NONE) {
     		return;

@@ -1,10 +1,12 @@
 package gaia.client.networking;
 
 import gaia.client.gamestate.Placement;
-import gaia.client.gamestate.Player;
 import gaia.client.gamestate.ServerState;
+import gaia.client.gamestate.players.Player;
+import gaia.client.gamestate.players.WalkTransition;
 import gaia.networking.IMessage;
 import gaia.networking.messages.*;
+import gaia.world.Direction;
 import gaia.world.PlacementType;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
@@ -70,7 +72,13 @@ public class ServerMessageProcessor {
 				break;
 		
 			case MessageIdentifier.PLAYER_MOVED:
+				// This is just an update to a players position, sent when any client requests to move and the server approves the move.
 				updatePlayerPosition(((PlayerMoved)message).getPlayerId(), ((PlayerMoved)message).getNewPosition());
+				break;
+				
+			case MessageIdentifier.PLAYER_BLOCKED:
+				// This message was sent by the server to correct the position of the client's player's position.
+				correctPlayerPosition(((PlayerBlocked)message).getPosition());
 				break;
 	
 			default:
@@ -93,20 +101,52 @@ public class ServerMessageProcessor {
 	 * @param position The positon of the spawning player.
 	 */
 	private void addPlayer(String playerId, Position position) {
-		this.serverState.getPlayers().addPlayer(new Player(playerId, position));
+		this.serverState.getPlayers().addPlayer(new Player(playerId, position, Direction.DOWN));
 	}
 	
 	/**
 	 * Update the position of a player.
 	 * @param playerId The id of the player.
-	 * @param position The positon of the player.
+	 * @param position The position of the player.
 	 */
 	private void updatePlayerPosition(String playerId, Position position) {
-		// Get the position of the player.
-		Position currentPosition = this.serverState.getPlayers().getPlayer(playerId).getPosition();
+		// Get the player that has moved.
+		Player player = this.serverState.getPlayers().getPlayer(playerId);
+		// Get the current position of the player.
+		Position currentPosition = player.getPosition();
+		// If the player that has changed position is not the client's player then we need to give them a walk transition.
+		if (!this.serverState.getPlayers().getClientsPlayer().getPlayerId().equals(player.getPlayerId())) {
+			// Determine the facing direction of the player, based on the route to the position they have moved to.
+			Direction facingDirection = Direction.DOWN;
+			if (position.getX() > currentPosition.getX()) {
+				facingDirection = Direction.RIGHT;
+			} else if (position.getX() < currentPosition.getX()) {
+				facingDirection = Direction.LEFT;
+			} else if (position.getY() > currentPosition.getY()) {
+				facingDirection = Direction.UP;
+			} else if (position.getY() < currentPosition.getY()) {
+				facingDirection = Direction.DOWN;
+			} 
+			// Set the facing direction for this player.
+			player.setFacingDirection(facingDirection);
+			// Create a walk transition for this player.
+			player.setWalkingTransition(WalkTransition.begin(currentPosition.copy(), position));
+		}
 		// Update the player position.
-		currentPosition.setX(position.getX());
-		currentPosition.setY(position.getY());
+		player.getPosition().setX(position.getX());
+		player.getPosition().setY(position.getY());
+	}
+	
+	/**
+	 * Correct the position of the client's player.
+	 * @param position The correct position of the player.
+	 */
+	private void correctPlayerPosition(Position position) {
+		// Get the client's player.
+		Player clientsPlayer = this.serverState.getPlayers().getClientsPlayer();
+		// Correct the player's position. This means moving them straight to the tile that the server
+		// says the player is positioned at. The direction the player is facing should stay the same.
+		clientsPlayer.moveTo(position.getX(), position.getY(), clientsPlayer.getFacingDirection());
 	}
 	
 	/**

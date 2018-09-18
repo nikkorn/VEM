@@ -1,7 +1,8 @@
 package gaia.server.world.players.requests;
 
 import gaia.server.ServerConsole;
-import gaia.server.engine.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackage;
+import gaia.server.welcomepackage.WelcomePackageFactory;
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.InventorySlotSetMessage;
 import gaia.server.world.messaging.messages.PlayerJoinAcceptedMessage;
@@ -50,10 +51,10 @@ public class JoinRequest extends PlayerRequest {
 				// The player was able to join!
 				Player player = world.getPlayers().getPlayer(this.getRequestingPlayerId());
 				// Create a welcome package for the newly connected client.
-				WelcomePackage welcomePackage = new WelcomePackage(world.getSeed(), world.getClock().getCurrentTime());
+				WelcomePackage welcomePackage = WelcomePackageFactory.create(world);
 				// Add a world message to notify of the success the player had in joining.
 				world.getWorldMessageQueue().add(new PlayerJoinAcceptedMessage(this.getRequestingPlayerId(), this.clientId, welcomePackage));
-				// Add a world message to notify of the spawning player.
+				// Add a world message to notify every player about this player spawn.
 				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPosition().getX(), player.getPosition().getY())));
 				// Add a world message for each item in the player inventorythat is not NONE.
 				for (int slotIndex = 0; slotIndex < player.getInventory().size(); slotIndex++) {
@@ -64,8 +65,8 @@ public class JoinRequest extends PlayerRequest {
 						world.getWorldMessageQueue().add(new InventorySlotSetMessage(this.getRequestingPlayerId(), item, slotIndex));
 					}
 				}
-				// As the player will be spawning into the world, we regard this as a chunk visit.
-				world.getChunks().onPlayerChunkVisit(player.getPosition().getChunkX(), player.getPosition().getChunkY());
+				// Let the world handle the player spawn.
+				world.onPlayerSpawn(player);
 				break;
 			default:
 				throw new RuntimeException("Unexpected PlayerJoinRequestResult value: " + result.toString());

@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.Stack;
 import gaia.Constants;
+import gaia.client.networking.IServerProxy;
 import gaia.client.networking.ServerJoinRequestRejectedException;
 import gaia.client.networking.ServerProxy;
 import gaia.world.Direction;
@@ -34,7 +35,7 @@ public class CLIClient {
 		try {
 			System.out.print("attempting to connect... ");
 			// Create a connection with the server.
-			final ServerProxy server = ServerProxy.create("localhost", 23445, playerId);
+			final IServerProxy server = ServerProxy.create("localhost", 23445, playerId);
 			// We managed to connect to the server.
 			System.out.println("connected!");
 			System.out.println("world seed: " + server.getServerState().getWorldSeed());
@@ -70,7 +71,7 @@ public class CLIClient {
 	 * @param command The command to process.
 	 * @param server The server.
 	 */
-	private static void processCommand(Stack<String> command, ServerProxy server) {
+	private static void processCommand(Stack<String> command, IServerProxy server) {
 		// Get the first token of the command.
 		String initialCommandToken = command.pop();
 		// Act based on the initial token.
@@ -136,7 +137,7 @@ public class CLIClient {
 	 * @param server the server.
 	 * @throws IOException 
 	 */
-	private static void movePlayer(String direction, ServerProxy server) throws IOException {
+	private static void movePlayer(String direction, IServerProxy server) throws IOException {
 		switch (direction) {
 			case "up":
 				server.getPlayerActions().move(Direction.UP);

@@ -135,12 +135,8 @@ public class Chunk {
 	public boolean isPositionWalkable(int x, int y) {
 		// Get the placement at this position.
 		Placement placement = placements.get(x, y);
-		// If there is no placement at this position then we can say it is walkable.
-		if (placement == null) {
-			return true;
-		}
-		// A position with a placement is walkable if both the placement overlay and underlay are walkable.
-		return placement.getOverlay().isWalkable() && placement.getUnderlay().isWalkable();
+		// A position is walkable if there is no placement there or if that placement is itself walkable.
+		return placement == null || placement.isWalkable();
 	}
 	
 	/**
