@@ -173,7 +173,7 @@ public class Gaia extends ApplicationAdapter {
 			int playerOffsetX = playerDetails.getX() - player.getX();
 			int playerOffsetY = playerDetails.getY() - player.getY();
 			// Draw the player.
-			batch.draw(PlayerResources.PLAYER_TEXTURE, ((playerOffsetX + 6) * TILE_SIZE), ((playerOffsetY + 6) * TILE_SIZE));
+			batch.draw(PlayerResources.getPlayerTexture(playerDetails.getFacingDirection()), ((playerOffsetX + 6) * TILE_SIZE), ((playerOffsetY + 6) * TILE_SIZE));
 		}		
 		// Draw the Inventory bar!
 		batch.draw(HUDResources.INVENTORY_BAR, 0, 0);
