@@ -129,10 +129,10 @@ public class Gaia extends ApplicationAdapter {
 					tileOffsetY += 16f - (player.getWalkingTransition().getProgress() * 16f);
 					break;
 				case DOWN:
-					tileOffsetY -= player.getWalkingTransition().getProgress() * 16f;
+					tileOffsetY -= 16f - (player.getWalkingTransition().getProgress() * 16f);
 					break;
 				case LEFT:
-					tileOffsetX -= player.getWalkingTransition().getProgress() * 16f;
+					tileOffsetX -= 16f - (player.getWalkingTransition().getProgress() * 16f);
 					break;
 				case RIGHT:
 					tileOffsetX += 16f - (player.getWalkingTransition().getProgress() * 16f);
