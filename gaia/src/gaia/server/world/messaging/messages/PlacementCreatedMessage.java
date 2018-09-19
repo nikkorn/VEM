@@ -7,11 +7,11 @@ import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.Position;
 
 /**
- * A message containing the details of a placement change.
+ * A message containing the details of a placement creation.
  */
-public class PlacementChangedMessage implements IWorldMessage {
+public class PlacementCreatedMessage implements IWorldMessage {
 	/**
-	 * The ids of any players who care about the placement change.
+	 * The ids of any players who care about the placement creation.
 	 */
 	private String[] playerIds;
 	/**
@@ -24,24 +24,26 @@ public class PlacementChangedMessage implements IWorldMessage {
 	private IPlacementDetails placement;
 	
 	/**
-	 * Create a new instance of the PlacementChangedMessage class.
-	 * @param playerIds The ids of any players who care about the placement change.
+	 * Create a new instance of the PlacementCreatedMessage class.
+	 * @param playerIds The ids of any players who care about the placement creation.
 	 * @param placement The placement details.
 	 * @param position The position of the placement.
+	 * @param modification The type of the placement modification.
 	 */
-	public PlacementChangedMessage(List<String> playerIds, IPlacementDetails placement, Position position) {
+	public PlacementCreatedMessage(List<String> playerIds, IPlacementDetails placement, Position position) {
 		this.playerIds = playerIds.toArray(new String[playerIds.size()]);
 		this.position  = position;
 		this.placement = placement;
 	}
 	
 	/**
-	 * Create a new instance of the PlacementChangedMessage class.
-	 * @param playerId The id of the player who cares about the placement change.
+	 * Create a new instance of the PlacementCreatedMessage class.
+	 * @param playerId The id of the player who cares about the placement creation.
 	 * @param placement The placement details.
 	 * @param position The position of the placement.
+	 * @param modification The type of the placement modification.
 	 */
-	public PlacementChangedMessage(String playerId, IPlacementDetails placement, Position position) {
+	public PlacementCreatedMessage(String playerId, IPlacementDetails placement, Position position) {
 		this(Arrays.asList(playerId), placement, position);
 	}
 	
@@ -51,6 +53,6 @@ public class PlacementChangedMessage implements IWorldMessage {
 		if (playerIds.length == 0) {
 			return;
 		}
-		handler.onPlacementUpdate(playerIds, position, placement);
+		handler.onPlacementCreate(playerIds, position, placement);
 	}
 }

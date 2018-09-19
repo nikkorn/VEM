@@ -10,10 +10,10 @@ import gaia.server.world.chunk.Chunks;
 import gaia.server.world.chunk.ITileVisitor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
+import gaia.server.world.messaging.messages.PlacementCreatedMessage;
 import gaia.server.world.messaging.messages.PlacementRemovedMessage;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.server.world.placements.Placement;
-import gaia.server.world.placements.PlacementModification;
 import gaia.server.world.players.Player;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
@@ -180,13 +180,13 @@ public class World implements IPlacementUpdateHandler {
 						// Get whether the tile was as the player expected and update their familiarity with it.
 						switch (player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y)) {
 							case EXPECTED_NO_PLACEMENT:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
+								worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 								break;
 							case EXPECTED_PLACEMENT:
 								worldMessageQueue.add(new PlacementRemovedMessage(player.getId(), null, new Position(x, y)));
 								break;
 							case EXPECTED_DIFFERENT_PLACEMENT_STATE:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.UPDATE));
+								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y)));
 								break;
 							default:
 								break;
@@ -214,10 +214,35 @@ public class World implements IPlacementUpdateHandler {
 							// Update the player's familiarity with the placement.
 							player.getWorldFamiliarity().update(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
-							worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
+							worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 						}
 					}
 		});
+	}
+	/**
+	 * Called when a placement is created at a position.
+	 * @param placement The placement that has been added.
+	 * @param position The position of the changed placement.
+	 */
+	@Override
+	public void onPlacementCreated(IPlacementDetails placement, Position position) {
+		// Create a list to hold the ids of any players that care about the placement creation.
+		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
+		// Get all the players that are close enough to this placement to care about it.
+		for (Player player : this.getPlayers().getAllPlayers()) {
+			// We do not care about this player if they are not within the view range of the placement.
+			if (!position.isWithinDistanceOf(player.getPosition(), Constants.PLAYER_VIEW_DISTANCE)) {
+				continue;
+			}
+			// This player is close enough to the placement to care about it.
+			concernedPlayerIds.add(player.getId());
+			// Update the player's familiarity with the placement.
+			player.getWorldFamiliarity().update(placement, position.getX(), position.getY());
+		}
+		// Add a world message to notify any concerned players of the placement change.
+		if (concernedPlayerIds.size() > 0) {
+			worldMessageQueue.add(new PlacementCreatedMessage(concernedPlayerIds, placement, position));
+		}
 	}
 	
 	/**
@@ -226,7 +251,7 @@ public class World implements IPlacementUpdateHandler {
 	 * @param position The position of the changed placement.
 	 */
 	@Override
-	public void onPlacementChange(IPlacementDetails placement, Position position) {
+	public void onPlacementChanged(IPlacementDetails placement, Position position) {
 		// Create a list to hold the ids of any players that care about the placement change.
 		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
 		// Get all the players that are close enough to this placement to care about it.
@@ -242,17 +267,17 @@ public class World implements IPlacementUpdateHandler {
 		}
 		// Add a world message to notify any concerned players of the placement change.
 		if (concernedPlayerIds.size() > 0) {
-			worldMessageQueue.add(new PlacementChangedMessage(concernedPlayerIds, placement, position, PlacementModification.UPDATE));
+			worldMessageQueue.add(new PlacementChangedMessage(concernedPlayerIds, placement, position));
 		}
 	}
 	
 	/**
-	 * Called when a placement changes at a position.
-	 * @param placement The placement that has been deleted.
-	 * @param position The position of the deleted placement.
+	 * Called when a placement is removed.
+	 * @param placement The placement that has been removed.
+	 * @param position The position of the removed placement.
 	 */
 	@Override
-	public void onPlacementDelete(IPlacementDetails placement, Position position) {
+	public void onPlacementRemoved(IPlacementDetails placement, Position position) {
 		// Create a list to hold the ids of any players that care about the placement deletion.
 		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
 		// Get all the players that are close enough to this placement to care about it.

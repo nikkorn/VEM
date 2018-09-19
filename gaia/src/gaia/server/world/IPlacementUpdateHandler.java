@@ -9,16 +9,23 @@ import gaia.world.Position;
 public interface IPlacementUpdateHandler {
 	
 	/**
+	 * Called when a placement is created at a position.
+	 * @param placement The placement that has been created.
+	 * @param position The position of the created placement.
+	 */
+	void onPlacementCreated(IPlacementDetails placement, Position position);
+	
+	/**
 	 * Called when a placement changes at a position.
 	 * @param placement The placement that has changed.
 	 * @param position The position of the changed placmement.
 	 */
-	void onPlacementChange(IPlacementDetails placement, Position position);
+	void onPlacementChanged(IPlacementDetails placement, Position position);
 	
 	/**
-	 * Called when a placement at a position is deleted.
-	 * @param placement The placement that has been deleted.
-	 * @param position The position of the deleted placement.
+	 * Called when a placement at a position is removed.
+	 * @param placement The placement that has been removed.
+	 * @param position The position of the removed placement.
 	 */
-	void onPlacementDelete(IPlacementDetails placement, Position position);
+	void onPlacementRemoved(IPlacementDetails placement, Position position);
 }

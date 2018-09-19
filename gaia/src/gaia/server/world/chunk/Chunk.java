@@ -148,8 +148,14 @@ public class Chunk {
 	 */
 	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, IPlacementUpdateHandler placementUpdateHandler) {
 		boolean highPriorityPlacementFound = false;
-		// Execute placements actions for each placements.
+		// Execute the placement actions for each placement.
 		for (Placement placement : this.placements.getAll()) {
+			// Ensure that the placement still exists within the placements collection.
+			// It may have been removed by another placement as part of this chunk tick.
+			// If it doesn't exist then we just need to move on to the next placement.
+			if (!this.placements.has(placement)) {
+				continue;
+			}
 			// Does this placements have no action associated with it?
 			if (placement.getAction() == null) {
 				// We cannot execute actions for a placements when there are none!
@@ -258,7 +264,7 @@ public class Chunk {
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
 			// Handle the placement change.
-			placementUpdateHandler.onPlacementChange(placement, placementPosition);
+			placementUpdateHandler.onPlacementChanged(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
@@ -297,7 +303,7 @@ public class Chunk {
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
 			// Handle the placement change.
-			placementUpdateHandler.onPlacementChange(placement, placementPosition);
+			placementUpdateHandler.onPlacementChanged(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
