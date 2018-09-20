@@ -1,7 +1,6 @@
 package gaia.server.engine;
 
 import gaia.server.world.World;
-import gaia.server.world.chunk.Chunk;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.time.Time;
 
@@ -57,17 +56,8 @@ public class Engine {
 		boolean timeChanged = this.world.getClock().update();
 		// Get the current time.
 		Time currentTime = this.world.getClock().getCurrentTime();
-		// Tick each of our cached chunks.
-		for (Chunk chunk : world.getChunks().getCachedChunks()) {
-			// Are any players within the vicinity of this chunk?
-			boolean arePlayersNearChunk = this.world.arePlayersInChunkVicinity(chunk);
-			// We only want to tick chunks that are active. An active chunk either:
-			// - Contains a high priority placement.
-			// - Has any players in the vicinity.
-			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
-				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, world);
-			}
-		}
+		// Tick the world.
+		this.world.tick(currentTime, timeChanged);
 		// Process any messages that were added to the world message queue as part of this engine tick.
 		processWorldMessages();
 	}

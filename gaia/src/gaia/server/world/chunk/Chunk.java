@@ -3,7 +3,7 @@ package gaia.server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
-import gaia.server.world.IPlacementUpdateHandler;
+import gaia.server.world.PlacementModificationsHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.world.TileType;
@@ -144,9 +144,9 @@ public class Chunk {
 	 * @param hasTimeChanged Whether the time has changed in the current server tick.
 	 * @param time The current time.
 	 * @param arePlayersInChunkVicinity Whether any players are in the vicinity of this chunk.
-	 * @param placementUpdateHandler The placement update handler.
+	 * @param placementModificationsHandler The placement modification handler.
 	 */
-	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, IPlacementUpdateHandler placementUpdateHandler) {
+	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, PlacementModificationsHandler placementModificationsHandler) {
 		boolean highPriorityPlacementFound = false;
 		// Execute the placement actions for each placement.
 		for (Placement placement : this.placements.getAll()) {
@@ -163,13 +163,13 @@ public class Chunk {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged, placementUpdateHandler);
+					executePlacementActions(placement, time, hasTimeChanged, placementModificationsHandler);
 				}
 			} else {
 				// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 				if (placement.getPriority() == Priority.HIGH) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged, placementUpdateHandler);
+					executePlacementActions(placement, time, hasTimeChanged, placementModificationsHandler);
 				}
 			}
 			// Is this a high priority placements?
@@ -187,17 +187,17 @@ public class Chunk {
 	 * @param item The item to use.
 	 * @param x The local x position.
 	 * @param y The local y position.
-	 * @param placementUpdateHandler The placement update handler.
+	 * @param placementModificationsHandler The placement modification handler.
 	 * @return Any modification made to the item.
 	 */
-	public ItemType useItem(ItemType item, int x, int y, IPlacementUpdateHandler placementUpdateHandler) {
+	public ItemType useItem(ItemType item, int x, int y, PlacementModificationsHandler placementModificationsHandler) {
 		// Get the placement at this position.
 		Placement targetPlacement = placements.get(x, y);
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
 		if (targetPlacement != null && targetPlacement.getAction() != null) {
 			// We are using the item on a placement.
-			return this.executePlacementInteractionAction(targetPlacement, item, placementUpdateHandler);
+			return this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 		}
 		// TODO Try to use the item on a tile, this may create a placement.
 		// There was no way to use the item at the position.
@@ -239,9 +239,9 @@ public class Chunk {
 	 * @param placement The placement.
 	 * @param time the time.
 	 * @param hasTimeChanged Whether the time has changed on this server tick.
-	 * @param placementUpdateHandler The placement update handler.
+	 * @param placementModificationsHandler The placement modification handler.
 	 */
-	private void executePlacementActions(Placement placement, Time time, boolean hasTimeChanged, IPlacementUpdateHandler placementUpdateHandler) {
+	private void executePlacementActions(Placement placement, Time time, boolean hasTimeChanged, PlacementModificationsHandler placementModificationsHandler) {
 		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
@@ -264,7 +264,7 @@ public class Chunk {
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
 			// Handle the placement change.
-			placementUpdateHandler.onPlacementChanged(placement, placementPosition);
+			placementModificationsHandler.onPlacementChanged(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
@@ -282,9 +282,9 @@ public class Chunk {
 	 * Execute the interaction action with an item for the specified placement.
 	 * @param placement The placement to interact with.
 	 * @param item The item used in the interaction.
-	 * @param placementUpdateHandler The placement update handler.
+	 * @param placementModificationsHandler The placement modification handler.
 	 */
-	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, IPlacementUpdateHandler placementUpdateHandler) {
+	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, PlacementModificationsHandler placementModificationsHandler) {
 		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
@@ -303,7 +303,7 @@ public class Chunk {
 		// Has the underlay or overlay changed?
 		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
 			// Handle the placement change.
-			placementUpdateHandler.onPlacementChanged(placement, placementPosition);
+			placementModificationsHandler.onPlacementChanged(placement, placementPosition);
 		}
 		// Handle changes to the state of the container if we have one.
 		if (placement.getContainer() != null) {
