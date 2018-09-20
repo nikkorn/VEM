@@ -5,15 +5,14 @@ import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.PlacementModificationsHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
+import gaia.server.world.placements.IPlacementActions;
+import gaia.server.world.placements.IPlacementActionsExecutor;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.placements.Placements;
 import gaia.server.world.placements.Priority;
 import gaia.time.Time;
-import gaia.world.PlacementOverlay;
-import gaia.world.PlacementUnderlay;
 import gaia.world.Position;
 
 /**
@@ -157,19 +156,19 @@ public class Chunk {
 				continue;
 			}
 			// Does this placements have no action associated with it?
-			if (placement.getAction() == null) {
+			if (placement.getActions() == null) {
 				// We cannot execute actions for a placements when there are none!
 			} else if (arePlayersInChunkVicinity) {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged, placementModificationsHandler);
+					executePlacementTickActions(placement, time, hasTimeChanged, placementModificationsHandler);
 				}
 			} else {
 				// Players are not nearby, so we will just be executing actions for HIGH priority placements only.
 				if (placement.getPriority() == Priority.HIGH) {
 					// Execute the placements actions.
-					executePlacementActions(placement, time, hasTimeChanged, placementModificationsHandler);
+					executePlacementTickActions(placement, time, hasTimeChanged, placementModificationsHandler);
 				}
 			}
 			// Is this a high priority placements?
@@ -195,7 +194,7 @@ public class Chunk {
 		Placement targetPlacement = placements.get(x, y);
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
-		if (targetPlacement != null && targetPlacement.getAction() != null) {
+		if (targetPlacement != null && targetPlacement.getActions() != null) {
 			// We are using the item on a placement.
 			return this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 		}
@@ -235,91 +234,6 @@ public class Chunk {
 	}
 	
 	/**
-	 * Execute relevant actions for the specified placement.
-	 * @param placement The placement.
-	 * @param time the time.
-	 * @param hasTimeChanged Whether the time has changed on this server tick.
-	 * @param placementModificationsHandler The placement modification handler.
-	 */
-	private void executePlacementActions(Placement placement, Time time, boolean hasTimeChanged, PlacementModificationsHandler placementModificationsHandler) {
-		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
-		// We need to respond to any of these changes and add a message to the world message queue to let people know.
-		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
-		PlacementOverlay preActionOverlay      = placement.getOverlay();
-		ItemType[] preActionContainerItemTypes = null;
-		// The placements may not even have a container.
-		if (placement.getContainer() != null) {
-			preActionContainerItemTypes = placement.getContainer().asItemTypeArray();
-		}
-		// Execute the placements action that is called once per server tick.
-		placement.getAction().onServerTick(placement);
-		// Execute the placements action that is called for a time change if it has.
-		if (hasTimeChanged) {
-			placement.getAction().onTimeUpdate(placement, time);
-		}
-		// Get the world position of the placement.
-		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX());
-		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
-		Position placementPosition = new Position(placementXPosition, placementYPosition);
-		// Has the underlay or overlay changed?
-		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
-			// Handle the placement change.
-			placementModificationsHandler.onPlacementChanged(placement, placementPosition);
-		}
-		// Handle changes to the state of the container if we have one.
-		if (placement.getContainer() != null) {
-			for (int containerItemIndex = 0; containerItemIndex < placement.getContainer().size(); containerItemIndex++) {
-				// Has the item type at the current container slot changed?
-				if (preActionContainerItemTypes[containerItemIndex] != placement.getContainer().get(containerItemIndex)) {
-					// Add a message to the world message queue to notify of the change.
-					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, placement.getContainer().get(containerItemIndex), placementPosition));
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Execute the interaction action with an item for the specified placement.
-	 * @param placement The placement to interact with.
-	 * @param item The item used in the interaction.
-	 * @param placementModificationsHandler The placement modification handler.
-	 */
-	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, PlacementModificationsHandler placementModificationsHandler) {
-		// A side effect of executing placements actions could be changes to overlay, underlay and container state.
-		// We need to respond to any of these changes and add a message to the world message queue to let people know.
-		PlacementUnderlay preActionUnderlay    = placement.getUnderlay();
-		PlacementOverlay preActionOverlay      = placement.getOverlay();
-		ItemType[] preActionContainerItemTypes = null;
-		// The placements may not even have a container.
-		if (placement.getContainer() != null) {
-			preActionContainerItemTypes = placement.getContainer().asItemTypeArray();
-		}
-		// Execute the placement action that handles iteractions and keep track of any modifications made to the item.
-		ItemType modification = placement.getAction().onInteraction(placement, item);
-		// Get the world position of the placement.
-		short placementXPosition   = (short) ((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX());
-		short placementYPosition   = (short) ((this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
-		Position placementPosition = new Position(placementXPosition, placementYPosition);
-		// Has the underlay or overlay changed?
-		if (placement.getUnderlay() != preActionUnderlay || placement.getOverlay() != preActionOverlay) {
-			// Handle the placement change.
-			placementModificationsHandler.onPlacementChanged(placement, placementPosition);
-		}
-		// Handle changes to the state of the container if we have one.
-		if (placement.getContainer() != null) {
-			for (int containerItemIndex = 0; containerItemIndex < placement.getContainer().size(); containerItemIndex++) {
-				// Has the item type at the current container slot changed?
-				if (preActionContainerItemTypes[containerItemIndex] != placement.getContainer().get(containerItemIndex)) {
-					// Add a message to the world message queue to notify of the change.
-					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, placement.getContainer().get(containerItemIndex), placementPosition));
-				}
-			}
-		}
-		// Return any modification made to the item in its use.
-		return modification;
-	}
-	
-	/**
 	 * Converts a world postition to a local chunk position.
 	 * @param position The world position.
 	 * @return The local chunk position.
@@ -335,5 +249,54 @@ public class Chunk {
 	 */
 	public static int convertWorldToLocalPosition(int position) {
 		return (position + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE;
+	}
+	
+	/**
+	 * Execute the server tick and time update actions for the specified placement.
+	 * @param placement The placement.
+	 * @param time the time.
+	 * @param hasTimeChanged Whether the time has changed on this server tick.
+	 * @param placementModificationsHandler The placement modification handler.
+	 */
+	private void executePlacementTickActions(Placement placement, Time time, boolean hasTimeChanged, PlacementModificationsHandler placementModificationsHandler) {
+		// Get the absolute world position of the placement.
+		Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX(), (this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
+		// Create the executor that will execute the placement server tick and time update actions.	
+		IPlacementActionsExecutor executor = new IPlacementActionsExecutor() {
+			@Override
+			public ItemType execute(IPlacementActions action) {
+				// Execute the placements action that is called once per server tick.
+				action.onServerTick(placement);
+				// Execute the placements action that is called for a time change if it has.
+				if (hasTimeChanged) {
+					action.onTimeUpdate(placement, time);
+				}
+				// There was no item used in the execution of these actions. 
+				return ItemType.NONE;
+			}
+		};
+		// Execute the server tick and time update placement actions.
+		placement.executeActions(placementPosition, executor, placementModificationsHandler, worldMessageQueue);
+	}
+	
+	/**
+	 * Execute the interaction action with an item for the specified placement.
+	 * @param placement The placement to interact with.
+	 * @param item The item used in the interaction.
+	 * @param placementModificationsHandler The placement modification handler.
+	 * @return The modification made to the item used in the interaction.
+	 */
+	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, PlacementModificationsHandler placementModificationsHandler) {
+		// Get the absolute world position of the placement.
+		Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX(), (this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
+		// Create the executor that will execute the placement interaction action.	
+		IPlacementActionsExecutor executor = new IPlacementActionsExecutor() {
+			@Override
+			public ItemType execute(IPlacementActions action) {
+				return action.onInteraction(placement, item);
+			}
+		};
+		// Execute the interaction placement action, returning any modification made to the item use in the interaction.
+		return placement.executeActions(placementPosition, executor, placementModificationsHandler, worldMessageQueue);
 	}
 }

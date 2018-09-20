@@ -4,7 +4,7 @@ import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.placements.IModifiablePlacement;
-import gaia.server.world.placements.IPlacementAction;
+import gaia.server.world.placements.IPlacementActions;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.server.world.placements.state.TreeState;
@@ -52,8 +52,8 @@ public class TreeFactory implements IPlacementFactory {
 	}
 
 	@Override
-	public IPlacementAction getAction() {
-		return new IPlacementAction() {
+	public IPlacementActions getActions() {
+		return new IPlacementActions() {
 			@Override
 			public void onServerTick(IModifiablePlacement placement) {
 				// Get the placements container.

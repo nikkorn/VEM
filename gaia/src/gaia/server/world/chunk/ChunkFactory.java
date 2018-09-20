@@ -112,7 +112,7 @@ public class ChunkFactory {
 		// Get the relevant placements factory.
 		IPlacementFactory placementFactory = PlacementFactories.getForType(placementType);
 		// Create the action for this placements.
-		placement.setAction(placementFactory.getAction());
+		placement.setActions(placementFactory.getActions());
 		// Create the placements state if there is any.
 		if (placementJSON.has("state")) {
 			placement.setState(placementFactory.createState(placementJSON.getJSONObject("state")));

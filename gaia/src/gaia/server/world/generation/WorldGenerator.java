@@ -73,7 +73,7 @@ public class WorldGenerator extends TileGenerator {
         // Create the placements state.
         placement.setState(placementFactory.createState(chunkRng));
         // Create the action for this placements.
-        placement.setAction(placementFactory.getAction());
+        placement.setActions(placementFactory.getActions());
         // Set the initial priority for this placements.
         placement.setPriority(placementFactory.getInitialPriority());
         // Set the initial underlay for this placements.

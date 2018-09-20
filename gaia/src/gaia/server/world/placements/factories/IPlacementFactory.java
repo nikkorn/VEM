@@ -2,7 +2,7 @@ package gaia.server.world.placements.factories;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.placements.IPlacementAction;
+import gaia.server.world.placements.IPlacementActions;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.world.PlacementOverlay;
@@ -54,8 +54,8 @@ public interface IPlacementFactory {
 	Container getContainer(Random chunkRng);
 	
 	/**
-	 * Create the placement action for this placement.
-	 * @return The placement action.
+	 * Create the placement actions for this placement.
+	 * @return The placement actions.
 	 */
-	IPlacementAction getAction();
+	IPlacementActions getActions();
 }
