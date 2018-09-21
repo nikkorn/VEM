@@ -1,8 +1,7 @@
-package gaia.server.world.placements.factories;
+package gaia.server.world.placements.builders;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.IPlacementActions;
 import gaia.server.world.placements.Priority;
@@ -13,11 +12,12 @@ import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
 import gaia.world.items.ItemType;
 import gaia.world.items.container.Container;
+import gaia.world.items.container.ContainerFactory;
 
 /**
- * Factory for creating a tilled earth placements.
+ * Builder for creating a tilled earth placements.
  */
-public class TilledEarthFactory implements IPlacementFactory {
+public class TilledEarthBuilder implements IPlacementBuilder {
 
 	@Override
 	public IPlacementState createState(Random chunkRng) {
@@ -68,6 +68,6 @@ public class TilledEarthFactory implements IPlacementFactory {
 
 	@Override
 	public Container getContainer(Random chunkRng) {
-		return ChunkFactory.createContainer(3);
+		return ContainerFactory.create(3);
 	}
 }

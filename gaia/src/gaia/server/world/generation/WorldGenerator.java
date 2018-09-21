@@ -4,7 +4,8 @@ import gaia.Constants;
 import gaia.world.TileType;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.placements.Placements;
-import gaia.server.world.placements.factories.IPlacementFactory;
+import gaia.server.world.placements.builders.IPlacementBuilder;
+import gaia.server.world.placements.builders.PlacementBuilders;
 import gaia.world.PlacementType;
 import gaia.world.generation.TileGenerator;
 
@@ -69,7 +70,7 @@ public class WorldGenerator extends TileGenerator {
         // Create the new placements.
         Placement placement = new Placement(type, x, y);
         // Get the relevant placements factory.
-        IPlacementFactory placementFactory = PlacementFactories.getForType(type);
+        IPlacementBuilder placementFactory = PlacementBuilders.getForType(type);
         // Create the placements state.
         placement.setState(placementFactory.createState(chunkRng));
         // Create the action for this placements.

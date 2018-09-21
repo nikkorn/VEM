@@ -102,7 +102,7 @@ public class Chunks {
 		} else {
 			// This chunk has not been cached yet, so it will need to be loaded.
 			// Create the new chunk using the world generator.
-			Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, (short)x, (short)y, worldMessageQueue);
+			Chunk chunk = ChunkFactory.create(worldGenerator, (short)x, (short)y, worldMessageQueue);
 			// Cache this chunk so that we don't have to keep generating it.
 			this.cachedChunks.put(chunk.getKey(), chunk);
 			// Return our newly created chunk.
@@ -196,7 +196,7 @@ public class Chunks {
 				}
 				// The player has wandered into the vicinity of chunk that has never
 				// been loaded before. Create the new chunk using the world generator
-				Chunk chunk = ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY, worldMessageQueue);
+				Chunk chunk = ChunkFactory.create(worldGenerator, chunkX, chunkY, worldMessageQueue);
 				// Cache this chunk so that we don't have to keep generating it.
 				this.cachedChunks.put(chunk.getKey(), chunk);
 			}

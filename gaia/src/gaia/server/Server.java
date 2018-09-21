@@ -44,7 +44,7 @@ public class Server {
 		// Set whether we are going to output debug info to the console.
 		ServerConsole.setDebugToConsole(configuration.isDebuggingToConsole());
 		// Create the world.
-		World world = WorldFactory.createWorld(worldName);
+		World world = WorldFactory.create(worldName);
 		// Create the game engine.
 		this.engine = new Engine(world);
 		// Create the client proxy manager, passing the port for client connections.

@@ -1,4 +1,4 @@
-package gaia.server.world.placements.factories;
+package gaia.server.world.placements.builders;
 
 import java.util.Random;
 import org.json.JSONObject;
@@ -10,9 +10,9 @@ import gaia.world.PlacementUnderlay;
 import gaia.world.items.container.Container;
 
 /**
- * Represents a placement factory.
+ * Represents a placement builder.
  */
-public interface IPlacementFactory {
+public interface IPlacementBuilder {
 	
 	/**
 	 * Create default state for the placement type.

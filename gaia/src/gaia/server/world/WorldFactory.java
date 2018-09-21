@@ -20,7 +20,7 @@ import gaia.time.Time;
 import gaia.world.Position;
 
 /**
- * A factory for world entities.
+ * Factory for creating World instances.
  */
 public class WorldFactory {
 	
@@ -29,7 +29,7 @@ public class WorldFactory {
 	 * @param name The name of the world.
 	 * @return The world instance.
 	 */
-	public static World createWorld(String name) {
+	public static World create(String name) {
 		// Check whether a world save directory of this name already exists.
 		File worldSaveDir = new File("worlds/" + name);
 		// Create the world message queue that will be shared throughout the application.
@@ -104,7 +104,7 @@ public class WorldFactory {
 					continue;
 				}
 				// Generate the chunk and add it to our chunk list.
-				chunks.add(ChunkFactory.createNewChunk(worldGenerator, chunkX, chunkY, worldMessageQueue));
+				chunks.add(ChunkFactory.create(worldGenerator, chunkX, chunkY, worldMessageQueue));
 			}
 		}
 		
@@ -162,7 +162,7 @@ public class WorldFactory {
 			// Convert the chunk save file to JSON.
 			JSONObject chunkState = Helpers.readJSONObjectFromFile(chunkFile);
 			// Restore the chunk.
-			Chunk chunk = ChunkFactory.restoreChunk(chunkState, worldGenerator, worldMessageQueue);
+			Chunk chunk = ChunkFactory.restore(chunkState, worldGenerator, worldMessageQueue);
 			// Add the chunk to the list of existing chunks.
 			existingChunks.add(chunk);
 		}
