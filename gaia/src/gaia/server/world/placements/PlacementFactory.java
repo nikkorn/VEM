@@ -1,5 +1,6 @@
 package gaia.server.world.placements;
 
+import java.util.HashMap;
 import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.placements.builders.IPlacementBuilder;
@@ -19,9 +20,18 @@ public class PlacementFactory {
 	 * The RNG to use in generating new placements in their default state.
 	 */
 	private static Random placementGenerationRNG;
+	/**
+	 * The map of placement types generated as result of an item usage on a tile.
+	 */
+	private static HashMap<String, PlacementType> itemUsagePlacementResults;
 	
 	static {
+		// Create the default RNG to use in building placements when one is not provided.
 		placementGenerationRNG = new Random();
+		// Populate the map of placement types generated as result of an item usage on a tile.
+		itemUsagePlacementResults = new HashMap<String, PlacementType>();
+		itemUsagePlacementResults.put(createItemTileLinkKey(ItemType.HOE, TileType.GRASS), PlacementType.TILLED_EARTH);
+		itemUsagePlacementResults.put(createItemTileLinkKey(ItemType.HOE, TileType.PLAINS), PlacementType.TILLED_EARTH);
 	}
 	
 	/**
@@ -70,19 +80,19 @@ public class PlacementFactory {
         // Create the new placement.
         Placement placement = new Placement(type, x, y);
         // Get the relevant placement builder.
-        IPlacementBuilder placementFactory = PlacementBuilders.getForType(type);
+        IPlacementBuilder placementBuilder = PlacementBuilders.getForType(type);
         // Create the placement state.
-        placement.setState(placementFactory.createState(rng));
+        placement.setState(placementBuilder.createState(rng));
         // Create the action for this placement.
-        placement.setActions(placementFactory.getActions());
+        placement.setActions(placementBuilder.getActions());
         // Set the initial priority for this placement.
-        placement.setPriority(placementFactory.getInitialPriority());
+        placement.setPriority(placementBuilder.getInitialPriority());
         // Set the initial underlay for this placement.
-        placement.setUnderlay(placementFactory.getInitialUnderlay());
+        placement.setUnderlay(placementBuilder.getInitialUnderlay());
         // Set the initial overlay for this placement.
-        placement.setOverlay(placementFactory.getInitialOverlay());
+        placement.setOverlay(placementBuilder.getInitialOverlay());
         // Set the container for this placement.
-        placement.setContainer(placementFactory.getContainer(rng));
+        placement.setContainer(placementBuilder.getContainer(rng));
         // Return the new placement.
         return placement;
     }
@@ -107,8 +117,24 @@ public class PlacementFactory {
 	 * @return The placement created as a result of using the item on the tile, or null if no placement was created.
 	 */
 	public static Placement create(TileType tile, ItemType item, short x, short y) {
-		// TODO Check whether using the item on this tile will create a placement, if so create and return it.
+		// Check whether using the item on this tile will create a placement, if so create and return it.
+		String itemTileLinkKey = createItemTileLinkKey(item, tile);
+		// Does using the item on the tile produce create a new placement?
+		if (itemUsagePlacementResults.containsKey(itemTileLinkKey)) {
+			// Create the placement and return it.
+			return create(itemUsagePlacementResults.get(itemTileLinkKey), x, y);
+		}
+		// Using the item on the tile does not create a placement.
 		return null;
 	}
 	
+	/**
+	 * Create a unique key for a item-tile combination.
+	 * @param item The item type.
+	 * @param tile The tile type.
+	 * @return A unique key for a item-tile combination.
+	 */
+	private static String createItemTileLinkKey(ItemType item, TileType tile) {
+		return item.toString() + "-" + tile.toString(); 
+	}
 }

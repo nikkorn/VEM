@@ -10,6 +10,7 @@ import gaia.world.items.ItemType;
 import gaia.server.world.placements.IPlacementActions;
 import gaia.server.world.placements.IPlacementActionsExecutor;
 import gaia.server.world.placements.Placement;
+import gaia.server.world.placements.PlacementFactory;
 import gaia.server.world.placements.Placements;
 import gaia.server.world.placements.Priority;
 import gaia.time.Time;
@@ -198,7 +199,17 @@ public class Chunk {
 			// We are using the item on a placement.
 			return this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 		}
-		// TODO Try to use the item on a tile, this may create a placement.
+		// Try to use the item on a tile, this may create a placement.
+		Placement createdPlacement = PlacementFactory.create(TileType.GRASS, item, (short)x, (short)y);
+		// If a placement was created in the process of using the item on the tile then add it to our placements collection.
+		if (createdPlacement != null) {
+			// Add the newly created placement.
+			this.placements.add(createdPlacement);
+			// Get the absolute world position of the placement.
+			Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + createdPlacement.getX(), (this.y * Constants.WORLD_CHUNK_SIZE) + createdPlacement.getY());
+			// Allow the placement modifications handler to take it from here.
+			placementModificationsHandler.onPlacementCreated(createdPlacement, placementPosition);
+		}
 		// There was no way to use the item at the position.
 		return item;
 	}
