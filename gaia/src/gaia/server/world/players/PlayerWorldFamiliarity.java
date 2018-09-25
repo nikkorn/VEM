@@ -15,20 +15,7 @@ public class PlayerWorldFamiliarity {
 	 * The mapping of world positions to placement familiarities.
 	 */
 	private HashMap<String, PlacementFamiliarity> placementFamiliarities = new HashMap<String, PlacementFamiliarity>();
-	
-	/**
-	 * Add a familiarity for a placement.
-	 * @param placement The placement to add a familiarity for.
-	 * @param x The x position of the placement.
-	 * @param y The y position of the placement.
-	 */
-	public void addFamiliarity(IPlacementDetails placement, short x, short y) {
-		// Get the placement position key.
-		String key = Placements.getPlacementKey(x, y);
-		// Add a familiarity for the placement.
-		placementFamiliarities.put(key, new PlacementFamiliarity(placement));
-	}
-	
+
 	/**
 	 * Update the player's familiarity with a position.
 	 * @param placement The placement at the position, or null if there is no placement.
@@ -38,8 +25,14 @@ public class PlayerWorldFamiliarity {
 	public void update(IPlacementDetails placement, short x, short y) {
 		// Get the placement position key.
 		String key = Placements.getPlacementKey(x, y);
-		// Update the player's familiarity with the placement at the position.
-		placementFamiliarities.put(key, new PlacementFamiliarity(placement));
+		// Are we updating familiarity with a now-deleted placement?
+		if (placement == null) {
+			// Update the player's familiarity with the now non-existent placement.
+			placementFamiliarities.remove(key);
+		} else {
+			// Update the player's familiarity with the placement at the position.
+			placementFamiliarities.put(key, new PlacementFamiliarity(placement));
+		}
 	}
 	
 	/**
