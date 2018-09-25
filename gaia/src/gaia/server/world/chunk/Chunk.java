@@ -164,9 +164,14 @@ public class Chunk {
 					executePlacementTickActions(placement, time, hasTimeChanged, placementModificationsHandler);
 				}
 			}
-			// Is this a high priority placements?
-			if (placement.getPriority() == Priority.HIGH) {
-				highPriorityPlacementFound = true;
+			// Check whether the placement has been marked for deletion, and remove it from the placements collection if it has.
+			if (placement.isMarkedForDeletion()) {
+				this.placements.remove(placement);
+			} else {
+				// Is this a high priority placements?
+				if (placement.getPriority() == Priority.HIGH) {
+					highPriorityPlacementFound = true;
+				}
 			}
 		}
 		// Set whether this chunk contains any high priority placements.
@@ -188,8 +193,14 @@ public class Chunk {
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
 		if (targetPlacement != null && targetPlacement.getActions() != null) {
-			// We are using the item on a placement.
-			return this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
+			// We are using the item on a placement, get the modification made to the used item.
+			ItemType modification = this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
+			// Check whether the placement has been marked for deletion, and remove it from the placements collection if it has.
+			if (targetPlacement.isMarkedForDeletion()) {
+				this.placements.remove(targetPlacement);
+			}
+			// Return the modification made to the used item.
+			return modification;
 		}
 		// Try to use the item on a tile, this may create a placement.
 		Placement createdPlacement = PlacementFactory.create(this.tiles[x][y], item, (short)x, (short)y);

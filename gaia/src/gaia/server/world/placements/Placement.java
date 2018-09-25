@@ -50,6 +50,10 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	 * The placements overlay.
 	 */
 	private PlacementOverlay overlay = PlacementOverlay.NONE;
+	/**
+	 * Whether this placement is marked for deletion.
+	 */
+	private boolean isMarkedForDeletion = false;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -193,6 +197,22 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	}
 	
 	/**
+	 * Get whether this placement is marked for deletion.
+	 * @return Whether this placement is marked for deletion.
+	 */
+	public boolean isMarkedForDeletion() {
+		return this.isMarkedForDeletion;
+	}
+	
+	/**
+	 * Mark this placement for deletion.
+	 */
+	@Override
+	public void MarkForDeletion() {
+		this.isMarkedForDeletion = true;
+	}
+	
+	/**
 	 * Get the placements as a packed integer.
 	 *   bits 0-9   - Underlay Type
 	 *   bits 10-19 - Overlay Type
@@ -232,6 +252,13 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		// One of these actions could be to interact with the placement using an item.
 		// In this case the modification made to the item will be returned by the executor.
 		ItemType modification = executor.execute(this.actions);
+		// Was the placement marked for deletion while the placement actions were being executed?
+		if (this.isMarkedForDeletion) {
+			// We are trying to delete this placement! Handle the placement deletion.
+			placementModificationsHandler.onPlacementRemoved(this, position);
+			// We do not care about modifications made to the placement, just that it has been deleted.
+			return modification;
+		}
 		// We are finished executing our actions. Has the underlay or overlay changed?
 		if (underlay != preActionUnderlay || overlay != preActionOverlay) {
 			// Handle the placement change.

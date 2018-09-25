@@ -57,4 +57,9 @@ public interface IModifiablePlacement {
 	 * @param overlay The placements overlay.
 	 */
 	public void setOverlay(PlacementOverlay overlay);
+	
+	/**
+	 * Mark this placement for deletion.
+	 */
+	public void MarkForDeletion();
 }
