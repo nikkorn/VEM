@@ -90,14 +90,6 @@ public class Chunk {
 	}
 	
 	/**
-	 * Get the tiles array.
-	 * @return The tiles array.
-	 */
-	public TileType[][] getTiles() {
-		return this.tiles;
-	}
-	
-	/**
 	 * Get the placements.
 	 * @return The placements.
 	 */
@@ -200,7 +192,7 @@ public class Chunk {
 			return this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 		}
 		// Try to use the item on a tile, this may create a placement.
-		Placement createdPlacement = PlacementFactory.create(TileType.GRASS, item, (short)x, (short)y);
+		Placement createdPlacement = PlacementFactory.create(this.tiles[x][y], item, (short)x, (short)y);
 		// If a placement was created in the process of using the item on the tile then add it to our placements collection.
 		if (createdPlacement != null) {
 			// Add the newly created placement.
