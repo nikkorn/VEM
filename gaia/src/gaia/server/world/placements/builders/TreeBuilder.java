@@ -1,10 +1,9 @@
-package gaia.server.world.placements.factories;
+package gaia.server.world.placements.builders;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.chunk.ChunkFactory;
 import gaia.server.world.placements.IModifiablePlacement;
-import gaia.server.world.placements.IPlacementAction;
+import gaia.server.world.placements.IPlacementActions;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.server.world.placements.state.TreeState;
@@ -13,13 +12,14 @@ import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
 import gaia.world.items.ItemType;
 import gaia.world.items.container.Container;
+import gaia.world.items.container.ContainerFactory;
 import gaia.world.items.container.NoFreeSlotException;
 
 /**
- * Factory for creating a plain tree placements.
- * Plain tree placments produce wood at random times, the rate at which is affected by the season.
+ * Builder for creating a plain tree placement.
+ * A plain tree placment produce wood at random times, the rate at which is affected by the season.
  */
-public class TreeFactory implements IPlacementFactory {
+public class TreeBuilder implements IPlacementBuilder {
 
 	@Override
 	public IPlacementState createState(Random chunkRng) {
@@ -48,12 +48,12 @@ public class TreeFactory implements IPlacementFactory {
 
 	@Override
 	public Container getContainer(Random chunkRng) {
-		return ChunkFactory.createContainer(2);
+		return ContainerFactory.create(2);
 	}
 
 	@Override
-	public IPlacementAction getAction() {
-		return new IPlacementAction() {
+	public IPlacementActions getActions() {
+		return new IPlacementActions() {
 			@Override
 			public void onServerTick(IModifiablePlacement placement) {
 				// Get the placements container.

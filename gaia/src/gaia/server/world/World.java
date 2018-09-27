@@ -2,7 +2,6 @@ package gaia.server.world;
 
 import gaia.world.generation.TileGenerator;
 import gaia.world.items.ItemType;
-import java.util.ArrayList;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
@@ -10,10 +9,9 @@ import gaia.server.world.chunk.Chunks;
 import gaia.server.world.chunk.ITileVisitor;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
+import gaia.server.world.messaging.messages.PlacementCreatedMessage;
 import gaia.server.world.messaging.messages.PlacementRemovedMessage;
-import gaia.server.world.placements.IPlacementDetails;
 import gaia.server.world.placements.Placement;
-import gaia.server.world.placements.PlacementModification;
 import gaia.server.world.players.Player;
 import gaia.server.world.players.Players;
 import gaia.time.Time;
@@ -22,7 +20,7 @@ import gaia.world.Position;
 /**
  * A game world composed of separate chunks.
  */
-public class World implements IPlacementUpdateHandler {
+public class World {
 	/**
 	 * The chunks that the world is composed of.
 	 */
@@ -47,6 +45,11 @@ public class World implements IPlacementUpdateHandler {
 	 * The world message queue.
 	 */
 	private WorldMessageQueue worldMessageQueue;
+	/**
+	 * The handler for any placement modifications that will be responsible for determining
+	 * concerned players and raising placement create/update/remove world messages for those players.
+	 */
+	private PlacementModificationsHandler placementModificationsHandler;
 	
 	/**
 	 * Creates a new instance of the World class.
@@ -58,12 +61,13 @@ public class World implements IPlacementUpdateHandler {
 	 * @param worldMessageQueue The world message queue.
 	 */
 	public World(Players players, Chunks chunks, Position spawn, Time time, TileGenerator tileGenerator, WorldMessageQueue worldMessageQueue) {
-		this.players           = players; 
-		this.chunks            = chunks;
-		this.playerSpawn       = spawn;
-		this.clock             = new Clock(time);
-		this.tileGenerator     = tileGenerator;
-		this.worldMessageQueue = worldMessageQueue;
+		this.players                       = players; 
+		this.chunks                        = chunks;
+		this.playerSpawn                   = spawn;
+		this.clock                         = new Clock(time);
+		this.tileGenerator                 = tileGenerator;
+		this.worldMessageQueue             = worldMessageQueue;
+		this.placementModificationsHandler = new PlacementModificationsHandler(players, worldMessageQueue);
 	}
 	
 	/**
@@ -80,14 +84,6 @@ public class World implements IPlacementUpdateHandler {
 	 */
 	public Clock getClock() {
 		return this.clock;
-	}
-
-	/**
-	 * Get the world message queue.
-	 * @return The world message queue.
-     */
-	public WorldMessageQueue getWorldMessageQueue() {
-		return worldMessageQueue;
 	}
 	
 	/**
@@ -107,11 +103,38 @@ public class World implements IPlacementUpdateHandler {
 	}
 	
 	/**
+	 * Get the world message queue.
+	 * @return The world message queue.
+     */
+	public WorldMessageQueue getWorldMessageQueue() {
+		return worldMessageQueue;
+	}
+	
+	/**
 	 * Get the world seed.
 	 * @return the world seed.
 	 */
 	public long getSeed() {
 		return this.tileGenerator.getSeed();
+	}
+	
+	/**
+	 * Tick the world.
+	 * @param currentTime The current time.
+	 * @param timeChanged Whether the time has changed as part of this tick.
+	 */
+	public void tick(Time currentTime, boolean timeChanged) {
+		// Tick each of our cached chunks.
+		for (Chunk chunk : chunks.getCachedChunks()) {
+			// Are any players within the vicinity of this chunk?
+			boolean arePlayersNearChunk = arePlayersInChunkVicinity(chunk);
+			// We only want to tick chunks that are active. An active chunk either:
+			// - Contains a high priority placement.
+			// - Has any players in the vicinity.
+			if (arePlayersNearChunk || chunk.hasHighPriorityPlacement()) {
+				chunk.tick(timeChanged, currentTime, arePlayersNearChunk, this.placementModificationsHandler);
+			}
+		}
 	}
 	
 	/**
@@ -133,7 +156,7 @@ public class World implements IPlacementUpdateHandler {
 		// to create a new chunk if the position is within an uncached chunk.
 		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Use the item at the position in the chunk and return any modification made in its use.
-		return targetChunk.useItem(item, Chunk.convertWorldToLocalPosition(position.getX()), Chunk.convertWorldToLocalPosition(position.getY()), this);
+		return targetChunk.useItem(item, Chunk.convertWorldToLocalPosition(position.getX()), Chunk.convertWorldToLocalPosition(position.getY()), this.placementModificationsHandler);
 	}
 	
 	/**
@@ -180,13 +203,13 @@ public class World implements IPlacementUpdateHandler {
 						// Get whether the tile was as the player expected and update their familiarity with it.
 						switch (player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y)) {
 							case EXPECTED_NO_PLACEMENT:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
+								worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 								break;
 							case EXPECTED_PLACEMENT:
 								worldMessageQueue.add(new PlacementRemovedMessage(player.getId(), null, new Position(x, y)));
 								break;
 							case EXPECTED_DIFFERENT_PLACEMENT_STATE:
-								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.UPDATE));
+								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y)));
 								break;
 							default:
 								break;
@@ -214,64 +237,12 @@ public class World implements IPlacementUpdateHandler {
 							// Update the player's familiarity with the placement.
 							player.getWorldFamiliarity().update(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
-							worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y), PlacementModification.CREATE));
+							worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 						}
 					}
 		});
 	}
-	
-	/**
-	 * Called when a placement changes at a position.
-	 * @param placement The placement that has changed.
-	 * @param position The position of the changed placement.
-	 */
-	@Override
-	public void onPlacementChange(IPlacementDetails placement, Position position) {
-		// Create a list to hold the ids of any players that care about the placement change.
-		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
-		// Get all the players that are close enough to this placement to care about it.
-		for (Player player : this.getPlayers().getAllPlayers()) {
-			// We do not care about this player if they are not within the view range of the placement.
-			if (!position.isWithinDistanceOf(player.getPosition(), Constants.PLAYER_VIEW_DISTANCE)) {
-				continue;
-			}
-			// This player is close enough to the placement to care about it.
-			concernedPlayerIds.add(player.getId());
-			// Update the player's familiarity with the placement.
-			player.getWorldFamiliarity().update(placement, position.getX(), position.getY());
-		}
-		// Add a world message to notify any concerned players of the placement change.
-		if (concernedPlayerIds.size() > 0) {
-			worldMessageQueue.add(new PlacementChangedMessage(concernedPlayerIds, placement, position, PlacementModification.UPDATE));
-		}
-	}
-	
-	/**
-	 * Called when a placement changes at a position.
-	 * @param placement The placement that has been deleted.
-	 * @param position The position of the deleted placement.
-	 */
-	@Override
-	public void onPlacementDelete(IPlacementDetails placement, Position position) {
-		// Create a list to hold the ids of any players that care about the placement deletion.
-		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
-		// Get all the players that are close enough to this placement to care about it.
-		for (Player player : this.getPlayers().getAllPlayers()) {
-			// We do not care about this player if they are not within the view range of the placement.
-			if (!position.isWithinDistanceOf(player.getPosition(), Constants.PLAYER_VIEW_DISTANCE)) {
-				continue;
-			}
-			// This player is close enough to the placement to care about it.
-			concernedPlayerIds.add(player.getId());
-			// Update the player's familiarity with the placement.
-			player.getWorldFamiliarity().update(null, position.getX(), position.getY());
-		}
-		// Add a world message to notify any concerned players of the placement deletion.
-		if (concernedPlayerIds.size() > 0) {
-			worldMessageQueue.add(new PlacementRemovedMessage(concernedPlayerIds, placement.getType(), position));
-		}
-	}
-	
+
 	/**
 	 * Checks whether any connected players are within the vicinity of the specified chunk.
 	 * @param chunk The chunk.

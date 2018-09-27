@@ -1,11 +1,16 @@
 package gaia.server.world.placements;
 
 import org.json.JSONObject;
+import gaia.server.world.PlacementModificationsHandler;
+import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.server.world.placements.state.IPlacementState;
 import gaia.utils.BitPacker;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
+import gaia.world.Position;
+import gaia.world.items.ItemType;
 import gaia.world.items.container.Container;
 
 /**
@@ -33,10 +38,10 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	 */
 	private IPlacementState state;
 	/**
-	 * The placements action to be executed per game engine tick and/or time update.
+	 * The placements actions to be executed per game engine tick and/or time update.
 	 * This could also be done per interaction if the placements priority is LOW.
 	 */
-	private IPlacementAction action;
+	private IPlacementActions actions;
 	/**
 	 * The placements underlay.
 	 */
@@ -45,6 +50,10 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	 * The placements overlay.
 	 */
 	private PlacementOverlay overlay = PlacementOverlay.NONE;
+	/**
+	 * Whether this placement is marked for deletion.
+	 */
+	private boolean isMarkedForDeletion = false;
 	
 	/**
 	 * Create a new instance of the Placement class.
@@ -99,19 +108,19 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	}
 	
 	/**
-	 * Get the placements action.
-	 * @return The placements action.
+	 * Get the placement actions.
+	 * @return The placement actions.
 	 */
-	public IPlacementAction getAction() {
-		return action;
+	public IPlacementActions getActions() {
+		return actions;
 	}
 
 	/**
-	 * Set the placements action.
-	 * @param action The placements action.
+	 * Set the placement actions.
+	 * @param action The placement actions.
 	 */
-	public void setAction(IPlacementAction action) {
-		this.action = action;
+	public void setActions(IPlacementActions actions) {
+		this.actions = actions;
 	}
 
 	/**
@@ -188,6 +197,22 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	}
 	
 	/**
+	 * Get whether this placement is marked for deletion.
+	 * @return Whether this placement is marked for deletion.
+	 */
+	public boolean isMarkedForDeletion() {
+		return this.isMarkedForDeletion;
+	}
+	
+	/**
+	 * Mark this placement for deletion.
+	 */
+	@Override
+	public void MarkForDeletion() {
+		this.isMarkedForDeletion = true;
+	}
+	
+	/**
 	 * Get the placements as a packed integer.
 	 *   bits 0-9   - Underlay Type
 	 *   bits 10-19 - Overlay Type
@@ -204,6 +229,53 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		packed = BitPacker.pack(packed, this.type.ordinal(), 20, 10);
 		// Return the packed value.
 		return packed;
+	}
+	
+	/**
+	 * Execute relevant actions for the placement using a placement actions executor.
+	 * @param position The absolute world position of the placement.
+	 * @param executor The actions executor.
+	 * @param placementModificationsHandler The placement modification handler.
+	 * @return The potential modification that was made to an item used in an interaction with the placement.
+	 */
+	public ItemType executeActions(Position position, IPlacementActionsExecutor executor, PlacementModificationsHandler placementModificationsHandler, WorldMessageQueue worldMessageQueue) {
+		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
+		// We need to respond to any of these changes and add a message to the world message queue to let people know.
+		PlacementUnderlay preActionUnderlay    = underlay;
+		PlacementOverlay preActionOverlay      = overlay;
+		ItemType[] preActionContainerItemTypes = null;
+		// The placements may not even have a container.
+		if (getContainer() != null) {
+			preActionContainerItemTypes = container.asItemTypeArray();
+		}
+		// Execute the placement actions using the actions executor provided.
+		// One of these actions could be to interact with the placement using an item.
+		// In this case the modification made to the item will be returned by the executor.
+		ItemType modification = executor.execute(this.actions);
+		// Was the placement marked for deletion while the placement actions were being executed?
+		if (this.isMarkedForDeletion) {
+			// We are trying to delete this placement! Handle the placement deletion.
+			placementModificationsHandler.onPlacementRemoved(this, position);
+			// We do not care about modifications made to the placement, just that it has been deleted.
+			return modification;
+		}
+		// We are finished executing our actions. Has the underlay or overlay changed?
+		if (underlay != preActionUnderlay || overlay != preActionOverlay) {
+			// Handle the placement change.
+			placementModificationsHandler.onPlacementChanged(this, position);
+		}
+		// Handle changes to the state of the container if we have one.
+		if (container != null) {
+			for (int containerItemIndex = 0; containerItemIndex < container.size(); containerItemIndex++) {
+				// Has the item type at the current container slot changed?
+				if (preActionContainerItemTypes[containerItemIndex] != container.get(containerItemIndex)) {
+					// Add a message to the world message queue to notify of the change.
+					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, container.get(containerItemIndex), position));
+				}
+			}
+		}
+		// Return the potential modification that was made to an item used in an interaction with the placement.
+		return modification;
 	}
 	
 	/**

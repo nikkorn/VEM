@@ -1,24 +1,16 @@
 package gaia.server.world.chunk;
 
-import gaia.server.world.generation.PlacementFactories;
 import gaia.server.world.generation.WorldGenerator;
 import gaia.server.world.messaging.WorldMessageQueue;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.world.TileType;
-import gaia.world.items.ItemType;
-import gaia.world.items.container.Container;
-import gaia.server.world.placements.Placement;
+import gaia.server.world.placements.PlacementFactory;
 import gaia.server.world.placements.Placements;
-import gaia.server.world.placements.Priority;
-import gaia.server.world.placements.factories.IPlacementFactory;
-import gaia.world.PlacementOverlay;
-import gaia.world.PlacementType;
-import gaia.world.PlacementUnderlay;
 
 /**
- * A factory for chunk entities.
+ * Factory for creating Chunk instances.
  */
 public class ChunkFactory {
 
@@ -32,7 +24,7 @@ public class ChunkFactory {
 	 * @param worldMessageQueue The world message queue.
 	 * @return The created chunk.
 	 */
-	public static Chunk createNewChunk(WorldGenerator generator, short x, short y, WorldMessageQueue worldMessageQueue) {
+	public static Chunk create(WorldGenerator generator, short x, short y, WorldMessageQueue worldMessageQueue) {
 		// Firstly, create the static world tiles for the chunk.
 		TileType[][] tiles = createChunkTiles(generator, x, y);
 		// This is the first time we are creating this chunk (there is no 
@@ -52,7 +44,7 @@ public class ChunkFactory {
 	 * @param worldMessageQueue The world message queue.
 	 * @return The created chunk.
 	 */
-	public static Chunk restoreChunk(JSONObject chunkJSON, WorldGenerator generator, WorldMessageQueue worldMessageQueue) {
+	public static Chunk restore(JSONObject chunkJSON, WorldGenerator generator, WorldMessageQueue worldMessageQueue) {
 		// Get the x/y chunk position.
 		short x = (short)chunkJSON.getInt("x");
 		short y = (short)chunkJSON.getInt("y");
@@ -69,8 +61,8 @@ public class ChunkFactory {
 			// Grab the placements position.
 			short placementXPosition = (short)placementJSON.getInt("x");
 			short placementYPosition = (short)placementJSON.getInt("y");
-			// Create the actual placements.
-			placements.add(createPlacement(placementJSON, placementXPosition, placementYPosition));
+			// Create the actual placement.
+			placements.add(PlacementFactory.create(placementJSON, placementXPosition, placementYPosition));
 		}
 		// Create and return the chunk.
 		return new Chunk(x, y, tiles, placements, worldMessageQueue);
@@ -95,69 +87,5 @@ public class ChunkFactory {
 		}
 		// Return the static tile type array.
 		return tiles;
-	}
-	
-	/**
-	 * Create a placements based on existing world state.
-	 * @param placementJSON The JSON object representing an existing placements.
-	 * @param x The placements x position within its parent chunk.
-	 * @param y The placements y position within its parent chunk.
-	 * @return The placements.
-	 */
-	private static Placement createPlacement(JSONObject placementJSON, short x, short y) {
-		// Get the placements type.
-		PlacementType placementType = PlacementType.values()[placementJSON.getInt("type")];
-		// Create the placements.
-		Placement placement = new Placement(placementType, x, y);
-		// Get the relevant placements factory.
-		IPlacementFactory placementFactory = PlacementFactories.getForType(placementType);
-		// Create the action for this placements.
-		placement.setAction(placementFactory.getAction());
-		// Create the placements state if there is any.
-		if (placementJSON.has("state")) {
-			placement.setState(placementFactory.createState(placementJSON.getJSONObject("state")));
-		}
-		// Create the placements container if it has one.
-		if (placementJSON.has("container")) {
-			placement.setContainer(createContainer(placementJSON.getJSONArray("container")));
-		}
-		// Set the placements priority.
-		placement.setPriority(Priority.values()[placementJSON.getInt("priority")]);
-		// Set the placements underlay.
-		placement.setUnderlay(PlacementUnderlay.values()[placementJSON.getInt("underlay")]);
-		// Set the placements overlay.
-		placement.setOverlay(PlacementOverlay.values()[placementJSON.getInt("overlay")]);
-		// Return the new placements.
-		return placement;
-	}
-	
-	/**
-	 * Create an empty container with the specified number of slots.
-	 * @param numberOfSlots The number of slots.
-	 * @return The container.
-	 */
-	public static Container createContainer(int numberOfSlots) {
-		return new Container(numberOfSlots);
-	}
-	
-	/**
-	 * Create a container based on existing world state.
-	 * @param containerJSON The JSON array representing the container slots.
-	 * @return The container.
-	 */
-	public static Container createContainer(JSONArray containerJSON) {
-		// Get the number of slots that this container has.
-		int numberOfSlots = containerJSON.length();
-		// Create the container with the correct number of slots.
-		Container container = new Container(numberOfSlots);
-		// Populate the container slot for each entry in our JSON array.
-		for (int slotIndex = 0; slotIndex < numberOfSlots; slotIndex++) {
-			// Grab the item type that the slot holds at the current index.
-			ItemType slotItemType = ItemType.values()[containerJSON.getInt(slotIndex)];
-			// Set the item in the appropriate slot.
-			container.set(slotItemType, slotIndex);
-		}
-		// Return the container.
-		return container;
 	}
 }
