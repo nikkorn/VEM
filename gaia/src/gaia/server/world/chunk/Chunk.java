@@ -7,7 +7,7 @@ import gaia.server.world.PlacementModificationsHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
-import gaia.server.world.placements.IPlacementActions;
+import gaia.server.world.placements.IActionablePlacement;
 import gaia.server.world.placements.IPlacementActionsExecutor;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.placements.PlacementFactory;
@@ -148,10 +148,8 @@ public class Chunk {
 			if (!this.placements.has(placement)) {
 				continue;
 			}
-			// Does this placements have no action associated with it?
-			if (placement.getActions() == null) {
-				// We cannot execute actions for a placements when there are none!
-			} else if (arePlayersInChunkVicinity) {
+			// Are any players nearby?
+			if (arePlayersInChunkVicinity) {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
 				if (placement.getPriority() == Priority.HIGH || placement.getPriority() == Priority.MEDIUM) {
 					// Execute the placements actions.
@@ -192,7 +190,7 @@ public class Chunk {
 		Placement targetPlacement = placements.get(x, y);
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
-		if (targetPlacement != null && targetPlacement.getActions() != null) {
+		if (targetPlacement != null) {
 			// We are using the item on a placement, get the modification made to the used item.
 			ItemType modification = this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 			// Check whether the placement has been marked for deletion, and remove it from the placements collection if it has.
@@ -278,7 +276,7 @@ public class Chunk {
 		// Create the executor that will execute the placement server tick and time update actions.	
 		IPlacementActionsExecutor executor = new IPlacementActionsExecutor() {
 			@Override
-			public ItemType execute(IPlacementActions action) {
+			public ItemType execute(IActionablePlacement action) {
 				// Execute the placements action that is called once per server tick.
 				action.onServerTick(placement);
 				// Execute the placements action that is called for a time change if it has.
@@ -306,7 +304,7 @@ public class Chunk {
 		// Create the executor that will execute the placement interaction action.	
 		IPlacementActionsExecutor executor = new IPlacementActionsExecutor() {
 			@Override
-			public ItemType execute(IPlacementActions action) {
+			public ItemType execute(IActionablePlacement action) {
 				return action.onInteraction(placement, item);
 			}
 		};

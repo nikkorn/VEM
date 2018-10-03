@@ -5,7 +5,15 @@ package gaia.world.items;
  */
 public enum ItemType {
 	NONE,
-	SEED,
+	
+	// Seeds
+	SEED_YELLOW,
+	SEED_RED,
+	SEED_BLUE,
+	SEED_GREEN,
+	SEED_ORANGE,
+	SEED_PURPLE,
+	
 	WOOD,
 	FENCE_POST,
 	GATE,

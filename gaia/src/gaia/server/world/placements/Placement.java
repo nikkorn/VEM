@@ -1,10 +1,10 @@
 package gaia.server.world.placements;
 
+import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.PlacementModificationsHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
-import gaia.server.world.placements.state.IPlacementState;
 import gaia.utils.BitPacker;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
@@ -14,40 +14,27 @@ import gaia.world.items.ItemType;
 import gaia.world.items.container.Container;
 
 /**
- * Represents a tile-positioned placements.
+ * Represents a tile-positioned placement.
  */
-public class Placement implements IModifiablePlacement, IPlacementDetails {
+public abstract class Placement implements IModifiablePlacement, IPlacementDetails, IActionablePlacement {
 	/**
-	 * The placements type.
-	 */
-	private PlacementType type;
-	/**
-	 * The placements position within its parent chunk.
+	 * The placement position within its parent chunk.
 	 */
 	private short x, y;
 	/**
-	 * The container of the placements.
+	 * The container of the placement.
 	 */
 	private Container container;
 	/**
-	 * The placements priority.
+	 * The placement priority.
 	 */
 	private Priority priority = Priority.NONE;
 	/**
-	 * The placements state.
-	 */
-	private IPlacementState state;
-	/**
-	 * The placements actions to be executed per game engine tick and/or time update.
-	 * This could also be done per interaction if the placements priority is LOW.
-	 */
-	private IPlacementActions actions;
-	/**
-	 * The placements underlay.
+	 * The placement underlay.
 	 */
 	private PlacementUnderlay underlay = PlacementUnderlay.NONE;
 	/**
-	 * The placements overlay.
+	 * The placement overlay.
 	 */
 	private PlacementOverlay overlay = PlacementOverlay.NONE;
 	/**
@@ -57,14 +44,12 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	
 	/**
 	 * Create a new instance of the Placement class.
-	 * @param type The placements type.
 	 * @param x The x position of the placements with its parent chunk.
 	 * @param y The y position of the placements with its parent chunk.
 	 */
-	public Placement(PlacementType type, short x, short y) {
-		this.type = type;
-		this.x    = x;
-		this.y    = y;
+	public Placement(short x, short y) {
+		this.x = x;
+		this.y = y;
 	}
 	
 	/**
@@ -84,12 +69,28 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	}
 	
 	/**
+	 * Create a fresh placement.
+	 * @param random The RNG to use in creating the new placement.
+	 */
+	public abstract void create(Random random);
+	
+	/**
+	 * Re-create a placement based on existing state.
+	 * @param state The state of the placement as JSON.
+	 */
+	public abstract void create(JSONObject state);
+	
+	/**
 	 * Get the placements type.
 	 * @return The placements type.
 	 */
-	public PlacementType getType() {
-		return this.type;
-	}
+	public abstract PlacementType getType();
+	
+	/**
+	 * Get the state of the placement as JSON.
+	 * @return The state of the placement as JSON.
+	 */
+	public abstract JSONObject getState();
 
 	/**
 	 * Get the placements priority.
@@ -106,22 +107,6 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
-	
-	/**
-	 * Get the placement actions.
-	 * @return The placement actions.
-	 */
-	public IPlacementActions getActions() {
-		return actions;
-	}
-
-	/**
-	 * Set the placement actions.
-	 * @param action The placement actions.
-	 */
-	public void setActions(IPlacementActions actions) {
-		this.actions = actions;
-	}
 
 	/**
 	 * Get the placements container.
@@ -137,22 +122,6 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 	 */
 	public void setContainer(Container container) {
 		this.container = container;
-	}
-
-	/**
-	 * Get the state of the placements.
-	 * @return The state of the placements.
-	 */
-	public IPlacementState getState() {
-		return state;
-	}
-
-	/**
-	 * Set the state of the placements.
-	 * @param state The state of the placements.
-	 */
-	public void setState(IPlacementState state) {
-		this.state = state;
 	}
 	
 	/**
@@ -226,7 +195,7 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		// Pack the overlay type.
 		packed = BitPacker.pack(packed, this.overlay.ordinal(), 10, 10);
 		// Pack the placements type.
-		packed = BitPacker.pack(packed, this.type.ordinal(), 20, 10);
+		packed = BitPacker.pack(packed, this.getType().ordinal(), 20, 10);
 		// Return the packed value.
 		return packed;
 	}
@@ -251,7 +220,7 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		// Execute the placement actions using the actions executor provided.
 		// One of these actions could be to interact with the placement using an item.
 		// In this case the modification made to the item will be returned by the executor.
-		ItemType modification = executor.execute(this.actions);
+		ItemType modification = executor.execute(this);
 		// Was the placement marked for deletion while the placement actions were being executed?
 		if (this.isMarkedForDeletion) {
 			// We are trying to delete this placement! Handle the placement deletion.
@@ -289,7 +258,7 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		placement.put("x", this.getX());
 		placement.put("y", this.getY());
 		// Set the type.
-		placement.put("type", this.type.ordinal());
+		placement.put("type", this.getType().ordinal());
 		// Set the underlay.
 		placement.put("underlay", this.underlay.ordinal());
 		// Set the overlay.
@@ -298,9 +267,10 @@ public class Placement implements IModifiablePlacement, IPlacementDetails {
 		if (this.container != null) {
 			placement.put("container", this.container.serialise());
 		}
-		// Set state (if this placements has any).
-		if (this.state != null) {
-			placement.put("state", this.state.asJSON());
+		// Set state (if this placement has any).
+		JSONObject state = this.getState();
+		if (state != null) {
+			placement.put("state", state);
 		}
 		// Set the priority.
 		placement.put("priority", this.priority.ordinal());

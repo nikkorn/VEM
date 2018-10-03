@@ -12,5 +12,5 @@ public interface IPlacementActionsExecutor {
 	 * @param action The placement actions.
 	 * @return The modification made to an item if the action being executed is a placement interaction.
 	 */
-	ItemType execute(IPlacementActions action);
+	ItemType execute(IActionablePlacement action);
 }

@@ -3,8 +3,8 @@ package gaia.server.world.placements;
 import java.util.HashMap;
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.placements.builders.IPlacementBuilder;
-import gaia.server.world.placements.builders.PlacementBuilders;
+import gaia.server.world.placements.factories.IPlacementFactory;
+import gaia.server.world.placements.factories.PlacementFactories;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
@@ -44,16 +44,12 @@ public class PlacementFactory {
 	public static Placement create(JSONObject placementJSON, short x, short y) {
 		// Get the placement type.
 		PlacementType placementType = PlacementType.values()[placementJSON.getInt("type")];
-		// Create the placement.
-		Placement placement = new Placement(placementType, x, y);
 		// Get the relevant placement builder.
-		IPlacementBuilder builder = PlacementBuilders.getForType(placementType);
-		// Create the action for this placement.
-		placement.setActions(builder.getActions());
-		// Create the placement state if there is any.
-		if (placementJSON.has("state")) {
-			placement.setState(builder.createState(placementJSON.getJSONObject("state")));
-		}
+		IPlacementFactory factory = PlacementFactories.getFactoryForType(placementType);
+		// Create the placement instance.
+		Placement placement = factory.create(x, y);
+		// Allow the placemetn to create itself based on existing state if it exists. 
+		placement.create(placementJSON.has("state") ? placementJSON.getJSONObject("state") : null);
 		// Create the placement container if it has one.
 		if (placementJSON.has("container")) {
 			placement.setContainer(ContainerFactory.create(placementJSON.getJSONArray("container")));
@@ -77,22 +73,20 @@ public class PlacementFactory {
      * @return The placement.
      */
     public static Placement create(PlacementType type, short x, short y, Random rng) {
-        // Create the new placement.
-        Placement placement = new Placement(type, x, y);
-        // Get the relevant placement builder.
-        IPlacementBuilder placementBuilder = PlacementBuilders.getForType(type);
-        // Create the placement state.
-        placement.setState(placementBuilder.createState(rng));
-        // Create the action for this placement.
-        placement.setActions(placementBuilder.getActions());
+        // Get the relevant placement factory.
+        IPlacementFactory factory = PlacementFactories.getFactoryForType(type);
+        // Create the placement instance.
+        Placement placement = factory.create(x, y);
+        // Allow the placement to create itself.
+        placement.create(rng);
         // Set the initial priority for this placement.
-        placement.setPriority(placementBuilder.getInitialPriority());
+        placement.setPriority(factory.getInitialPriority());
         // Set the initial underlay for this placement.
-        placement.setUnderlay(placementBuilder.getInitialUnderlay());
+        placement.setUnderlay(factory.getInitialUnderlay());
         // Set the initial overlay for this placement.
-        placement.setOverlay(placementBuilder.getInitialOverlay());
+        placement.setOverlay(factory.getInitialOverlay());
         // Set the container for this placement.
-        placement.setContainer(placementBuilder.getContainer(rng));
+        placement.setContainer(factory.getContainer(rng));
         // Return the new placement.
         return placement;
     }

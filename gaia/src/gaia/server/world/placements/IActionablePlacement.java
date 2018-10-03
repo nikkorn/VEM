@@ -4,9 +4,9 @@ import gaia.time.Time;
 import gaia.world.items.ItemType;
 
 /**
- * Represents any actions that can be taken by a placements.
+ * Represents an actionable placement.
  */
-public interface IPlacementActions {
+public interface IActionablePlacement {
 	
 	/**
 	 * Execute the action in response to a server tick.
