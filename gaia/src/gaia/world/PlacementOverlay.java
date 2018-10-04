@@ -5,8 +5,12 @@ package gaia.world;
  */
 public enum PlacementOverlay {
 	NONE,
-	PLANTED_SEED,
-	PLANTED_SEED_SPROUTING;
+	SEED_YELLOW,
+	SEED_RED,
+	SEED_BLUE,
+	SEED_GREEN,
+	SEED_ORANGE,
+	SEED_PURPLE;
 	
 	/**
 	 * Gets whether the placement overlay is walkable.

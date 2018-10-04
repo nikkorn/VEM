@@ -162,7 +162,7 @@ public class Gaia extends ApplicationAdapter {
 					}
 					// Draw the placement overlay if there is one!
 					if (placement.getOverlay() != PlacementOverlay.NONE) {
-						// TODO Draw overlay!
+						batch.draw(this.placementResources.getOverlayTexture(placement.getOverlay()), ((x - playerX + 6) * TILE_SIZE) + tileOffsetX, ((z - playerZ + 6) * TILE_SIZE) + tileOffsetY);
 					}
 				}
 			}

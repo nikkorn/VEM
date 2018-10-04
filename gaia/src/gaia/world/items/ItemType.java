@@ -30,6 +30,12 @@ public enum ItemType {
 		switch(this) {
 			case BACON:
 				return ItemTarget.PLAYER;
+			case SEED_YELLOW:
+			case SEED_RED:
+			case SEED_BLUE:
+			case SEED_GREEN:
+			case SEED_ORANGE:
+			case SEED_PURPLE:
 			case SMALL_WATERING_CAN:
 			case SHOVEL:
 			case HOE:
