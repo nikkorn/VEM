@@ -1,5 +1,6 @@
 package gaia.server.world.agriculture;
 
+import org.json.JSONObject;
 import gaia.time.Season;
 import gaia.world.PlacementOverlay;
 import gaia.world.items.ItemType;
@@ -13,9 +14,9 @@ public abstract class Crop {
 	 */
 	private CropState state = CropState.SEEDED;
 	/**
-	 * The number of ticks that the crop has been active for.
+	 * The number of minutes that the crop has been active for.
 	 */
-	private long numberOfTicksActive = 0;
+	private long numberOfMinutesActive = 0;
 	/**
 	 * The unit of growth for the crop.
 	 * This value defines the state of the crop.
@@ -42,7 +43,7 @@ public abstract class Crop {
 	 */
 	public boolean tick(boolean isWatered, Season season) {
 		// Has this crop died of old age?
-		if (++numberOfTicksActive == this.getLifeSpan()) {
+		if (++numberOfMinutesActive == this.getLifeSpan()) {
 			// Our crop has died of old age!
 			this.state = CropState.DEAD;
 			// The state has changed.
@@ -102,6 +103,34 @@ public abstract class Crop {
 	}
 	
 	/**
+	 * Get the placement overlay for the current crop state.
+	 * @return The placement overlay for the current crop state.
+	 */
+	public PlacementOverlay getCurrentOverlay() {
+		switch (this.state) {
+			case DEAD:
+				return this.getDeadOverlay();
+			case PRODUCE:
+				return this.getProducedOverlay();
+			case SEEDED:
+				return this.getSeededOverlay();
+			case SPROUTED:
+				return this.getSproutedOverlay();
+			default:
+				throw new RuntimeException("unexpected crop state: " + this.state);
+		}
+	}
+	
+	/**
+	 * Serialise the placement to JSON to be persisted to disk.
+	 * @return The serialised placement.
+	 */
+	public JSONObject serialise() {
+		// TODO Return serialised object.
+		return new JSONObject();
+	}
+	
+	/**
 	 * Gets the modification to make to the crop growth.
 	 * @param isWatered Whether the crop is watered.
 	 * @param season The current season.
@@ -134,14 +163,26 @@ public abstract class Crop {
 	public abstract PlacementOverlay getSproutedOverlay();
 	
 	/**
-	 * Gets the maximum life span of the crop in ticks.
-	 * @return The maximum life span of the crop in ticks.
+	 * Gets the placement overlay to use when the crop is produced.
+	 * @return The placement overlay to use when the crop is produced.
+	 */
+	public abstract PlacementOverlay getProducedOverlay();
+	
+	/**
+	 * Gets the placement overlay to use when the crop is dead.
+	 * @return The placement overlay to use when the crop is dead.
+	 */
+	public abstract PlacementOverlay getDeadOverlay();
+	
+	/**
+	 * Gets the maximum life span of the crop in minutes.
+	 * @return The maximum life span of the crop in minutes.
 	 */
 	public abstract long getLifeSpan();
 	
 	/**
 	 * Gets the health of the crop.
-	 * The health of a crop defines how much of an overal decremetn the crop can take in its growth before dying.
+	 * The health of a crop defines how much of an overal decrement the crop can take in its growth before dying.
 	 * @return The health of the crop.
 	 */
 	public abstract long getInitialHealth();

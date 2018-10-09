@@ -33,11 +33,6 @@ public class Chunk {
 	 */
 	private short x, y;
 	/**
-	 * Whether this chunk has at least one high priority placement.
-	 * A chunk with a high priority placement will always be active.
-	 */
-	private boolean hasHighPriorityPlacement = false;
-	/**
 	 * The world message queue.
 	 */
 	private WorldMessageQueue worldMessageQueue;
@@ -56,13 +51,6 @@ public class Chunk {
 		this.tiles             = tiles;
 		this.placements        = placements;
 		this.worldMessageQueue = worldMessageQueue;
-		// Determine whether any placement is a high priority one.
-		for (Placement placement : placements.getAll()) {
-			// Is this a high priority placement?
-			if (placement.getPriority() == Priority.HIGH) {
-				this.hasHighPriorityPlacement = true;
-			}
-		}
 	}
 	
 	/**
@@ -99,10 +87,11 @@ public class Chunk {
 	
 	/**
 	 * Gets whether this chunk has at least one high priority placements.
+	 * A chunk with a high priority placement will always be active.
 	 * @return Whether this chunk has at least one high priority placements.
 	 */
 	public boolean hasHighPriorityPlacement() {
-		return this.hasHighPriorityPlacement;
+		return this.placements.getHighestPriority() == Priority.HIGH;
 	}
 	
 	/**
@@ -139,7 +128,9 @@ public class Chunk {
 	 * @param placementModificationsHandler The placement modification handler.
 	 */
 	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, PlacementModificationsHandler placementModificationsHandler) {
-		boolean highPriorityPlacementFound = false;
+		// Keep track of whether the priority of any placement changes as part of this tick.
+		// If this happens then it could change whether the chunk should be considered during future ticks.
+		boolean hasPlacementPriorityChanged = false;
 		// Execute the placement actions for each placement.
 		for (Placement placement : this.placements.getAll()) {
 			// Ensure that the placement still exists within the placements collection.
@@ -148,6 +139,8 @@ public class Chunk {
 			if (!this.placements.has(placement)) {
 				continue;
 			}
+			// Get the priority of the placement as this may change as a side-effect of using the item on it.
+			Priority priority = placement.getPriority();
 			// Are any players nearby?
 			if (arePlayersInChunkVicinity) {
 				// Players are nearby so we will be be executing actions for both HIGH and MEDIUM priority placements.
@@ -166,15 +159,17 @@ public class Chunk {
 			if (placement.isMarkedForDeletion()) {
 				this.placements.remove(placement);
 			} else {
-				// Is this a high priority placements?
-				if (placement.getPriority() == Priority.HIGH) {
-					highPriorityPlacementFound = true;
+				// If the priority of the placement has changed then we will have to re-evaluate the highest priority of all placements.
+				if (priority != placement.getPriority()) {
+					hasPlacementPriorityChanged = true;
 				}
 			}
 		}
-		// Set whether this chunk contains any high priority placements.
-		// This will impact whether the chunk stays active when no player is in it.
-		this.hasHighPriorityPlacement = highPriorityPlacementFound;
+		// If the priority of any placemetns have changed then the highest priority of this
+		// chunk's placements will need to be re-evaluted in order to be kept up-to-date.
+		if (hasPlacementPriorityChanged) {
+			this.placements.evaluteHighestPriority();
+		}
 	}
 	
 	/**
@@ -191,11 +186,17 @@ public class Chunk {
 		// If there is a placement at this position then we will use the item on it
 		// unless the placement has no actions associated that can handle an item use.
 		if (targetPlacement != null) {
+			// Get the priority of the placement as this may change as a side-effect of using the item on it.
+			Priority priority = targetPlacement.getPriority();
 			// We are using the item on a placement, get the modification made to the used item.
 			ItemType modification = this.executePlacementInteractionAction(targetPlacement, item, placementModificationsHandler);
 			// Check whether the placement has been marked for deletion, and remove it from the placements collection if it has.
 			if (targetPlacement.isMarkedForDeletion()) {
 				this.placements.remove(targetPlacement);
+			}
+			// If the priority of the placement has changed then we will have to re-evaluate the highest priority of all placements.
+			if (priority != targetPlacement.getPriority()) {
+				this.placements.evaluteHighestPriority();
 			}
 			// Return the modification made to the used item.
 			return modification;

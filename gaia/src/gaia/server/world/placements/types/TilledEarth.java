@@ -2,10 +2,12 @@ package gaia.server.world.placements.types;
 
 import java.util.Random;
 import org.json.JSONObject;
+import gaia.server.world.agriculture.Crop;
+import gaia.server.world.agriculture.CropState;
+import gaia.server.world.agriculture.RedBerryPlant;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.Placement;
 import gaia.time.Time;
-import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
 import gaia.world.items.ItemType;
 
@@ -18,9 +20,9 @@ public class TilledEarth extends Placement {
 	 */
 	public int wateredTicks = 100;
 	/**
-	 * The seed that is planted.
+	 * The crop that is planted.
 	 */
-	private ItemType plantedSeed = ItemType.NONE;
+	private Crop plantedCrop = null;
 
 	/**
 	 * Create a new instance of the TilledEarth class.
@@ -48,17 +50,37 @@ public class TilledEarth extends Placement {
 
 	@Override
 	public void onTimeUpdate(IModifiablePlacement placement, Time time) {
-		// ServerConsole.writeInfo("Just growing some plants, oh did the time change?");
+		// Do we have a crop planted?
+		if (this.plantedCrop != null) {
+			// Is the crop dead?
+			if (this.plantedCrop.getState() == CropState.DEAD) {
+				// If the crop is dead then set the placement overlay.
+				placement.setOverlay(this.plantedCrop.getDeadOverlay());
+				return;
+			}
+			// We have a living crop! Tick it and check whether the state has changed
+			boolean cropStateChanged = this.plantedCrop.tick(wateredTicks > 0, time.getSeason());
+			// Handle state changes!
+			if (cropStateChanged) {
+				// Has the crop produced anything?
+				if (this.plantedCrop.getState() == CropState.PRODUCE) {
+					// TODO Create container with produce if we have produced anything.
+					System.out.println("We have produced a: " + this.plantedCrop.getProduce());
+				}
+				// Update the placement overlay to reflect the change of crop state.
+				placement.setOverlay(this.plantedCrop.getCurrentOverlay());
+			}
+		}
 	}
 
 	@Override
 	public ItemType onInteraction(IModifiablePlacement placement, ItemType item) {
 		// Is the player trying to plant a seed and there isn't one planted already?
-		if (isItemSeed(item) && this.plantedSeed == ItemType.NONE) {
-			// We can plant the seed!
-			this.plantedSeed = item;
-			// Set the overlay that matches the planted seed.
-			placement.setOverlay(getUnderlayForSeed(this.plantedSeed));
+		if (isItemSeed(item) && this.plantedCrop == null) {
+			// We can plant the seed! Get the crop for it.
+			this.plantedCrop = getCropForSeed(item);
+			// Set the overlay that matches the crops planted seed.
+			placement.setOverlay(this.plantedCrop.getSeededOverlay());
 			// The player no longer has the seed.
 			return ItemType.NONE;
 			
@@ -87,12 +109,17 @@ public class TilledEarth extends Placement {
 	}
 	
 	/**
-	 * Get the relevant planted seed overlay for a specifiec seed. 
+	 * Get the relevant crop for a specific seed. 
 	 * @param seed The seed.
-	 * @return The relevant planted seed overlay for a specifiec seed. 
+	 * @return The relevant crop for a specific seed. 
 	 */
-	private static PlacementOverlay getUnderlayForSeed(ItemType seed) {
-		return PlacementOverlay.valueOf(seed.toString());
+	private static Crop getCropForSeed(ItemType seed) {
+		switch (seed) {
+			case SEED_RED:
+				return new RedBerryPlant();
+			default:
+				return null;
+		}
 	}
 
 	@Override
@@ -106,8 +133,8 @@ public class TilledEarth extends Placement {
 		JSONObject state = new JSONObject();
 		// Record the number of ticks that the tilled earth is watered for.
 		state.put("watered-ticks", this.wateredTicks);
-		// Record the planted seed.
-		state.put("planted-seed", this.plantedSeed.ordinal());
+		// Record the planted crop.
+		state.put("planted-crop", this.plantedCrop.serialise());
 		// Return the serialised state.
 		return state;
 	}

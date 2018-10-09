@@ -64,6 +64,8 @@ public class ChunkFactory {
 			// Create the actual placement.
 			placements.add(PlacementFactory.create(placementJSON, placementXPosition, placementYPosition));
 		}
+		// We need to evaluate the highest priority of any placement in the chunk.
+		placements.evaluteHighestPriority();
 		// Create and return the chunk.
 		return new Chunk(x, y, tiles, placements, worldMessageQueue);
 	}

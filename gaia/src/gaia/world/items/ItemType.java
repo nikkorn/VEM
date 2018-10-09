@@ -20,7 +20,10 @@ public enum ItemType {
 	SMALL_WATERING_CAN,
 	SHOVEL,
 	HOE,
-	BACON;
+	BACON,
+	
+	// Food
+	REDBERRY;
 	
 	/**
 	 * Gets the target of use for an item.

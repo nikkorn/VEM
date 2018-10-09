@@ -12,6 +12,10 @@ public class Placements {
 	 * The map of placements keyed on position.
 	 */
 	private HashMap<String, Placement> placements = new HashMap<String, Placement>();
+	/**
+	 * The highest priority of any single placement.
+	 */
+	private Priority highestPriority = Priority.NONE;
 
 	/**
 	 * Get the placement at the x/y position, or null if the position has no placement.
@@ -51,12 +55,14 @@ public class Placements {
 	 * @param placement The placements.
 	 */
 	public void add(Placement placement) {
-		// Make sure that this is a valid placements position.
+		// Make sure that this is a valid placement position.
 		if (!isValidPlacementPosition(placement.getX(), placement.getY())) {
 			throw new RuntimeException("given an invalid placements position (x: " + placement.getX() + " y:" + placement.getY() +")");
 		}
-		// Add the placements.
+		// Add the placement.
 		this.placements.put(getPlacementKey(placement.getX(), placement.getY()), placement);
+		// We will need to re-evaluate the priorities of each placement to find the highest for this collection.
+		this.evaluteHighestPriority();
 	}
 	
 	/**
@@ -68,7 +74,10 @@ public class Placements {
 		// Create the key for the position.
 		String placementKey = getPlacementKey(x, y);
 		// Remove the placement.
-		this.placements.remove(placementKey);
+		if (this.placements.remove(placementKey) != null) {
+			// We will need to re-evaluate the priorities of each placement to find the highest for this collection.
+			this.evaluteHighestPriority();
+		}
 	}
 	
 	/**
@@ -83,12 +92,37 @@ public class Placements {
 		if (this.placements.containsKey(placementKey) && this.placements.get(placementKey) == placement) {
 			// Remove the placement.
 			this.placements.remove(placementKey);
+			// We will need to re-evaluate the priorities of each placement to find the highest for this collection.
+			this.evaluteHighestPriority();
 			// We were able to remove the placement.
 			return true;
 		}
-		this.placements.remove(placementKey);
 		// We did not remove the placement.
 		return false;
+	}
+	
+	/**
+	 * Get the highest priority of any single placement.
+	 * @return The highest priority of any single placement.
+	 */
+	public Priority getHighestPriority() {
+		return this.highestPriority;
+	}
+	
+	/**
+	 * Evaluate the priorities of each placement to find the highest for this collection.
+	 */
+	public void evaluteHighestPriority() {
+		// Keep track of the highest priority so far.
+		Priority highest = Priority.LOW;
+		// Iterate over each placement to find the highest priority.
+		for (Placement placement : this.placements.values()) {
+			if (placement.getPriority().ordinal() > highest.ordinal()) {
+				highest = placement.getPriority();
+			}
+		}
+		// Set the highest placement priority for this collection.
+		this.highestPriority = highest;
 	}
 	
 	/**

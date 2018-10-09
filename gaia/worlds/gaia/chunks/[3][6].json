@@ -1,18 +1,5 @@
 {
   "x": 3,
   "y": 6,
-  "placements": [
-    {
-      "type": 1,
-      "priority": 3,
-      "underlay": 2,
-      "overlay": 0,
-      "state": {
-        "watered-ticks": 200
-      },
-      "x": 2,
-      "y": 10,
-      "container": [2, 0, 0]
-    }
-  ]
+  "placements": []
 }

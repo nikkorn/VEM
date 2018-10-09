@@ -248,8 +248,8 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 	}
 	
 	/**
-	 * Serialise the placements to JSON to be persisted to disk.
-	 * @return The serialised placements.
+	 * Serialise the placement to JSON to be persisted to disk.
+	 * @return The serialised placement.
 	 */
 	public JSONObject serialise() {
 		// Create the JSON object that will hold the information about this placements.
