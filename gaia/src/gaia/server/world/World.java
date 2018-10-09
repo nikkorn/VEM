@@ -250,9 +250,9 @@ public class World {
 	 */
 	public boolean arePlayersInChunkVicinity(Chunk chunk) {
 		// Check the position of each connected player.
-		for (Position playerPosition : this.players.getPlayerPositions()) {
+		for (Player player : this.players.getAllPlayers()) {
 			// Is the currently connected player in the vicinity of this chunk?
-			if (chunk.isPositionInVicinity(playerPosition)) {
+			if (chunk.isPositionInVicinity(player.getPosition())) {
 				return true;
 			}
 		}

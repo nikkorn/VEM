@@ -95,8 +95,13 @@ public class Players {
 			return;
 		}
 		// Lastly, check to make sure that no other players are already at this new position.
-		for(Position playerPosition : this.getPlayerPositions()) {
-			if (playerPosition.matches(targetPosition)) {
+		for (Player player : this.players) {
+			// We don't care about the moving player.
+			if (player == targetPlayer) {
+				continue;
+			}
+			// Is the other player in the way?
+			if (player.getPosition().matches(targetPosition)) {
 				// There is already a player at this position. Send a message to the player telling them to correct their position.
 				world.getWorldMessageQueue().add(new PlayerBlockedMessage(playerId, currentPosition.copy()));
 				return;
@@ -176,13 +181,5 @@ public class Players {
 		}
 		// There was no player at the position.
 		return null;
-	}
-	
-	/**
-	 * Gets the positions of all connected players.
-	 * @return The positions of all connected players.
-	 */
-	public ArrayList<Position> getPlayerPositions() {
-		return new ArrayList<Position>();
 	}
 }
