@@ -2,8 +2,8 @@ package gaia.client.gamestate.players;
 
 import gaia.world.Direction;
 import gaia.world.Position;
-import gaia.world.items.Inventory;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.types.Inventory;
 
 /**
  * Represents a player.

@@ -7,11 +7,11 @@ import gaia.world.items.ItemType;
 /**
  * Represents a container consisting of slots.
  */
-public class Container {
+public abstract class Container {
 	/**
 	 * The slots that this container is composed of.
 	 */
-	private ArrayList<Slot> slots = new ArrayList<Slot>(); 
+	private ArrayList<Slot> slots = new ArrayList<Slot>();
 	
 	/**
 	 * Creates a new instance of the Container class with the specified number of empty slots.
@@ -21,6 +21,25 @@ public class Container {
 		// Populate the container with empty slots.
 		for (int slotCount = 0; slotCount < numberOfSlots; slotCount++) {
 			slots.add(new Slot());
+		}
+	}
+	
+	/**
+	 * Creates a new instance of the Container class containing the specified items.
+	 * @param contains The items that this container will contain.
+	 */
+	public Container(ItemType[] contains) {
+		// Populate the container with empty slots to fill with the items.
+		for (int slotCount = 0; slotCount < contains.length; slotCount++) {
+			slots.add(new Slot());
+		}
+		// Add each of the items.
+		for (ItemType item : contains) {
+			try {
+				this.add(item);
+			} catch (NoFreeSlotException e) {
+				// This won't happen as we just created the slots for the items.
+			}
 		}
 	}
 
@@ -147,6 +166,18 @@ public class Container {
 		// Return the container as an array of item types.
 		return itemTypes;
 	}
+	
+	/**
+	 * Get the type of the container.
+	 * @return The type of the container.
+	 */
+	public abstract ContainerType getType();
+	
+	/**
+	 * Get the type of the container.
+	 * @return The type of the container.
+	 */
+	public abstract ContainerCategory getCategory();
 	
 	/**
 	 * Serialise the container to JSON array to be persisted to disk.

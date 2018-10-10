@@ -1,7 +1,9 @@
-package gaia.world.items;
+package gaia.world.items.container.types;
 
 import gaia.Constants;
 import gaia.world.items.container.Container;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 
 /**
  * A player inventory.
@@ -22,5 +24,15 @@ public class Inventory extends Container {
 	 */
 	public static boolean isValidSlotIndex(int slotIndex) {
 		return slotIndex >= 0 && slotIndex < Constants.PLAYER_INVENTORY_SIZE;
+	}
+
+	@Override
+	public ContainerType getType() {
+		return ContainerType.INVENTORY;
+	}
+
+	@Override
+	public ContainerCategory getCategory() {
+		return ContainerCategory.STATIC;
 	}
 }

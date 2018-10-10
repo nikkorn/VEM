@@ -10,9 +10,9 @@ import gaia.networking.messages.MovePlayer;
 import gaia.networking.messages.UseInventoryItem;
 import gaia.world.Direction;
 import gaia.world.Position;
-import gaia.world.items.Inventory;
 import gaia.world.items.ItemTarget;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.types.Inventory;
 
 /**
  * Player actions.

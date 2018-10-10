@@ -3,8 +3,8 @@ package gaia.server.world.players;
 import gaia.server.ServerConsole;
 import gaia.world.Direction;
 import gaia.world.Position;
-import gaia.world.items.Inventory;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.types.Inventory;
 
 /**
  * Represents a player in the world.
