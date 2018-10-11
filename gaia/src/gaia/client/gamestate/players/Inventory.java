@@ -1,45 +1,20 @@
 package gaia.client.gamestate.players;
 
-import java.util.ArrayList;
 import gaia.Constants;
-import gaia.world.items.ItemType;
-import gaia.world.items.container.Slot;
+import gaia.client.gamestate.Container;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 
 /**
  * The client-side representation of a player inventory.
  */
-public class Inventory implements IInventoryDetails {
-	/**
-	 * The slots that this container is composed of.
-	 */
-	private ArrayList<Slot> slots = new ArrayList<Slot>();
+public class Inventory extends Container implements IInventoryDetails {
 	
 	/**
 	 * Creates a new instance of the Inventory class.
 	 */
 	public Inventory() {
-		// Populate the inventory with empty slots.
-		for (int slotCount = 0; slotCount < Constants.PLAYER_INVENTORY_SIZE; slotCount++) {
-			slots.add(new Slot());
-		}
-	}
-	
-	/**
-	 * Gets the item type held in the slot defined by the index.
-	 * @param index The index of the slot to check.
-	 * @return The item type held in the slot defined by the index.
-	 */
-	public ItemType get(int index) {
-		return this.slots.get(index).get();
-	}
-	
-	/**
-	 * Sets the item type held in the slot defined by the index.
-	 * @param type The type of the item.
-	 * @param index The index of the slot to check.
-	 */
-	public void set(ItemType type, int index) {
-		this.slots.get(index).set(type);
+		super(ContainerType.INVENTORY, ContainerCategory.STATIC, Constants.PLAYER_INVENTORY_SIZE);
 	}
 	
 	/**

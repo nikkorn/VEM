@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class Placements implements IPlacements {
 	/**
-	 * The map of placements.
+	 * The map of world position keys to placements.
 	 */
 	private HashMap<String, Placement> placements = new HashMap<String, Placement>();
 	

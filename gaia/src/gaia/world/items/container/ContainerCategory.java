@@ -1,4 +1,4 @@
-package gaia.server.world.items.container;
+package gaia.world.items.container;
 
 /**
  * Enumeration of container categories.

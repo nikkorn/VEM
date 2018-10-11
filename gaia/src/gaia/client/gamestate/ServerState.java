@@ -35,6 +35,10 @@ public class ServerState implements IServerState {
      */
     private Placements placements;
     /**
+     * The world containers.
+     */
+    private Containers containers;
+    /**
      * The players.
      */
     private Players players;
@@ -93,6 +97,15 @@ public class ServerState implements IServerState {
 	@Override
 	public Placements getPlacements() {
 		return this.placements;
+	}
+	
+	/**
+	 * Get the containers.
+	 * @return The containers.
+	 */
+	@Override
+	public Containers getContainers() {
+		return this.containers;
 	}
 	
 	/**

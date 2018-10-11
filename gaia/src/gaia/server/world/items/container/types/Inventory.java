@@ -2,8 +2,8 @@ package gaia.server.world.items.container.types;
 
 import gaia.Constants;
 import gaia.server.world.items.container.Container;
-import gaia.server.world.items.container.ContainerCategory;
-import gaia.server.world.items.container.ContainerType;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 
 /**
  * A player inventory.

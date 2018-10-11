@@ -3,6 +3,7 @@ package gaia.server.world.items.container;
 import org.json.JSONArray;
 import gaia.server.world.items.container.types.GeneralContainer;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerType;
 
 /**
  * Factory for creating Container instances.

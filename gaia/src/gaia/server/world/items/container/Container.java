@@ -3,6 +3,8 @@ package gaia.server.world.items.container;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 import gaia.world.items.container.Slot;
 
 /**

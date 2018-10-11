@@ -1,9 +1,9 @@
 package gaia.server.world.items.container.types;
 
 import gaia.server.world.items.container.Container;
-import gaia.server.world.items.container.ContainerCategory;
-import gaia.server.world.items.container.ContainerType;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 
 /**
  * A general container that can be static or a pickup.

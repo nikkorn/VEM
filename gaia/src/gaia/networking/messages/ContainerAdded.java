@@ -1,5 +1,5 @@
 package gaia.networking.messages;
 
-public class ContainerUpdated {
+public class ContainerAdded {
 
 }

@@ -26,6 +26,12 @@ public interface IServerState {
 	IPlacements getPlacements();
 	
 	/**
+	 * Get the details of all the containers.
+	 * @return The the details of all containers.
+	 */
+	IContainers getContainers();
+	
+	/**
 	 * Get the world seed.
 	 * @return the world seed.
 	 */
