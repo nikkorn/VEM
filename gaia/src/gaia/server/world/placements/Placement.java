@@ -3,6 +3,7 @@ package gaia.server.world.placements;
 import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.PlacementModificationsHandler;
+import gaia.server.world.items.container.Container;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.utils.BitPacker;
@@ -11,7 +12,6 @@ import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
-import gaia.world.items.container.Container;
 
 /**
  * Represents a tile-positioned placement.

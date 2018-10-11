@@ -3,6 +3,7 @@ package gaia.client.networking;
 import java.io.IOException;
 import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
+import gaia.client.gamestate.players.Inventory;
 import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
@@ -12,7 +13,6 @@ import gaia.world.Direction;
 import gaia.world.Position;
 import gaia.world.items.ItemTarget;
 import gaia.world.items.ItemType;
-import gaia.world.items.container.types.Inventory;
 
 /**
  * Player actions.

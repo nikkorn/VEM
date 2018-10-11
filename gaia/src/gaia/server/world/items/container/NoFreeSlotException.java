@@ -1,4 +1,4 @@
-package gaia.world.items.container;
+package gaia.server.world.items.container;
 
 import gaia.world.items.ItemType;
 

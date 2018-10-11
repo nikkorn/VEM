@@ -3,14 +3,14 @@ package gaia.server.world.placements.types;
 import java.util.Random;
 import org.json.JSONObject;
 import gaia.lotto.Lotto;
+import gaia.server.world.items.container.Container;
+import gaia.server.world.items.container.NoFreeSlotException;
 import gaia.server.world.placements.IModifiablePlacement;
 import gaia.server.world.placements.Placement;
 import gaia.time.Time;
 import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 import gaia.world.items.ItemType;
-import gaia.world.items.container.Container;
-import gaia.world.items.container.NoFreeSlotException;
 
 /**
  * A 'Tree' placement.

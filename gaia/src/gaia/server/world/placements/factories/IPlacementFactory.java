@@ -1,11 +1,12 @@
 package gaia.server.world.placements.factories;
 
 import java.util.Random;
+
+import gaia.server.world.items.container.Container;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.placements.Priority;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementUnderlay;
-import gaia.world.items.container.Container;
 
 /**
  * Represents a placement builder.

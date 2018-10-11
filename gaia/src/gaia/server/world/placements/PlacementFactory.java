@@ -3,6 +3,8 @@ package gaia.server.world.placements;
 import java.util.HashMap;
 import java.util.Random;
 import org.json.JSONObject;
+
+import gaia.server.world.items.container.ContainerFactory;
 import gaia.server.world.placements.factories.IPlacementFactory;
 import gaia.server.world.placements.factories.PlacementFactories;
 import gaia.world.PlacementOverlay;
@@ -10,7 +12,6 @@ import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
-import gaia.world.items.container.ContainerFactory;
 
 /**
  * Factory for creating Placement instances.

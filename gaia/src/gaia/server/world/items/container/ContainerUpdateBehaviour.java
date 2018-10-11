@@ -1,4 +1,4 @@
-package gaia.world.items.container;
+package gaia.server.world.items.container;
 
 /**
  * Emuneration of container update behaviours.
