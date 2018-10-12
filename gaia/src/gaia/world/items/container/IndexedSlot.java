@@ -56,7 +56,6 @@ public class IndexedSlot extends Slot {
 			}
 			// We have an item!
 			indexedSlots.add(new IndexedSlot(slotIndex, slots.get(slotIndex).get()));
-			
 		}
 		// Return the list of indexed slots.
 		return indexedSlots;

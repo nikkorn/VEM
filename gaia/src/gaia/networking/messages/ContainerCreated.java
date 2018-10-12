@@ -1,6 +1,7 @@
 package gaia.networking.messages;
 
 import java.util.ArrayList;
+import gaia.networking.IMessage;
 import gaia.world.Position;
 import gaia.world.items.container.ContainerCategory;
 import gaia.world.items.container.ContainerType;
@@ -10,7 +11,7 @@ import gaia.world.items.container.Slot;
 /**
  * The message sent to all clients when a container is added to the world.
  */
-public class ContainerAdded {
+public class ContainerCreated implements IMessage {
 	/**
 	 * The position of the container.
 	 */
@@ -33,14 +34,14 @@ public class ContainerAdded {
 	private ArrayList<IndexedSlot> indexedSlots;
 	
 	/**
-	 * Create a new instance of the ContainerAdded class.
+	 * Create a new instance of the ContainerCreated class.
 	 * @param position The container position.
 	 * @param type The container type.
 	 * @param category The container category.
 	 * @param size The size of the container, as in the number of slots.
 	 * @param slots The list of slots within this container.
 	 */
-	public ContainerAdded(Position position, ContainerType type, ContainerCategory category, int size, ArrayList<Slot> slots) {
+	public ContainerCreated(Position position, ContainerType type, ContainerCategory category, int size, ArrayList<Slot> slots) {
 		this.position     = position;
 		this.type         = type;
 		this.category     = category;
@@ -86,5 +87,10 @@ public class ContainerAdded {
 	 */
 	public ArrayList<IndexedSlot> getIndexedSlots() {
 		return this.indexedSlots;
+	}
+
+	@Override
+	public int getTypeId() {
+		return MessageIdentifier.CONTAINER_CREATED;
 	}
 }

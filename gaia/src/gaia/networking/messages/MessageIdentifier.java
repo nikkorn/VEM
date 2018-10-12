@@ -24,4 +24,7 @@ public class MessageIdentifier {
 	public static final int PLACEMENT_UPDATED        = 13;
 	public static final int PLACEMENT_CREATED        = 14;
 	public static final int PLACEMENT_REMOVED        = 15;
+	public static final int CONTAINER_SLOT_SET       = 16;
+	public static final int CONTAINER_CREATED        = 17;
+	public static final int CONTAINER_REMOVED        = 18;
 }

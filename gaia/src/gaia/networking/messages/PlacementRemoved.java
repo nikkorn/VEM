@@ -13,7 +13,7 @@ public class PlacementRemoved implements IMessage {
 	 */
 	private Position position;
 	/**
-	 * The expected placement type of the placement being removed.
+	 * The expected type of the placement being removed.
 	 */
 	private PlacementType expectedPlacementType;
 
