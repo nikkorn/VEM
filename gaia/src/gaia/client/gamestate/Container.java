@@ -41,6 +41,7 @@ public class Container implements IContainerDetails {
 	 * @param index The index of the slot to check.
 	 * @return The item type held in the slot defined by the index.
 	 */
+	@Override
 	public ItemType get(int index) {
 		return this.slots.get(index).get();
 	}
@@ -58,6 +59,7 @@ public class Container implements IContainerDetails {
 	 * Gets the container type.
 	 * @return The container type.
 	 */
+	@Override
 	public ContainerType getType() {
 		return type;
 	}
@@ -66,6 +68,7 @@ public class Container implements IContainerDetails {
 	 * Gets the container category.
 	 * @return The container category.
 	 */
+	@Override
 	public ContainerCategory getCategory() {
 		return category;
 	}
@@ -74,7 +77,8 @@ public class Container implements IContainerDetails {
 	 * Get the size of this container, as in number of slots.
 	 * @return The size of this container, as in number of slots.
 	 */
-	public int size() {
+	@Override
+	public int getSize() {
 		return this.slots.size();
 	}
 	

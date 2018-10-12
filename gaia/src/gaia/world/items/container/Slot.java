@@ -13,6 +13,21 @@ public class Slot {
 	private ItemType held = ItemType.NONE;
 	
 	/**
+	 * Create a new instance of the Slot class.
+	 * The slot will contain the NONE item type.
+	 */
+	public Slot() {}
+	
+	/**
+	 * Create a new instance of the Slot class.
+	 * The slot will contain the specified item.
+	 * @param held The item that the slot will hold.
+	 */
+	public Slot(ItemType held) {
+		this.set(held);
+	}
+	
+	/**
 	 * Get the type of item held in this slot.
 	 * @return The type of item held in this slot.
 	 */
