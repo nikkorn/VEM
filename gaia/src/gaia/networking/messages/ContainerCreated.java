@@ -19,11 +19,11 @@ public class ContainerCreated implements IMessage {
 	/**
 	 * The container type.
 	 */
-	private ContainerType type;
+	private ContainerType containerType;
 	/**
 	 * The container category.
 	 */
-	private ContainerCategory category;
+	private ContainerCategory containerCategory;
 	/**
 	 * The size of the container.
 	 */
@@ -39,14 +39,25 @@ public class ContainerCreated implements IMessage {
 	 * @param type The container type.
 	 * @param category The container category.
 	 * @param size The size of the container, as in the number of slots.
+	 * @param indexedSlots The indexed slots in the container.
+	 */
+	public ContainerCreated(Position position, ContainerType type, ContainerCategory category, int size, ArrayList<IndexedSlot> indexedSlots) {
+		this.position          = position;
+		this.containerType     = type;
+		this.containerCategory = category;
+		this.size              = size;
+		this.indexedSlots      = indexedSlots;
+	}
+	
+	/**
+	 * Create a new instance of the ContainerCreated class.
+	 * @param position The container position.
+	 * @param type The container type.
+	 * @param category The container category.
 	 * @param slots The list of slots within this container.
 	 */
-	public ContainerCreated(Position position, ContainerType type, ContainerCategory category, int size, ArrayList<Slot> slots) {
-		this.position     = position;
-		this.type         = type;
-		this.category     = category;
-		this.size         = size;
-		this.indexedSlots = IndexedSlot.createIndexedSlotList(slots);
+	public ContainerCreated(Position position, ContainerType type, ContainerCategory category, ArrayList<Slot> slots) {
+		this(position, type, category, slots.size(), IndexedSlot.createIndexedSlotList(slots));
 	}
 	
 	/**
@@ -61,16 +72,16 @@ public class ContainerCreated implements IMessage {
 	 * Gets the container type.
 	 * @return The container type.
 	 */
-	public ContainerType getType() {
-		return type;
+	public ContainerType getContainerType() {
+		return containerType;
 	}
 
 	/**
 	 * Gets the container category.
 	 * @return The container category.
 	 */
-	public ContainerCategory getCategory() {
-		return category;
+	public ContainerCategory getContainerCategory() {
+		return containerCategory;
 	}
 	
 	/**

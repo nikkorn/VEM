@@ -64,8 +64,8 @@ public class TilledEarth extends Placement {
 			if (cropStateChanged) {
 				// Has the crop produced anything?
 				if (this.plantedCrop.getState() == CropState.PRODUCE) {
-					// TODO Create container with produce if we have produced anything.
-					System.out.println("We have produced a: " + this.plantedCrop.getProduce());
+					// Create container with the goodies that we have produced!
+					placement.setContainer(this.plantedCrop.getProducedContainer());
 				}
 				// Update the placement overlay to reflect the change of crop state.
 				placement.setOverlay(this.plantedCrop.getCurrentOverlay());

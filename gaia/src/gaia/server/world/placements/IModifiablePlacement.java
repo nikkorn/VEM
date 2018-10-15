@@ -28,6 +28,12 @@ public interface IModifiablePlacement {
 	public Container getContainer();
 	
 	/**
+	 * Set the placements container.
+	 * @param container The placements container.
+	 */
+	public void setContainer(Container container);
+	
+	/**
 	 * Get the placements underlay.
 	 * @return The placements underlay.
 	 */

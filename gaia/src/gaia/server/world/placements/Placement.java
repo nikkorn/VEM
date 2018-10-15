@@ -24,7 +24,7 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 	/**
 	 * The container of the placement.
 	 */
-	private Container container;
+	private Container container = null;
 	/**
 	 * The placement priority.
 	 */

@@ -1,6 +1,8 @@
 package gaia.server.world.agriculture;
 
 import org.json.JSONObject;
+import gaia.server.world.items.container.Container;
+import gaia.server.world.items.container.ContainerFactory;
 import gaia.time.Season;
 import gaia.world.PlacementOverlay;
 import gaia.world.items.ItemType;
@@ -92,6 +94,17 @@ public abstract class Crop {
 			// There has been no change in state.
 			return false;
 		}
+	}
+	
+	/**
+	 * Create the pickup container that will be produced by the fully grown crop.
+	 * @return The pickup container that will be produced by the fully grown crop.
+	 */
+	public Container getProducedContainer() {
+		// Get the seeds/produce. TODO This will eventually be random and impacted by crop health.
+		ItemType[] contains = new ItemType[] { this.getSeed(), this.getSeed(), this.getProduce() }; 
+		// Create and return the pickup container.
+		return ContainerFactory.create(contains);
 	}
 	
 	/**
