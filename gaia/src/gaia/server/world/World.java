@@ -201,14 +201,14 @@ public class World {
 					public void onVisit(int x, int y, Placement placement) {
 						// Get whatever the player expects to be at the position.
 						// Get whether the tile was as the player expected and update their familiarity with it.
-						switch (player.getWorldFamiliarity().compareAndUpdate(placement, (short)x, (short)y)) {
-							case EXPECTED_NO_PLACEMENT:
+						switch (player.getWorldFamiliarity().compareAndUpdatePlacementFamiliarity(placement, (short)x, (short)y)) {
+							case EXPECTED_NOT_PRESENT:
 								worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 								break;
-							case EXPECTED_PLACEMENT:
+							case EXPECTED_PRESENT:
 								worldMessageQueue.add(new PlacementRemovedMessage(player.getId(), null, new Position(x, y)));
 								break;
-							case EXPECTED_DIFFERENT_PLACEMENT_STATE:
+							case EXPECTED_DIFFERENT_STATE:
 								worldMessageQueue.add(new PlacementChangedMessage(player.getId(), placement, new Position(x, y)));
 								break;
 							default:
@@ -235,7 +235,7 @@ public class World {
 						// Is there is a placement at this position?
 						if (placement != null) {
 							// Update the player's familiarity with the placement.
-							player.getWorldFamiliarity().update(placement, (short)x, (short)y);
+							player.getWorldFamiliarity().updatePlacementFamiliarity(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
 							worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 						}

@@ -1,20 +1,22 @@
-package gaia.server.world.players;
+package gaia.server.world.players.worldfamiliarity;
 
 import java.util.HashMap;
+import gaia.server.world.items.container.Container;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.server.world.placements.Placements;
-import gaia.world.PlacementOverlay;
-import gaia.world.PlacementType;
-import gaia.world.PlacementUnderlay;
 
 /**
- * A representation of which placements a player knows about in the world.
+ * A representation of which placements and containers a player knows about in the world.
  */
 public class PlayerWorldFamiliarity {
 	/**
 	 * The mapping of world positions to placement familiarities.
 	 */
 	private HashMap<String, PlacementFamiliarity> placementFamiliarities = new HashMap<String, PlacementFamiliarity>();
+	/**
+	 * The mapping of world positions to container familiarities.
+	 */
+	private HashMap<String, ContainerFamiliarity> containerFamiliarities = new HashMap<String, ContainerFamiliarity>();
 
 	/**
 	 * Update the player's familiarity with a position.
@@ -22,7 +24,7 @@ public class PlayerWorldFamiliarity {
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 */
-	public void update(IPlacementDetails placement, short x, short y) {
+	public void updatePlacementFamiliarity(IPlacementDetails placement, short x, short y) {
 		// Get the placement position key.
 		String key = Placements.getPlacementKey(x, y);
 		// Are we updating familiarity with a now-deleted placement?
@@ -36,13 +38,23 @@ public class PlayerWorldFamiliarity {
 	}
 	
 	/**
+	 * Update the player's familiarity with a container.
+	 * @param container The container at the position, or null if there is no container.
+	 * @param x The x position of the container.
+	 * @param y The y position of the container.
+	 */
+	public void updateContainerFamiliarity(Container container, short x, short y) {
+		// ...
+	}
+	
+	/**
 	 * Compare a placement at a position with what the player expects at the position.
 	 * @param placement The placement we are comparing to the player's familiarity, or null if there is no placement.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 * @return The player's expectation of what is at the position. 
 	 */
-	public WorldFamiliarityExpectation compareAndUpdate(IPlacementDetails placement, short x, short y) {
+	public WorldFamiliarityExpectation compareAndUpdatePlacementFamiliarity(IPlacementDetails placement, short x, short y) {
 		// Get the placement position key.
 		String key = Placements.getPlacementKey(x, y);
 		// Is there a placement at the position?
@@ -55,13 +67,13 @@ public class PlayerWorldFamiliarity {
 					return WorldFamiliarityExpectation.AS_EXPECTED;
 				} else {
 					// They do not match!
-					return WorldFamiliarityExpectation.EXPECTED_DIFFERENT_PLACEMENT_STATE;
+					return WorldFamiliarityExpectation.EXPECTED_DIFFERENT_STATE;
 				}
 			} else {
 				// The player thought that there was no placement at this position but there is.
 				// Update the familiarities to reflect the fact that there is a placement at the position.
 				placementFamiliarities.put(key, new PlacementFamiliarity(placement));
-				return WorldFamiliarityExpectation.EXPECTED_NO_PLACEMENT;
+				return WorldFamiliarityExpectation.EXPECTED_NOT_PRESENT;
 			}
 		} else {
 			// Does the player know that there is no placement at this position?
@@ -71,62 +83,20 @@ public class PlayerWorldFamiliarity {
 				// The player thought that there was a placement at this position but there isn't.
 				// Update the familiarities to reflect the fact that there is no placement at the position.
 				placementFamiliarities.remove(key);
-				return WorldFamiliarityExpectation.EXPECTED_PLACEMENT;
+				return WorldFamiliarityExpectation.EXPECTED_PRESENT;
 			}
 		}
 	}
 	
 	/**
-	 * Represents a players familiarity with a placement.
+	 * Compare a container at a position with what the player expects at the position.
+	 * @param container The container we are comparing to the player's familiarity, or null if there is no container.
+	 * @param x The x position of the container.
+	 * @param y The y position of the container.
+	 * @return The player's expectation of what is at the position. 
 	 */
-	private class PlacementFamiliarity {
-		/**
-		 * The placement type.
-		 */
-		private PlacementType type;
-		/**
-		 * The placement underlay.
-		 */
-		private PlacementUnderlay underlay;
-		/**
-		 * The placement overlay.
-		 */
-		private PlacementOverlay overlay;
-		
-		/**
-		 * Create a new instance of the PlacementFamiliarity class.
-		 * @param placmement The placement that this familiarity represents.
-		 */
-		public PlacementFamiliarity(IPlacementDetails placement) {
-			this.type     = placement.getType();
-			this.underlay = placement.getUnderlay();
-			this.overlay  = placement.getOverlay();
-		}
-		
-		/**
-		 * Get whether the specified placement matches what the player is familiar with and update differences.
-		 * @param placement The placement we are checking mathces this familiarity.
-		 * @return Whether the specified placement matches what the player is familiar with.
-		 */
-		public boolean compareAndUpdate(IPlacementDetails placement) {
-			boolean matches = true;
-			// Is there a type mismatch?
-			if (this.type != placement.getType()) {
-				this.type = placement.getType();
-				matches   = false;
-			}
-			// Is there an underlay mismatch?
-			if (this.underlay != placement.getUnderlay()) {
-				this.underlay = placement.getUnderlay();
-				matches       = false;
-			}
-			// Is there an overlay mismatch?
-			if (this.overlay != placement.getOverlay()) {
-				this.overlay = placement.getOverlay();
-				matches   = false;
-			}
-			// Return whether the placement matched our familiarity with it.
-			return matches;
-		}
+	public WorldFamiliarityExpectation compareAndUpdateContainerFamiliarity(Container container, short x, short y) {
+		// ...
+		return WorldFamiliarityExpectation.AS_EXPECTED;
 	}
 }
