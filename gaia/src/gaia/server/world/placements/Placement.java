@@ -4,8 +4,8 @@ import java.util.Random;
 import org.json.JSONObject;
 import gaia.server.world.WorldModificationsHandler;
 import gaia.server.world.items.container.Container;
+import gaia.server.world.items.container.ContainerSnapshot;
 import gaia.server.world.messaging.WorldMessageQueue;
-import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
 import gaia.utils.BitPacker;
 import gaia.world.PlacementOverlay;
 import gaia.world.PlacementType;
@@ -212,34 +212,42 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = underlay;
 		PlacementOverlay preActionOverlay      = overlay;
-		ItemType[] preActionContainerItemTypes = null;
-		// The placements may not even have a container.
-		if (getContainer() != null) {
-			preActionContainerItemTypes = container.asItemTypeArray();
-		}
+		// Get the snapshot of the placement container (if it exists). This will be compared
+		// to the container after executing the action to check for any modifications.
+		ContainerSnapshot containerSnapshot = container != null ? container.getSnapshot() : null;
 		// Execute the placement actions using the actions executor provided.
 		// One of these actions could be to interact with the placement using an item.
 		// In this case the modification made to the item will be returned by the executor.
 		ItemType modification = executor.execute(this);
 		// Was the placement marked for deletion while the placement actions were being executed?
+		// If it wasn't then we need to check for any modifications that were made to the placement. 
 		if (this.isMarkedForDeletion) {
 			// We are trying to delete this placement! Handle the placement deletion.
 			placementModificationsHandler.onPlacementRemoved(this, position);
 			// We do not care about modifications made to the placement, just that it has been deleted.
 			return modification;
-		}
-		// We are finished executing our actions. Has the underlay or overlay changed?
-		if (underlay != preActionUnderlay || overlay != preActionOverlay) {
-			// Handle the placement change.
-			placementModificationsHandler.onPlacementChanged(this, position);
-		}
-		// Handle changes to the state of the container if we have one.
-		if (container != null) {
-			for (int containerItemIndex = 0; containerItemIndex < container.size(); containerItemIndex++) {
-				// Has the item type at the current container slot changed?
-				if (preActionContainerItemTypes[containerItemIndex] != container.get(containerItemIndex)) {
-					// Add a message to the world message queue to notify of the change.
-					worldMessageQueue.add(new ContainerSlotChangedMessage(containerItemIndex, container.get(containerItemIndex), position));
+		} else {
+			// We are finished executing our actions. Has the underlay or overlay changed?
+			if (underlay != preActionUnderlay || overlay != preActionOverlay) {
+				// Handle the placement change.
+				placementModificationsHandler.onPlacementChanged(this, position);
+			}
+			// Handle changes to the state of the container if we have one.
+			if (container != null) {
+				// If we do not have a snapshot of the container before executing the action then a container was added.
+				if (containerSnapshot == null) {
+					// A container was added!
+					// ...
+				} else {
+					// ...
+				}
+			} else {
+				// If we have a snapshot of the container before executing the action then the container was removed.
+				if (containerSnapshot != null) {
+					// The container was removed!
+					// ...
+				} else {
+					// ...
 				}
 			}
 		}

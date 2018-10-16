@@ -57,7 +57,7 @@ public class JoinRequest extends PlayerRequest {
 				// Add a world message to notify every player about this player spawn.
 				world.getWorldMessageQueue().add(new PlayerSpawnedMessage(this.getRequestingPlayerId(), new Position(player.getPosition().getX(), player.getPosition().getY())));
 				// Add a world message for each item in the player inventorythat is not NONE.
-				for (int slotIndex = 0; slotIndex < player.getInventory().size(); slotIndex++) {
+				for (int slotIndex = 0; slotIndex < player.getInventory().getSize(); slotIndex++) {
 					// Get the item at the current slot index.
 					ItemType item = player.getInventory().get(slotIndex);
 					// We only care about items that are not of the NONE type.

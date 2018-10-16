@@ -15,6 +15,10 @@ public abstract class Container {
 	 * The slots that this container is composed of.
 	 */
 	private ArrayList<Slot> slots = new ArrayList<Slot>();
+	/**
+	 * The most up-to-date snapshot of the container.
+	 */
+	private ContainerSnapshot snapshot;
 	
 	/**
 	 * Creates a new instance of the Container class with the specified number of empty slots.
@@ -25,6 +29,8 @@ public abstract class Container {
 		for (int slotCount = 0; slotCount < numberOfSlots; slotCount++) {
 			slots.add(new Slot());
 		}
+		// Create the initial  container snapshot.
+		this.snapshot = new ContainerSnapshot(this);
 	}
 	
 	/**
@@ -44,13 +50,23 @@ public abstract class Container {
 				// This won't happen as we just created the slots for the items.
 			}
 		}
+		// Create the initial  container snapshot.
+		this.snapshot = new ContainerSnapshot(this);
+	}
+	
+	/**
+	 * Get a snapshot of the container.
+	 * @return A snapshot of the container.
+	 */
+	public ContainerSnapshot getSnapshot() {
+		return this.snapshot;
 	}
 
 	/**
 	 * Get the size of this container, as in number of slots.
 	 * @return The size of this container, as in number of slots.
 	 */
-	public int size() {
+	public int getSize() {
 		return this.slots.size();
 	}
 	
@@ -118,6 +134,8 @@ public abstract class Container {
 	 */
 	public void set(ItemType type, int index) {
 		this.slots.get(index).set(type);
+		// Update the container snapshot.
+		this.snapshot = new ContainerSnapshot(this);
 	}
 	
 	/**
@@ -130,12 +148,21 @@ public abstract class Container {
 		if (this.isFull()) {
 			throw new NoFreeSlotException(type);
 		}
+		// Keep track of whether any items are actually added.
+		boolean itemWasAdded = false;
 		// Find the first free slot and add our item there.
 		for (Slot slot : slots) {
 			if (slot.get() == ItemType.NONE) {
 				// We found an empty slot!
 				slot.set(type);
+				// An item was added!
+				itemWasAdded = true;
 			}
+		}
+		// If an item was added then we need to update the container snapshot.
+		if (itemWasAdded) {
+			// Update the container snapshot.
+			this.snapshot = new ContainerSnapshot(this);
 		}
 	}
 	
@@ -146,6 +173,8 @@ public abstract class Container {
 		for (Slot slot : slots) {
 			slot.set(ItemType.NONE);
 		}
+		// Update the container snapshot.
+		this.snapshot = new ContainerSnapshot(this);
 	}
 	
 	/**
@@ -153,6 +182,8 @@ public abstract class Container {
 	 */
 	public void clear(int index) {
 		set(ItemType.NONE, index);
+		// Update the container snapshot.
+		this.snapshot = new ContainerSnapshot(this);
 	}
 	
 	/**
@@ -161,9 +192,9 @@ public abstract class Container {
 	 */
 	public ItemType[] asItemTypeArray() {
 		// Create the array to hold the item types.
-		ItemType[] itemTypes = new ItemType[this.size()];
+		ItemType[] itemTypes = new ItemType[this.getSize()];
 		// Populate the item type array.
-		for (int slotIndex = 0; slotIndex < this.size(); slotIndex++) {
+		for (int slotIndex = 0; slotIndex < this.getSize(); slotIndex++) {
 			itemTypes[slotIndex] = this.slots.get(slotIndex).get();
 		}
 		// Return the container as an array of item types.

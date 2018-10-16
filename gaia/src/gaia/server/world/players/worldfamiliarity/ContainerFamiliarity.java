@@ -47,7 +47,7 @@ public class ContainerFamiliarity {
 			return false;
 		}
 		// Does the number of items differ?
-		if (container.size() != items.length) {
+		if (container.getSize() != items.length) {
 			return false;
 		}
 		// Do any of the items differ?
