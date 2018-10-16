@@ -2,7 +2,7 @@ package gaia.server.world.placements;
 
 import java.util.Random;
 import org.json.JSONObject;
-import gaia.server.world.PlacementModificationsHandler;
+import gaia.server.world.WorldModificationsHandler;
 import gaia.server.world.items.container.Container;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.ContainerSlotChangedMessage;
@@ -207,7 +207,7 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 	 * @param placementModificationsHandler The placement modification handler.
 	 * @return The potential modification that was made to an item used in an interaction with the placement.
 	 */
-	public ItemType executeActions(Position position, IPlacementActionsExecutor executor, PlacementModificationsHandler placementModificationsHandler, WorldMessageQueue worldMessageQueue) {
+	public ItemType executeActions(Position position, IPlacementActionsExecutor executor, WorldModificationsHandler placementModificationsHandler, WorldMessageQueue worldMessageQueue) {
 		// A side effect of executing placement actions could be changes to overlay, underlay and container state.
 		// We need to respond to any of these changes and add a message to the world message queue to let people know.
 		PlacementUnderlay preActionUnderlay    = underlay;

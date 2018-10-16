@@ -2,6 +2,7 @@ package gaia.server.world;
 
 import java.util.ArrayList;
 import gaia.Constants;
+import gaia.server.world.items.container.Container;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementCreatedMessage;
@@ -12,9 +13,9 @@ import gaia.server.world.players.Players;
 import gaia.world.Position;
 
 /**
- * Handler for placement modifications.
+ * Handler for placement and container modifications.
  */
-public class PlacementModificationsHandler {
+public class WorldModificationsHandler {
 	/**
 	 * The collection of connected players.
 	 */
@@ -29,7 +30,7 @@ public class PlacementModificationsHandler {
 	 * @param players The collection of connected players.
 	 * @param worldMessageQueue The world message queue.
 	 */
-	public PlacementModificationsHandler(Players players, WorldMessageQueue worldMessageQueue) {
+	public WorldModificationsHandler(Players players, WorldMessageQueue worldMessageQueue) {
 		this.players           = players;
 		this.worldMessageQueue = worldMessageQueue;
 	}
@@ -107,5 +108,32 @@ public class PlacementModificationsHandler {
 		if (concernedPlayerIds.size() > 0) {
 			worldMessageQueue.add(new PlacementRemovedMessage(concernedPlayerIds, placement.getType(), position));
 		}
+	}
+	
+	/**
+	 * Called when a container is created at a position.
+	 * @param container The container that has been added.
+	 * @param position The position of the added container.
+	 */
+	public void onContainerCreated(Container container, Position position) {
+		// TODO ...
+	}
+	
+	/**
+	 * Called when a slot within a container changes at a position.
+	 * @param container The container that has has a slot change.
+	 * @param position The position of the changed container.
+	 */
+	public void onContainerSlotsChanged(Container container, int indexPosition, Position position) {
+		// TODO ...
+	}
+	
+	/**
+	 * Called when a container is removed.
+	 * @param container The container that has been removed.
+	 * @param position The position of the removed container.
+	 */
+	public void onContainerRemoved(Container container, Position position) {
+		// TODO ...
 	}
 }

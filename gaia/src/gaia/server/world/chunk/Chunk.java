@@ -3,7 +3,7 @@ package gaia.server.world.chunk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import gaia.Constants;
-import gaia.server.world.PlacementModificationsHandler;
+import gaia.server.world.WorldModificationsHandler;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.world.TileType;
 import gaia.world.items.ItemType;
@@ -127,7 +127,7 @@ public class Chunk {
 	 * @param arePlayersInChunkVicinity Whether any players are in the vicinity of this chunk.
 	 * @param placementModificationsHandler The placement modification handler.
 	 */
-	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, PlacementModificationsHandler placementModificationsHandler) {
+	public void tick(boolean hasTimeChanged, Time time, boolean arePlayersInChunkVicinity, WorldModificationsHandler placementModificationsHandler) {
 		// Keep track of whether the priority of any placement changes as part of this tick.
 		// If this happens then it could change whether the chunk should be considered during future ticks.
 		boolean hasPlacementPriorityChanged = false;
@@ -180,7 +180,7 @@ public class Chunk {
 	 * @param placementModificationsHandler The placement modification handler.
 	 * @return Any modification made to the item.
 	 */
-	public ItemType useItem(ItemType item, int x, int y, PlacementModificationsHandler placementModificationsHandler) {
+	public ItemType useItem(ItemType item, int x, int y, WorldModificationsHandler placementModificationsHandler) {
 		// Get the placement at this position.
 		Placement targetPlacement = placements.get(x, y);
 		// If there is a placement at this position then we will use the item on it
@@ -271,7 +271,7 @@ public class Chunk {
 	 * @param hasTimeChanged Whether the time has changed on this server tick.
 	 * @param placementModificationsHandler The placement modification handler.
 	 */
-	private void executePlacementTickActions(Placement placement, Time time, boolean hasTimeChanged, PlacementModificationsHandler placementModificationsHandler) {
+	private void executePlacementTickActions(Placement placement, Time time, boolean hasTimeChanged, WorldModificationsHandler placementModificationsHandler) {
 		// Get the absolute world position of the placement.
 		Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX(), (this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
 		// Create the executor that will execute the placement server tick and time update actions.	
@@ -299,7 +299,7 @@ public class Chunk {
 	 * @param placementModificationsHandler The placement modification handler.
 	 * @return The modification made to the item used in the interaction.
 	 */
-	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, PlacementModificationsHandler placementModificationsHandler) {
+	private ItemType executePlacementInteractionAction(Placement placement, ItemType item, WorldModificationsHandler placementModificationsHandler) {
 		// Get the absolute world position of the placement.
 		Position placementPosition = new Position((this.x * Constants.WORLD_CHUNK_SIZE) + placement.getX(), (this.y * Constants.WORLD_CHUNK_SIZE) + placement.getY());
 		// Create the executor that will execute the placement interaction action.	

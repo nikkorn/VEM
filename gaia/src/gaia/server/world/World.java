@@ -49,7 +49,7 @@ public class World {
 	 * The handler for any placement modifications that will be responsible for determining
 	 * concerned players and raising placement create/update/remove world messages for those players.
 	 */
-	private PlacementModificationsHandler placementModificationsHandler;
+	private WorldModificationsHandler placementModificationsHandler;
 	
 	/**
 	 * Creates a new instance of the World class.
@@ -67,7 +67,7 @@ public class World {
 		this.clock                         = new Clock(time);
 		this.tileGenerator                 = tileGenerator;
 		this.worldMessageQueue             = worldMessageQueue;
-		this.placementModificationsHandler = new PlacementModificationsHandler(players, worldMessageQueue);
+		this.placementModificationsHandler = new WorldModificationsHandler(players, worldMessageQueue);
 	}
 	
 	/**

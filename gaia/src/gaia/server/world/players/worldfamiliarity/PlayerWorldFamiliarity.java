@@ -44,7 +44,16 @@ public class PlayerWorldFamiliarity {
 	 * @param y The y position of the container.
 	 */
 	public void updateContainerFamiliarity(Container container, short x, short y) {
-		// ...
+		// Get the placement position key.
+		String key = Placements.getPlacementKey(x, y);
+		// Are we updating familiarity with a now-deleted container?
+		if (container == null) {
+			// Update the player's familiarity with the now non-existent container.
+			containerFamiliarities.remove(key);
+		} else {
+			// Update the player's familiarity with the container at the position.
+			containerFamiliarities.put(key, new ContainerFamiliarity(container));
+		}
 	}
 	
 	/**
