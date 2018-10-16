@@ -19,12 +19,12 @@ public class PlayerWorldFamiliarity {
 	private HashMap<String, ContainerFamiliarity> containerFamiliarities = new HashMap<String, ContainerFamiliarity>();
 
 	/**
-	 * Update the player's familiarity with a position.
+	 * Set the player's familiarity with a position.
 	 * @param placement The placement at the position, or null if there is no placement.
 	 * @param x The x position of the placement.
 	 * @param y The y position of the placement.
 	 */
-	public void updatePlacementFamiliarity(IPlacementDetails placement, short x, short y) {
+	public void setPlacementFamiliarity(IPlacementDetails placement, short x, short y) {
 		// Get the placement position key.
 		String key = Placements.getPlacementKey(x, y);
 		// Are we updating familiarity with a now-deleted placement?
@@ -34,25 +34,6 @@ public class PlayerWorldFamiliarity {
 		} else {
 			// Update the player's familiarity with the placement at the position.
 			placementFamiliarities.put(key, new PlacementFamiliarity(placement));
-		}
-	}
-	
-	/**
-	 * Update the player's familiarity with a container.
-	 * @param container The container at the position, or null if there is no container.
-	 * @param x The x position of the container.
-	 * @param y The y position of the container.
-	 */
-	public void updateContainerFamiliarity(Container container, short x, short y) {
-		// Get the placement position key.
-		String key = Placements.getPlacementKey(x, y);
-		// Are we updating familiarity with a now-deleted container?
-		if (container == null) {
-			// Update the player's familiarity with the now non-existent container.
-			containerFamiliarities.remove(key);
-		} else {
-			// Update the player's familiarity with the container at the position.
-			containerFamiliarities.put(key, new ContainerFamiliarity(container));
 		}
 	}
 	
@@ -96,7 +77,39 @@ public class PlayerWorldFamiliarity {
 			}
 		}
 	}
+
+	/**
+	 * Set the player's familiarity with a container.
+	 * @param container The container at the position, or null if there is no container.
+	 * @param x The x position of the container.
+	 * @param y The y position of the container.
+	 */
+	public void setContainerFamiliarity(Container container, short x, short y) {
+		// Get the placement position key.
+		String key = Placements.getPlacementKey(x, y);
+		// Are we updating familiarity with a now-deleted container?
+		if (container == null) {
+			// Update the player's familiarity with the now non-existent container.
+			containerFamiliarities.remove(key);
+		} else {
+			// Update the player's familiarity with the container at the position.
+			containerFamiliarities.put(key, new ContainerFamiliarity(container));
+		}
+	}
 	
+	/**
+	 * Get the player's familiarity with a container, or null if there is no familiarity.
+	 * @param x The x position of the container.
+	 * @param y The y position of the container.
+	 * @return The player's familiarity with a container, or null if there is no familiarity.
+	 */
+	public ContainerFamiliarity getContainerFamiliarity(short x, short y) {
+		// Get the placement position key.
+		String key = Placements.getPlacementKey(x, y);
+		// Get the container familiarity, this could be null.
+		return containerFamiliarities.get(key);
+	}
+
 	/**
 	 * Compare a container at a position with what the player expects at the position.
 	 * @param container The container we are comparing to the player's familiarity, or null if there is no container.
@@ -104,8 +117,37 @@ public class PlayerWorldFamiliarity {
 	 * @param y The y position of the container.
 	 * @return The player's expectation of what is at the position. 
 	 */
-	public WorldFamiliarityExpectation compareAndUpdateContainerFamiliarity(Container container, short x, short y) {
-		// ...
-		return WorldFamiliarityExpectation.AS_EXPECTED;
+	public WorldFamiliarityExpectation compareContainerFamiliarity(Container container, short x, short y) {
+		// Get the placement position key.
+		String key = Placements.getPlacementKey(x, y);
+		// Is there a container at the position?
+		if (container != null) {
+			// Does the player know that there is no container at this position?
+			if (containerFamiliarities.containsKey(key)) {
+				// The player knows that there is a container at the position, but do they match?
+				if (containerFamiliarities.get(key).compare(container)) {
+					// They match!
+					return WorldFamiliarityExpectation.AS_EXPECTED;
+				} else {
+					// They do not match!
+					return WorldFamiliarityExpectation.EXPECTED_DIFFERENT_STATE;
+				}
+			} else {
+				// The player thought that there was no container at this position but there is.
+				// Update the familiarities to reflect the fact that there is a container at the position.
+				containerFamiliarities.put(key, new ContainerFamiliarity(container));
+				return WorldFamiliarityExpectation.EXPECTED_NOT_PRESENT;
+			}
+		} else {
+			// Does the player know that there is no container at this position?
+			if (!containerFamiliarities.containsKey(key)) {
+				return WorldFamiliarityExpectation.AS_EXPECTED;
+			} else {
+				// The player thought that there was a container at this position but there isn't.
+				// Update the familiarities to reflect the fact that there is no container at the position.
+				containerFamiliarities.remove(key);
+				return WorldFamiliarityExpectation.EXPECTED_PRESENT;
+			}
+		}
 	}
 }

@@ -235,7 +235,7 @@ public class World {
 						// Is there is a placement at this position?
 						if (placement != null) {
 							// Update the player's familiarity with the placement.
-							player.getWorldFamiliarity().updatePlacementFamiliarity(placement, (short)x, (short)y);
+							player.getWorldFamiliarity().setPlacementFamiliarity(placement, (short)x, (short)y);
 							// Add a world message to notify the spawning player of the placement load.
 							worldMessageQueue.add(new PlacementCreatedMessage(player.getId(), placement, new Position(x, y)));
 						}

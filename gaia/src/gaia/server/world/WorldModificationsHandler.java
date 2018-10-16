@@ -52,7 +52,7 @@ public class WorldModificationsHandler {
 			// This player is close enough to the placement to care about it.
 			concernedPlayerIds.add(player.getId());
 			// Update the player's familiarity with the placement.
-			player.getWorldFamiliarity().updatePlacementFamiliarity(placement, position.getX(), position.getY());
+			player.getWorldFamiliarity().setPlacementFamiliarity(placement, position.getX(), position.getY());
 		}
 		// Add a world message to notify any concerned players of the placement change.
 		if (concernedPlayerIds.size() > 0) {
@@ -77,7 +77,7 @@ public class WorldModificationsHandler {
 			// This player is close enough to the placement to care about it.
 			concernedPlayerIds.add(player.getId());
 			// Update the player's familiarity with the placement.
-			player.getWorldFamiliarity().updatePlacementFamiliarity(placement, position.getX(), position.getY());
+			player.getWorldFamiliarity().setPlacementFamiliarity(placement, position.getX(), position.getY());
 		}
 		// Add a world message to notify any concerned players of the placement change.
 		if (concernedPlayerIds.size() > 0) {
@@ -102,7 +102,7 @@ public class WorldModificationsHandler {
 			// This player is close enough to the placement to care about it.
 			concernedPlayerIds.add(player.getId());
 			// Update the player's familiarity with the placement.
-			player.getWorldFamiliarity().updatePlacementFamiliarity(null, position.getX(), position.getY());
+			player.getWorldFamiliarity().setPlacementFamiliarity(null, position.getX(), position.getY());
 		}
 		// Add a world message to notify any concerned players of the placement deletion.
 		if (concernedPlayerIds.size() > 0) {
