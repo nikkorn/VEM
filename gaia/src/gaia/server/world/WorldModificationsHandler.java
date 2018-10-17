@@ -3,6 +3,7 @@ package gaia.server.world;
 import java.util.ArrayList;
 import gaia.Constants;
 import gaia.server.world.items.container.Container;
+import gaia.server.world.items.container.ContainerSnapshot;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementCreatedMessage;
@@ -111,11 +112,11 @@ public class WorldModificationsHandler {
 	}
 	
 	/**
-	 * Called when a container is created at a position.
+	 * Called when a container is added to a placement at a position.
 	 * @param container The container that has been added.
 	 * @param position The position of the added container.
 	 */
-	public void onContainerCreated(Container container, Position position) {
+	public void onContainerAdded(Container container, Position position) {
 		// TODO ...
 	}
 	
@@ -129,11 +130,11 @@ public class WorldModificationsHandler {
 	}
 	
 	/**
-	 * Called when a container is removed.
-	 * @param container The container that has been removed.
+	 * Called when a container is removed from a placement.
+	 * @param snapshot The snapshot of the container that has been removed.
 	 * @param position The position of the removed container.
 	 */
-	public void onContainerRemoved(Container container, Position position) {
+	public void onContainerRemoved(ContainerSnapshot snapshot, Position position) {
 		// TODO ...
 	}
 }

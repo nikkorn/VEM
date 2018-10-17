@@ -224,6 +224,10 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 		if (this.isMarkedForDeletion) {
 			// We are trying to delete this placement! Handle the placement deletion.
 			placementModificationsHandler.onPlacementRemoved(this, position);
+			// If the placement had a container then the container will also be deleted.
+			if (this.container != null) {
+				placementModificationsHandler.onContainerRemoved(containerSnapshot, position);
+			}
 			// We do not care about modifications made to the placement, just that it has been deleted.
 			return modification;
 		} else {
@@ -232,24 +236,8 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 				// Handle the placement change.
 				placementModificationsHandler.onPlacementChanged(this, position);
 			}
-			// Handle changes to the state of the container if we have one.
-			if (container != null) {
-				// If we do not have a snapshot of the container before executing the action then a container was added.
-				if (containerSnapshot == null) {
-					// A container was added!
-					// ...
-				} else {
-					// ...
-				}
-			} else {
-				// If we have a snapshot of the container before executing the action then the container was removed.
-				if (containerSnapshot != null) {
-					// The container was removed!
-					// ...
-				} else {
-					// ...
-				}
-			}
+			// Handle changes to the state of the placement container.
+			checkForContainerModifications(containerSnapshot, container, position, placementModificationsHandler);
 		}
 		// Return the potential modification that was made to an item used in an interaction with the placement.
 		return modification;
@@ -285,4 +273,61 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 		// Return the serialised placements.
 		return placement;
 	}
+	
+	/**
+	 * Check for any modification that were made to a placement container as a result of executing a palcement's actions.
+	 * @param snapshot The pre-action container snapshot, null if there was no container.
+	 * @param container The post-action container, null if there is now no container.
+	 * @param position The position of the placement.
+	 * @param placementModificationsHandler The placement modifications handler.
+	 */
+	private static void checkForContainerModifications(ContainerSnapshot snapshot, Container container, Position position, WorldModificationsHandler placementModificationsHandler) {
+		// Handle changes to the state of the container if we have one.
+		if (container != null) {
+			// If we do not have a snapshot of the container before executing the action then a container was added.
+			if (snapshot == null) {
+				// A container was added to the placement!
+				placementModificationsHandler.onContainerAdded(container, position);
+			} else {
+				// A placement action has existed pre and post action, but could have been modified so we need to compare.
+				// If the type, category or number of slots of the snapshot and container differ then the container has been replaced.
+				if (snapshot.getType() != container.getType() || snapshot.getCategory() != container.getCategory() || snapshot.getItemsHeld().length != container.getSize()) {
+					// Our container was replaced! Remove the inital one ...
+					placementModificationsHandler.onContainerRemoved(snapshot, position);
+					// ... and add the new one.
+					placementModificationsHandler.onContainerAdded(container, position);
+				} else {
+					// Get the items that were held in the container pre-action.
+					ItemType[] itemsHeldPreAction = snapshot.getItemsHeld();
+					// The containers are of the same type, but we need to check whether any slots have changed.
+					for (int itemIndex = 0; itemIndex < itemsHeldPreAction.length; itemIndex++) {
+						// Do the items at this slot differ?
+						if (itemsHeldPreAction[itemIndex] != container.get(itemIndex)) {
+							// The item in the current slot has been changed.
+							placementModificationsHandler.onContainerSlotsChanged(container, itemIndex, position);
+						}
+					}
+				}
+			}
+		} else {
+			// If we have a snapshot of the container before executing the action then the container was removed.
+			if (snapshot != null) {
+				// The container was removed!
+				placementModificationsHandler.onContainerRemoved(snapshot, position);
+			}
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
