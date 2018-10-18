@@ -318,16 +318,3 @@ public abstract class Placement implements IModifiablePlacement, IPlacementDetai
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

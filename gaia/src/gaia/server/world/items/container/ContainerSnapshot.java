@@ -7,7 +7,7 @@ import gaia.world.items.container.ContainerType;
 /**
  * A snapshot of the state of a container.
  */
-public class ContainerSnapshot {
+public class ContainerSnapshot implements IContainerDetails {
 	/**
 	 * The container type.
 	 */
@@ -35,6 +35,7 @@ public class ContainerSnapshot {
 	 * Gets the container type.
 	 * @return The container type.
 	 */
+	@Override
 	public ContainerType getType() {
 		return this.type;
 	}
@@ -43,6 +44,7 @@ public class ContainerSnapshot {
 	 * Gets the container category.
 	 * @return The container category.
 	 */
+	@Override
 	public ContainerCategory getCategory() {
 		return this.category;
 	}
@@ -51,6 +53,7 @@ public class ContainerSnapshot {
 	 * Gets the array of items held in the container.
 	 * @return The array of items held in the container.
 	 */
+	@Override
 	public ItemType[] getItemsHeld() {
 		return this.items;
 	}

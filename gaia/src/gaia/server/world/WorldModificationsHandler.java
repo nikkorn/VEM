@@ -5,6 +5,7 @@ import gaia.Constants;
 import gaia.server.world.items.container.Container;
 import gaia.server.world.items.container.ContainerSnapshot;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.messaging.messages.ContainerAddedMessage;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementCreatedMessage;
 import gaia.server.world.messaging.messages.PlacementRemovedMessage;
@@ -117,7 +118,23 @@ public class WorldModificationsHandler {
 	 * @param position The position of the added container.
 	 */
 	public void onContainerAdded(Container container, Position position) {
-		// TODO ...
+		// Create a list to hold the ids of any players that care about the added container.
+		ArrayList<String> concernedPlayerIds = new ArrayList<String>();
+		// Get all the players that are close enough to this container to care about it.
+		for (Player player : players.getAllPlayers()) {
+			// We do not care about this player if they are not within the view range of the container.
+			if (!position.isWithinDistanceOf(player.getPosition(), Constants.PLAYER_VIEW_DISTANCE)) {
+				continue;
+			}
+			// This player is close enough to the container to care about it.
+			concernedPlayerIds.add(player.getId());
+			// Update the player's familiarity with the container.
+			player.getWorldFamiliarity().setContainerFamiliarity(container, position.getX(), position.getY());
+		}
+		// Add a world message to notify any concerned players of the added container.
+		if (concernedPlayerIds.size() > 0) {
+			worldMessageQueue.add(new ContainerAddedMessage(concernedPlayerIds, container.getSnapshot(), position));
+		}
 	}
 	
 	/**

@@ -5,7 +5,7 @@ import gaia.world.PlacementType;
 import gaia.world.PlacementUnderlay;
 
 /**
- * Exposes the immutable properties of a placements.
+ * Exposes the immutable properties of a placement.
  */
 public interface IPlacementDetails {
 	

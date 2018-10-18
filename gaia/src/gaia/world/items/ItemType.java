@@ -47,4 +47,12 @@ public enum ItemType {
 				return ItemTarget.NONE;
 		}
 	}
+	
+	/**
+	 * Gets whether an item is of the NONE type.
+	 * @return Whether an item is of the NONE type.
+	 */ 
+	public boolean isNothing() {
+		return this == ItemType.NONE;
+	}
 }

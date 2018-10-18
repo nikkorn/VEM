@@ -28,7 +28,6 @@ public class PlacementCreatedMessage implements IWorldMessage {
 	 * @param playerIds The ids of any players who care about the placement creation.
 	 * @param placement The placement details.
 	 * @param position The position of the placement.
-	 * @param modification The type of the placement modification.
 	 */
 	public PlacementCreatedMessage(List<String> playerIds, IPlacementDetails placement, Position position) {
 		this.playerIds = playerIds.toArray(new String[playerIds.size()]);
@@ -41,7 +40,6 @@ public class PlacementCreatedMessage implements IWorldMessage {
 	 * @param playerId The id of the player who cares about the placement creation.
 	 * @param placement The placement details.
 	 * @param position The position of the placement.
-	 * @param modification The type of the placement modification.
 	 */
 	public PlacementCreatedMessage(String playerId, IPlacementDetails placement, Position position) {
 		this(Arrays.asList(playerId), placement, position);

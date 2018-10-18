@@ -1,6 +1,7 @@
 package gaia.server.networking;
 
 import java.util.ArrayList;
+import gaia.networking.messages.ContainerAdded;
 import gaia.networking.messages.InventorySlotSet;
 import gaia.networking.messages.PlacementCreated;
 import gaia.networking.messages.PlacementRemoved;
@@ -11,6 +12,7 @@ import gaia.networking.messages.PlayerSpawned;
 import gaia.server.ServerConsole;
 import gaia.server.engine.IWorldEventsHandler;
 import gaia.server.welcomepackage.WelcomePackage;
+import gaia.server.world.items.container.IContainerDetails;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.Direction;
 import gaia.world.IPositionDetails;
@@ -102,6 +104,14 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 		// Let each player that cares about this placement removal know about it.
 		for (String playerId : playerIds) {
 			this.clientProxyManager.sendMessage(playerId, new PlacementRemoved(position.copy(), expectedType));
+		}
+	}
+
+	@Override
+	public void onContainerAdd(String[] playerIds, IPositionDetails position, IContainerDetails container) {
+		// Let each player that cares about this added container know about it.
+		for (String playerId : playerIds) {
+			this.clientProxyManager.sendMessage(playerId, new ContainerAdded(position.copy(), container.getType(), container.getCategory(), container.getItemsHeld()));
 		}
 	}
 }

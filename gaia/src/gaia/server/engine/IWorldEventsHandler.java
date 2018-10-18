@@ -2,6 +2,7 @@ package gaia.server.engine;
 
 import java.util.ArrayList;
 import gaia.server.welcomepackage.WelcomePackage;
+import gaia.server.world.items.container.IContainerDetails;
 import gaia.server.world.placements.IPlacementDetails;
 import gaia.world.Direction;
 import gaia.world.IPositionDetails;
@@ -90,4 +91,12 @@ public interface IWorldEventsHandler {
 	 * @param expectedType The expected placement type.
 	 */
 	void onPlacementRemove(String[] playerIds, IPositionDetails position, PlacementType expectedType);
+	
+	/**
+	 * Called when a container is added.
+	 * @param playerIds The ids of any players who are in the vicinity of the added container.
+	 * @param position The position of the container.
+	 * @param container The container details.
+	 */
+	void onContainerAdd(String[] playerIds, IPositionDetails position, IContainerDetails container);
 }
