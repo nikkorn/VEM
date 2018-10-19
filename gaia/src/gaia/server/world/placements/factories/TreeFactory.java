@@ -1,7 +1,6 @@
 package gaia.server.world.placements.factories;
 
 import java.util.Random;
-
 import gaia.server.world.items.container.Container;
 import gaia.server.world.items.container.ContainerFactory;
 import gaia.server.world.placements.Placement;

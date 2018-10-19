@@ -57,12 +57,11 @@ public class RedBerryPlant extends Crop {
 
 	@Override
 	public long getRequiredGrowthForSprouting() {
-		return 100;
+		return 20;
 	}
 
 	@Override
 	public long getRequiredGrowthForProduce() {
-		return 200;
+		return 40;
 	}
-
 }

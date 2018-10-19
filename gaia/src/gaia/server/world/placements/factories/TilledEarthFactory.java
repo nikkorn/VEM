@@ -1,9 +1,7 @@
 package gaia.server.world.placements.factories;
 
 import java.util.Random;
-
 import gaia.server.world.items.container.Container;
-import gaia.server.world.items.container.ContainerFactory;
 import gaia.server.world.placements.Placement;
 import gaia.server.world.placements.Priority;
 import gaia.server.world.placements.types.TilledEarth;
@@ -37,6 +35,6 @@ public class TilledEarthFactory implements IPlacementFactory {
 
 	@Override
 	public Container getContainer(Random chunkRng) {
-		return ContainerFactory.create(3);
+		return null;
 	}
 }

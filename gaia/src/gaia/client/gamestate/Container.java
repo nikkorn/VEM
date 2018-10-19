@@ -1,6 +1,6 @@
 package gaia.client.gamestate;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import gaia.world.items.ItemType;
 import gaia.world.items.container.*;
 
@@ -17,23 +17,32 @@ public class Container implements IContainerDetails {
 	 */
 	private ContainerCategory category;
 	/**
-	 * The slots that this container is composed of.
+	 * The items that are held in this container.
 	 */
-	private ArrayList<Slot> slots = new ArrayList<Slot>();
+	private ItemType[] items;
 	
 	/**
 	 * Create a new instance of the Container class.
 	 * @param type The container type.
 	 * @param category The container category.
-	 * @param numberOfSlots The number of slots in the container.
+	 * @param items The items held in the container.
 	 */
-	public Container(ContainerType type, ContainerCategory category, int numberOfSlots) {
+	public Container(ContainerType type, ContainerCategory category, ItemType[] items) {
 		this.type     = type;
 		this.category = category;
-		// Populate the container with empty slots.
-		for (int slotCount = 0; slotCount < numberOfSlots; slotCount++) {
-			slots.add(new Slot());
-		}
+		this.items    = items;
+	}
+	
+	/**
+	 * Create a new instance of the Container class.
+	 * @param type The container type.
+	 * @param category The container category.
+	 * @param slots The number of empty slots that the container should have.
+	 */
+	public Container(ContainerType type, ContainerCategory category, int numberOfSlots) {
+		this(type, category, new ItemType[numberOfSlots]);
+		// Set each item in the container to be of the NONE type.
+		Arrays.fill(this.items, ItemType.NONE);
 	}
 	
 	/**
@@ -43,18 +52,18 @@ public class Container implements IContainerDetails {
 	 */
 	@Override
 	public ItemType get(int index) {
-		return this.slots.get(index).get();
+		return this.items[index];
 	}
 	
 	/**
 	 * Sets the item type held in the slot defined by the index.
-	 * @param type The type of the item.
-	 * @param index The index of the slot to check.
+	 * @param index The index of the slot.
+	 * @param item The item to set as being held at the specified slot.
 	 */
-	public void set(ItemType type, int index) {
-		this.slots.get(index).set(type);
+	public void set(int index, ItemType item) {
+		this.items[index] = item;
 	}
-
+	
 	/**
 	 * Gets the container type.
 	 * @return The container type.
@@ -79,7 +88,7 @@ public class Container implements IContainerDetails {
 	 */
 	@Override
 	public int getSize() {
-		return this.slots.size();
+		return this.items.length;
 	}
 	
 	/**
@@ -88,8 +97,8 @@ public class Container implements IContainerDetails {
 	 */
 	public boolean isEmpty() {
 		// Check whether any item types other than NONE are held in this container.
-		for (Slot slot : slots) {
-			if (slot.get() != ItemType.NONE) {
+		for (ItemType item : this.items) {
+			if (!item.isNothing()) {
 				// We found a slot holding an item.
 				return false;
 			}
@@ -104,8 +113,8 @@ public class Container implements IContainerDetails {
 	 */
 	public boolean isFull() {
 		// Check whether any slots in this container are not holding an item.
-		for (Slot slot : slots) {
-			if (slot.get() == ItemType.NONE) {
+		for (ItemType item : this.items) {
+			if (item.isNothing()) {
 				// We found an empty slot.
 				return false;
 			}
@@ -121,12 +130,12 @@ public class Container implements IContainerDetails {
 	 */
 	public boolean isSlotFree(int index) {
 		// Is this a valid index?
-		if (index < 0 || index >= slots.size()) {
+		if (index < 0 || index >= getSize()) {
 			return false;
 		}
-		// Get the slot at this index.
-		Slot slot = slots.get(index);
-		// Return whether the slot is free.
-		return slot.get() == ItemType.NONE;
+		// Get the item at this index.
+		ItemType item = this.items[index];
+		// Return whether the item is free.
+		return item.isNothing();
 	}
 }

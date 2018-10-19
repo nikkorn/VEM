@@ -1,5 +1,6 @@
 package gaia.client.networking;
 
+import gaia.client.gamestate.Container;
 import gaia.client.gamestate.Placement;
 import gaia.client.gamestate.ServerState;
 import gaia.client.gamestate.players.Player;
@@ -10,6 +11,8 @@ import gaia.world.Direction;
 import gaia.world.PlacementType;
 import gaia.world.Position;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.items.container.ContainerType;
 
 /**
  * Processor of messages sent from the server.
@@ -62,6 +65,21 @@ public class ServerMessageProcessor {
 				// Handle the placement removal.
 				onPlacementRemoved(removedType, removedPlacementPosition);
 				break;
+				
+			case MessageIdentifier.CONTAINER_ADDED:
+				// Get the type of the added container.
+				ContainerType containerType = ((ContainerAdded)message).getContainerType();
+				// Get the category of the added container.
+				ContainerCategory containerCategory = ((ContainerAdded)message).getContainerCategory();
+				// Get the items held in the container.
+				ItemType[] itemsHeld = ((ContainerAdded)message).getItemsHeld();
+				// Create the container.
+				Container container = new Container(containerType, containerCategory, itemsHeld);
+				// Get the position of the added container.
+				Position position = ((ContainerAdded)message).getPosition();
+				// Handle the placement removal.
+				onContainerAdded(container, position);
+				break;
 			
 			case MessageIdentifier.INVENTORY_SLOT_CHANGED:
 				setInventorySlot(((InventorySlotSet)message).getItemType(), ((InventorySlotSet)message).getSlotIndex());
@@ -92,7 +110,7 @@ public class ServerMessageProcessor {
 	 * @param slotIndex The inventory slot index.
 	 */
 	private void setInventorySlot(ItemType itemType, int slotIndex) {
-		this.serverState.getPlayers().getClientsPlayer().getInventory().set(itemType, slotIndex);
+		this.serverState.getPlayers().getClientsPlayer().getInventory().set(slotIndex, itemType);
 	}
 
 	/**
@@ -190,5 +208,15 @@ public class ServerMessageProcessor {
 		}
 		// There is a placement of the expected type at the position where the placement was removed from, so remove it.
 		this.serverState.getPlacements().remove(position.getX(), position.getY());
+	}
+	
+	/**
+	 * Called in response to a container being added at a position.
+	 * @param container The added container.
+	 * @param position The position of the added container.
+	 */
+	private void onContainerAdded(Container container, Position position) {
+		// Update the server state to reflect the added container.
+		this.serverState.getContainers().add(container, position.getX(), position.getY());
 	}
 }
