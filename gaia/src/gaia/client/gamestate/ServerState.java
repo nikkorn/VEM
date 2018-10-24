@@ -33,11 +33,11 @@ public class ServerState implements IServerState {
     /**
      * The world placements.
      */
-    private Placements placements;
+    private Placements placements = new Placements();
     /**
      * The world containers.
      */
-    private Containers containers;
+    private Containers containers = new Containers();
     /**
      * The players.
      */
@@ -54,7 +54,6 @@ public class ServerState implements IServerState {
 		this.queuedMessageReader    = queuedMessageReader;
 		this.serverMessageProcessor = new ServerMessageProcessor(this);
 		this.tiles                  = Tiles.generate(new TileGenerator(worldSeed));
-		this.placements             = new Placements();
 		this.worldSeed              = worldSeed;
 		// Create the players collection.
 		this.players = new Players(playerId);

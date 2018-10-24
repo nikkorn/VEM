@@ -50,7 +50,7 @@ public abstract class Container {
 				// This won't happen as we just created the slots for the items.
 			}
 		}
-		// Create the initial  container snapshot.
+		// Create the initial container snapshot.
 		this.snapshot = new ContainerSnapshot(this);
 	}
 	
@@ -157,6 +157,7 @@ public abstract class Container {
 				slot.set(type);
 				// An item was added!
 				itemWasAdded = true;
+				break;
 			}
 		}
 		// If an item was added then we need to update the container snapshot.
@@ -226,5 +227,12 @@ public abstract class Container {
 		}
 		// Return the serialised JSON array.
 		return slotsArray;
+	}
+	
+	/**
+	 * Update the container snapshot.
+	 */
+	protected void updateSnapshot() {
+		this.snapshot = new ContainerSnapshot(this);
 	}
 }

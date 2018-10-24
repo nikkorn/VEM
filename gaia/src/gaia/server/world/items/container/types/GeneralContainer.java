@@ -21,6 +21,7 @@ public class GeneralContainer extends Container {
 	public GeneralContainer(int numberOfSlots) {
 		super(numberOfSlots);
 		this.category = ContainerCategory.STATIC;
+		this.updateSnapshot();
 	}
 	
 	/**
@@ -30,6 +31,7 @@ public class GeneralContainer extends Container {
 	public GeneralContainer(ItemType[] contains) {
 		super(contains);
 		this.category = ContainerCategory.PICKUP;
+		this.updateSnapshot();
 	}
 
 	@Override
