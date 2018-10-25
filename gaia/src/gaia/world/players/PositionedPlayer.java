@@ -55,4 +55,25 @@ public class PositionedPlayer {
 	public Direction getFacingDirection() {
 		return this.direction;
 	}
+	
+	/**
+	 * Get the world position that the player is facing.
+	 * @param position The player position.
+	 * @param facing The facing direction of the player.
+	 * @return The world position that the player is facing.
+	 */
+	public static Position getFacingPosition(Position position, Direction facing) {
+		switch(facing) {
+			case UP:
+				return new Position(position.getX(), (short) (position.getY() + 1));
+			case DOWN:
+				return new Position(position.getX(), (short) (position.getY() - 1));
+			case LEFT:
+				return new Position((short) (position.getX() - 1), position.getY());
+			case RIGHT:
+				return new Position((short) (position.getX() + 1), position.getY());
+			default:
+				return new Position(position.getX(), (short) (position.getY() - 1));
+		}
+	}
 }

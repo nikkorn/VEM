@@ -32,6 +32,12 @@ public interface IServerState {
 	IContainers getContainers();
 	
 	/**
+	 * Get the details of the container accessible by the clients player, or null if there is no accessible container.
+	 * @return The details of the container accessible by the clients player, or null if there is no accessible container.
+	 */
+	IContainerDetails getAccessibleContainer();
+	
+	/**
 	 * Get the world seed.
 	 * @return the world seed.
 	 */

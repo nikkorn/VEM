@@ -3,8 +3,8 @@ package gaia.server.world.players.requests;
 import gaia.server.world.World;
 import gaia.server.world.messaging.messages.InventorySlotSetMessage;
 import gaia.server.world.players.Player;
-import gaia.world.Position;
 import gaia.world.items.ItemType;
+import gaia.world.players.PositionedPlayer;
 
 /**
  * A request to use an inventory item.
@@ -53,7 +53,7 @@ public class UseItemRequest extends PlayerRequest {
 		switch(item.getTarget()) {
 			case FACING_TILE:
 				// We are targeting the position that the player is currently facing.
-				modification = world.useItem(item, getPlayerFacingPosition(player));
+				modification = world.useItem(item, PositionedPlayer.getFacingPosition(player.getPosition(), player.getFacingDirection()));
 				break;
 			case PLAYER:
 				// Use the item on the player directly.
@@ -68,26 +68,6 @@ public class UseItemRequest extends PlayerRequest {
 			player.getInventory().set(modification, slotIndex);
 			// Add a world message to notify of this change.
 			world.getWorldMessageQueue().add(new InventorySlotSetMessage(this.getRequestingPlayerId(), modification, slotIndex));
-		}
-	}
-	
-	/**
-	 * Get the world position that the player is facing.
-	 * @param player The player.
-	 * @return The world position that the player is facing.
-	 */
-	private static Position getPlayerFacingPosition(Player player) {
-		switch(player.getFacingDirection()) {
-			case UP:
-				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() + 1));
-			case DOWN:
-				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() - 1));
-			case LEFT:
-				return new Position((short) (player.getPosition().getX() - 1), player.getPosition().getY());
-			case RIGHT:
-				return new Position((short) (player.getPosition().getX() + 1), player.getPosition().getY());
-			default:
-				return new Position(player.getPosition().getX(), (short) (player.getPosition().getY() - 1));
 		}
 	}
 }

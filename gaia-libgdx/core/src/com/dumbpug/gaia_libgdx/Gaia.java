@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import gaia.Constants;
+import gaia.client.gamestate.IContainerDetails;
 import gaia.client.gamestate.IPlacementDetails;
 import gaia.client.gamestate.players.IPlayerDetails;
 import gaia.client.networking.IServerProxy;
@@ -185,6 +186,18 @@ public class Gaia extends ApplicationAdapter {
 			ItemType item = server.getServerState().getPlayersDetails().getClientsPlayerDetails().getInventorySlot(slotIndex);
 			// Draw the item in this slot.
 			batch.draw(itemResources.getItemTexture(item), slotIndex * 16, 0);
+		}
+		// Draw the items for the clients players accessible container (if there is one).
+		if (server.getServerState().getAccessibleContainer() != null) {
+			// Get the details of the container that the clients player is facing.
+			IContainerDetails containerDetails = server.getServerState().getAccessibleContainer();
+			// Draw each item in the contianer to the top of the screen.
+			for (int containerItemIndex = 0; containerItemIndex < containerDetails.getSize(); containerItemIndex++) {
+				// Get the item type at the current container slot.
+				ItemType item = containerDetails.get(containerItemIndex);
+				// Draw the item in this slot.
+				batch.draw(itemResources.getItemTexture(item), containerItemIndex * 16, Gdx.graphics.getHeight() - 16);
+			}
 		}
 		// Draw the disconnect overlay if we are disconnected.
 		if (!server.isConnected()) {

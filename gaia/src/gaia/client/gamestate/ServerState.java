@@ -7,6 +7,7 @@ import gaia.client.gamestate.players.Players;
 import gaia.client.networking.ServerMessageProcessor;
 import gaia.networking.MessageQueue;
 import gaia.networking.QueuedMessageReader;
+import gaia.world.Position;
 import gaia.world.generation.TileGenerator;
 import gaia.world.players.PositionedPlayer;
 
@@ -105,6 +106,22 @@ public class ServerState implements IServerState {
 	@Override
 	public Containers getContainers() {
 		return this.containers;
+	}
+	
+	/**
+	 * Get the details of the container accessible by the clients player, or null if there is no accessible container.
+	 * @return The details of the container accessible by the clients player, or null if there is no accessible container.
+	 */
+	@Override
+	public IContainerDetails getAccessibleContainer() {
+		// Get the clients player.
+		Player clientsPlayer = this.players.getClientsPlayer();
+		// Get the position that the clients player is facing.
+		Position facedPosition = PositionedPlayer.getFacingPosition(clientsPlayer.getPosition(), clientsPlayer.getFacingDirection());
+		// Try to get the container that is at the position the player is facing, or null if there is no container.
+		Container facedContainer = this.containers.getContainerAt(facedPosition.getX(), facedPosition.getY());
+		// Return the container at the faced position.
+		return facedContainer;
 	}
 	
 	/**
