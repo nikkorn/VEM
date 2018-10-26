@@ -140,16 +140,16 @@ public class CLIClient {
 	private static void movePlayer(String direction, IServerProxy server) throws IOException {
 		switch (direction) {
 			case "up":
-				server.getPlayerActions().move(Direction.UP);
+				server.getClientActions().move(Direction.UP);
 				break;
 			case "down":
-				server.getPlayerActions().move(Direction.DOWN);
+				server.getClientActions().move(Direction.DOWN);
 				break;
 			case "left":
-				server.getPlayerActions().move(Direction.LEFT);
+				server.getClientActions().move(Direction.LEFT);
 				break;
 			case "right":
-				server.getPlayerActions().move(Direction.RIGHT);
+				server.getClientActions().move(Direction.RIGHT);
 				break;
 			default:
 				System.out.println("unknown direction: " + direction);

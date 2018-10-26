@@ -14,10 +14,10 @@ public interface IServerProxy {
 	IServerState getServerState();
 	
 	/**
-	 * Get the actions that can be taken by the player.
-	 * @return The actions that can be taken by the player.
+	 * Get the actions that can be taken by the client.
+	 * @return The actions that can be taken by the client.
      */
-	PlayerActions getPlayerActions();
+	ClientActions getClientActions();
 	
 	/**
 	 * Get whether we are still connected with the server.

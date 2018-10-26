@@ -24,9 +24,9 @@ public class ServerProxy implements IServerProxy {
 	 */
 	private QueuedMessageReader queuedMessageReader;
 	/**
-	 * The actions that can be taken by the player.
+	 * The actions that can be taken by the client.
 	 */
-	private PlayerActions playerActions;
+	private ClientActions clientActions;
 	/**
 	 * The client-side representation of the server state.
 	 */
@@ -42,7 +42,7 @@ public class ServerProxy implements IServerProxy {
 	private ServerProxy(String playerId, final QueuedMessageReader queuedMessageReader, MessageOutputStream messageOutputStream, JoinSuccess joinSuccessMessage) {
 		this.queuedMessageReader = queuedMessageReader;
 		this.serverState         = new ServerState(playerId, queuedMessageReader, joinSuccessMessage.getWorldSeed(), joinSuccessMessage.getPositionedPlayers());
-		this.playerActions       = new PlayerActions(messageOutputStream, serverState);
+		this.clientActions       = new ClientActions(messageOutputStream, serverState);
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class ServerProxy implements IServerProxy {
 	 * @return The actions that can be taken by the player.
      */
 	@Override
-	public PlayerActions getPlayerActions() {
-		return this.playerActions;
+	public ClientActions getClientActions() {
+		return this.clientActions;
 	}
 	
 	/**

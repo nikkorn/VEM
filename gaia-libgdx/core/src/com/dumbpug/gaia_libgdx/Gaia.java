@@ -82,16 +82,16 @@ public class Gaia extends ApplicationAdapter {
 		}
 		// Check whether the player wants to move.
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			this.server.getPlayerActions().move(Direction.UP);
+			this.server.getClientActions().move(Direction.UP);
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			this.server.getPlayerActions().move(Direction.DOWN);
+			this.server.getClientActions().move(Direction.DOWN);
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			this.server.getPlayerActions().move(Direction.LEFT);
+			this.server.getClientActions().move(Direction.LEFT);
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			this.server.getPlayerActions().move(Direction.RIGHT);
+			this.server.getClientActions().move(Direction.RIGHT);
 		}
 		// Check whether the player wants to change their active inventory slot.
 		if(Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
@@ -103,7 +103,7 @@ public class Gaia extends ApplicationAdapter {
 		}
 		// Check whether to use the active inventory item.
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			this.server.getPlayerActions().useItem(activeInventorySlot);
+			this.server.getClientActions().useInventoryItem(activeInventorySlot);
 		}
 		// Refresh our server state.
 		server.getServerState().refresh();
