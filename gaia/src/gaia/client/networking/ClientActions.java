@@ -7,6 +7,7 @@ import gaia.client.gamestate.players.Inventory;
 import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
+import gaia.networking.messages.MoveContainerItemToInventory;
 import gaia.networking.messages.MovePlayer;
 import gaia.networking.messages.UseInventoryItem;
 import gaia.world.Direction;
@@ -81,6 +82,12 @@ public class ClientActions {
 	 * @param slot The inventory slot index.
 	 */
 	public void useInventoryItem(int slot) {
+		// Get the client's player.
+		Player player = serverState.getPlayers().getClientsPlayer();
+		// We should not be using inventory items while we are walking.
+		if (player.isWalking()) {
+			return;
+		}
 		// Do nothing if the slot index is invalid.
 		if (!Inventory.isValidSlotIndex(slot)) {
 			throw new RuntimeException("Invalid inventory slot index: " + slot);
@@ -88,7 +95,7 @@ public class ClientActions {
 		// Refresh the server state to ensure we have the latest inventory slots.
 		this.serverState.refresh();
 		// Get the item at the specified index.
-		ItemType itemType = serverState.getPlayers().getClientsPlayer().getInventory().get(slot);
+		ItemType itemType = player.getInventory().get(slot);
 		// We do not want to do anything if there is no target of use for the item in the slot.
 		if (itemType.getTarget() == ItemTarget.NONE) {
 			return;
@@ -110,10 +117,28 @@ public class ClientActions {
 	 * @param inventorySlot The inventory slot index.
 	 */
 	public void moveContainerItemToInventory(int containerSlot, int inventorySlot) {
+		// Get the client's player.
+		Player player = serverState.getPlayers().getClientsPlayer();
+		// We should not be moving inventory items while we are walking.
+		if (player.isWalking()) {
+			return;
+		}
+		// Do nothing if the inventory slot index is invalid.
+		if (!Inventory.isValidSlotIndex(inventorySlot)) {
+			throw new RuntimeException("Invalid inventory slot index: " + inventorySlot);
+		}
 		// Refresh the server state to ensure we have the latest info.
 		this.serverState.refresh();
-		
-		// ...
+		// Do nothing if there is no container in front of the player.
+		if (serverState.getAccessibleContainer() == null) {
+			return;
+		}
+		// Get the inventory item at the specified index.
+		ItemType inventoryItemType = player.getInventory().get(inventorySlot);
+		// Get the container item at the specified index.
+		ItemType containerItemType = serverState.getAccessibleContainer().get(containerSlot);
+		// Send a message to the server asking to move the item from the container to the players inventory.
+		send(new MoveContainerItemToInventory(containerSlot, containerItemType, inventorySlot, inventoryItemType));
 	}
 
 	/**
