@@ -40,6 +40,8 @@ public class ClientServerMessageMarshallerProviderFactory {
 		provider.addMarshaller(new InventorySlotSetMarshaller());
 		// Add the marshaller used for reading/writing use inventory item messages.
 		provider.addMarshaller(new UseInventoryItemMarshaller());
+		// Add the marshaller used for reading/writing swap inventory and container item messages.
+		provider.addMarshaller(new SwapContainerAndInventoryItemMarshaller());
 		// Return the provider.
 		return provider;
 	}

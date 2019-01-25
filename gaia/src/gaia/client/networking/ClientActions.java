@@ -7,13 +7,14 @@ import gaia.client.gamestate.players.Inventory;
 import gaia.client.gamestate.players.Player;
 import gaia.networking.IMessage;
 import gaia.networking.MessageOutputStream;
-import gaia.networking.messages.MoveContainerItemToInventory;
+import gaia.networking.messages.SwapContainerAndInventoryItem;
 import gaia.networking.messages.MovePlayer;
 import gaia.networking.messages.UseInventoryItem;
 import gaia.world.Direction;
 import gaia.world.Position;
 import gaia.world.items.ItemTarget;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerCategory;
 
 /**
  * Client actions.
@@ -106,17 +107,17 @@ public class ClientActions {
 
 	/**
 	 * Move an item from a slot in an accessible container to a slot in the player inventory.
+	 * This will also move the inventory item to the container slot as long as the container
+	 * category is STATIC or the item being moved to the container is the NONE type, otherwise
+	 * the swap will not be carried out as items that are not of the NONE type caoont be placed
+	 * back into containers of the PICKUP category type.
+	 * 
 	 * This does nothing if there is no accessible container for the player to interact with.
 	 * 
-	 * If the container category is PICKUP then items can only be moved into a free inventory
-	 * slot as items cannot be moved into PICKUP container slots.
-	 * 
-	 * If the container category is STATIC then when a container item is moved into an occupied
-	 * inventory slot then the items are swapped. 
 	 * @param containerSlot The container slot index.
 	 * @param inventorySlot The inventory slot index.
 	 */
-	public void moveContainerItemToInventory(int containerSlot, int inventorySlot) {
+	public void swapContainerAndInventoryItem(int containerSlot, int inventorySlot) {
 		// Get the client's player.
 		Player player = serverState.getPlayers().getClientsPlayer();
 		// We should not be moving inventory items while we are walking.
@@ -137,26 +138,13 @@ public class ClientActions {
 		ItemType inventoryItemType = player.getInventory().get(inventorySlot);
 		// Get the container item at the specified index.
 		ItemType containerItemType = serverState.getAccessibleContainer().get(containerSlot);
-		// Send a message to the server asking to move the item from the container to the players inventory.
-		send(new MoveContainerItemToInventory(containerSlot, containerItemType, inventorySlot, inventoryItemType));
-	}
-
-	/**
-	 * Move an item from a slot in the player inventory to a slot in an accessible container.
-	 * This does nothing if there is no accessible container for the player to interact with.
-	 * 
-	 * If the container category is PICKUP then items cannot be moved to the container.
-	 * 
-	 * If the container category is STATIC then when an inventory item is moved into an occupied
-	 * container slot then the items are swapped. 
-	 * @param inventorySlot The inventory slot index.
-	 * @param containerSlot The container slot index.
-	 */
-	public void moveInventoryItemToContainer(int inventorySlot, int containerSlot) {
-		// Refresh the server state to ensure we have the latest info.
-		this.serverState.refresh();
-		
-		// ...
+		// Do nothing if the accessible container is a PICKUP container and we are trying
+		// to move an inventory item that is not the NONE type into a container slot.
+		if (serverState.getAccessibleContainer().getCategory() == ContainerCategory.PICKUP && !inventoryItemType.isNothing()) {
+			return;
+		}
+		// Send a message to the server asking to swap an invetory item with a container item.
+		send(new SwapContainerAndInventoryItem(containerSlot, containerItemType, inventorySlot, inventoryItemType));
 	}
 
 	/**

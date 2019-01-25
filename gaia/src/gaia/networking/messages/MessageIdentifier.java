@@ -9,10 +9,7 @@ public class MessageIdentifier {
 	public static final int HANDSHAKE                          = 0; 
 	public static final int MOVE_PLAYER                        = 1;
 	public static final int USE_INVENTORY_ITEM                 = 2;
-	public static final int OPEN_CONTAINER                     = 3;
-	public static final int CLOSE_CONTAINER                    = 4;
-	public static final int MOVE_CONTAINER_ITEM_TO_INVENTORY   = 5;
-	public static final int MOVE_INVENTORY_ITEM_TO_CONTAINER   = 6;
+	public static final int SWAP_CONTAINER_AND_INVENTORY_ITEM  = 3;
 	
 	// Server -> Client
 	public static final int JOIN_SUCCESS                       = 100;
