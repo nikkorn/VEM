@@ -3,9 +3,11 @@ package gaia.server.networking;
 import gaia.networking.IMessage;
 import gaia.networking.messages.MessageIdentifier;
 import gaia.networking.messages.MovePlayer;
+import gaia.networking.messages.SwapContainerAndInventoryItem;
 import gaia.networking.messages.UseInventoryItem;
 import gaia.server.engine.Request;
 import gaia.server.world.players.requests.MoveRequest;
+import gaia.server.world.players.requests.SwapContainerAndInventoryItemRequest;
 import gaia.server.world.players.requests.UseItemRequest;
 
 /**
@@ -60,6 +62,10 @@ public class ClientMessage {
 
 			case MessageIdentifier.USE_INVENTORY_ITEM:
 				return new UseItemRequest(message.getPlayerId(), ((UseInventoryItem)message.getMessage()).getSlotIndex(), ((UseInventoryItem)message.getMessage()).getExpectedItemType());
+			
+			case MessageIdentifier.SWAP_CONTAINER_AND_INVENTORY_ITEM:
+				SwapContainerAndInventoryItem swapMessage = (SwapContainerAndInventoryItem) message.getMessage(); 
+				return new SwapContainerAndInventoryItemRequest(message.getPlayerId(), swapMessage.getContainerSlotIndex(), swapMessage.getExpectedContainerItem(), swapMessage.getInventorySlotIndex(), swapMessage.getExpectedInventoryItem());
 
 			default:
 				throw new RuntimeException("error: cannot convert client message with id '" + message.getMessage().getTypeId() + "' to engine request.");

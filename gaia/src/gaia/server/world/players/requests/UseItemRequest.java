@@ -21,7 +21,7 @@ public class UseItemRequest extends PlayerRequest {
 
 	/**
 	 * Create a new instance of the MoveRequest class.
-	 * @param playerId The id of the player requesting to join. 
+	 * @param playerId The id of the player requesting to use the item. 
 	 * @param slotIndex The index of the inventory slot containing the item the player wishes to use.
 	 * @param expected The item type that was present in the inventory slot at the time of making the request.
 	 */

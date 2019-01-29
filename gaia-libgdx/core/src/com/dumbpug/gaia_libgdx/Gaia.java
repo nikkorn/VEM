@@ -105,6 +105,10 @@ public class Gaia extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			this.server.getClientActions().useInventoryItem(activeInventorySlot);
 		}
+		// Check whether to request a swap of the currently selected inventroy item and selected container item.
+		if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+			this.server.getClientActions().swapContainerAndInventoryItem(0, activeInventorySlot);
+		}
 		// Refresh our server state.
 		server.getServerState().refresh();
 	}
