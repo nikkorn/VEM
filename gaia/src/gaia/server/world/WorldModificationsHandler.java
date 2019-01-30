@@ -2,6 +2,7 @@ package gaia.server.world;
 
 import java.util.ArrayList;
 import gaia.Constants;
+import gaia.server.ServerConsole;
 import gaia.server.world.items.container.Container;
 import gaia.server.world.items.container.ContainerSnapshot;
 import gaia.server.world.messaging.WorldMessageQueue;
@@ -143,7 +144,7 @@ public class WorldModificationsHandler {
 	 * @param position The position of the changed container.
 	 */
 	public void onContainerSlotsChanged(Container container, int indexPosition, Position position) {
-		// TODO ...
+		ServerConsole.writeDebug("onContainerSlotsChanged called for item " + container.get(indexPosition));
 	}
 	
 	/**

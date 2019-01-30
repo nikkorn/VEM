@@ -18,10 +18,10 @@ public class Placements {
 	private Priority highestPriority = Priority.NONE;
 
 	/**
-	 * Get the placement at the x/y position, or null if the position has no placement.
-	 * @param x The x position of the placement.
-	 * @param y The y position of the placement.
-	 * @return The placement at the x/y position, or null if the position has no placement.
+	 * Get the placement at the local x/y position, or null if the position has no placement.
+	 * @param x The local x position of the placement.
+	 * @param y The local y position of the placement.
+	 * @return The placement at the local x/y position, or null if the position has no placement.
 	 */
 	public Placement get(int x, int y) {
 		// Create the key for the position.

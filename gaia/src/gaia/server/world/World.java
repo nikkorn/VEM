@@ -7,6 +7,7 @@ import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
 import gaia.server.world.chunk.Chunks;
 import gaia.server.world.chunk.ITileVisitor;
+import gaia.server.world.items.container.Container;
 import gaia.server.world.messaging.WorldMessageQueue;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementCreatedMessage;
@@ -175,6 +176,25 @@ public class World {
 		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Ask the chunk whether the local position is walkable.
 		return targetChunk.isPositionWalkable((position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
+	}
+	
+	/**
+	 * Get the container at the specified world position if it exists.
+	 * @param position The world position.
+	 * @return The container at the specified world position if it exists.
+	 */
+	public Container getContainer(Position position) {
+		// We cannot get containers in positions within chunks that are not loaded.
+		if (!this.chunks.isChunkCached(position.getChunkX(), position.getChunkY())) {
+			// The chunk that this position is within is not loaded.
+			return null;
+		}
+		// Get the chunk that this position is within.
+		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
+		// For a container to exist it has to be associated with a placement, try to get the placement at the position.
+		Placement targetPlacement = targetChunk.getPlacements().get((position.getX() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE, (position.getY() + Constants.WORLD_SIZE) % Constants.WORLD_CHUNK_SIZE);
+		// Return the placement container if the placemnet exists.
+		return targetPlacement == null ? null : targetPlacement.getContainer();
 	}
 	
 	/**
