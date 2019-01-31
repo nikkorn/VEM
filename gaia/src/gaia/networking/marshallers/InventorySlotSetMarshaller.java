@@ -28,7 +28,7 @@ public class InventorySlotSetMarshaller implements IMessageMarshaller<InventoryS
 		// Write the slot index.
 		dataOutputStream.writeByte((byte) message.getSlotIndex());
 		// Write the item type ordinal.
-		dataOutputStream.writeInt(message.getItemType().ordinal());
+		dataOutputStream.writeInt(message.getItemHeld().ordinal());
 	}
 	
 	@Override

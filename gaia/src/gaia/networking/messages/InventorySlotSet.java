@@ -27,10 +27,10 @@ public class InventorySlotSet implements IMessage {
 	}
 
 	/**
-	 * Get the item type.
+	 * Get the item type held in the slot.
 	 * @return The item type.
 	 */
-	public ItemType getItemType() {
+	public ItemType getItemHeld() {
 		return this.itemType;
 	}
 	

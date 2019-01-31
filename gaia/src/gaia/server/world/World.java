@@ -2,6 +2,8 @@ package gaia.server.world;
 
 import gaia.world.generation.TileGenerator;
 import gaia.world.items.ItemType;
+import gaia.world.items.container.ContainerCategory;
+import gaia.world.players.PositionedPlayer;
 import org.json.JSONObject;
 import gaia.Constants;
 import gaia.server.world.chunk.Chunk;
@@ -9,6 +11,7 @@ import gaia.server.world.chunk.Chunks;
 import gaia.server.world.chunk.ITileVisitor;
 import gaia.server.world.items.container.Container;
 import gaia.server.world.messaging.WorldMessageQueue;
+import gaia.server.world.messaging.messages.InventorySlotSetMessage;
 import gaia.server.world.messaging.messages.PlacementChangedMessage;
 import gaia.server.world.messaging.messages.PlacementCreatedMessage;
 import gaia.server.world.messaging.messages.PlacementRemovedMessage;
@@ -158,6 +161,38 @@ public class World {
 		Chunk targetChunk = this.chunks.getCachedChunk(position.getChunkX(), position.getChunkY());
 		// Use the item at the position in the chunk and return any modification made in its use.
 		return targetChunk.useItem(item, Chunk.convertWorldToLocalPosition(position.getX()), Chunk.convertWorldToLocalPosition(position.getY()), this.placementModificationsHandler);
+	}
+	
+	/**
+	 * Set a slot in the container accessible to the player if one exists.
+	 * @param player The player requesting to set a slot in the container accessible to them.
+	 * @param inventorySlotIndex The index of the slot in the player inventory holding the item to set in the container slot.
+	 * @param containerSlotIndex The index of the slot in the container to set the item in and swap out.
+	 */
+	public void setAccessibleContainerSlot(Player player, int inventorySlotIndex, int containerSlotIndex) {
+		// Get the position that the player is facing.
+		Position facingPosition = PositionedPlayer.getFacingPosition(player.getPosition(), player.getFacingDirection());
+		// Try to get the container that is in front of the player.
+		Container container = getContainer(facingPosition);
+		// There is nothing to do if there is no container in front of the player.
+		if (container == null) {
+			return;
+		}
+		// Get the inventory item.
+		ItemType inventoryItem = player.getInventory().get(inventorySlotIndex);
+		// There is nothing to do if the item is not the NONE type and the container 
+		// category is PICKUP, as items cannot be placed into PICKUP containers.
+		if (container.getCategory() == ContainerCategory.PICKUP && !inventoryItem.isNothing()) {
+			return;
+		}
+		// Set the inventory slot of the player to the container item type.
+		player.getInventory().set(container.get(containerSlotIndex), inventorySlotIndex);
+		// Add a world message to notify of this change.
+		this.worldMessageQueue.add(new InventorySlotSetMessage(player.getId(), container.get(containerSlotIndex), inventorySlotIndex));
+		// Set the container slot to the inventory slot item type.
+		container.set(inventoryItem, containerSlotIndex);
+		// The placement modifications handler should take care of the slot change by updating player familiarity and sending network messages.
+		this.placementModificationsHandler.onContainerSlotsChanged(container, containerSlotIndex, facingPosition);
 	}
 	
 	/**

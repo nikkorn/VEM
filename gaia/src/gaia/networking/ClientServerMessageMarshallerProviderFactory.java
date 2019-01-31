@@ -36,6 +36,8 @@ public class ClientServerMessageMarshallerProviderFactory {
 		provider.addMarshaller(new PlacementRemovedMarshaller());
 		// Add the marshaller used for reading/writing container created messages.
 		provider.addMarshaller(new ContainerAddedMarshaller());
+		// Add the marshaller used for reading/writing container slot set messages.
+		provider.addMarshaller(new ContainerSlotSetMarshaller());
 		// Add the marshaller used for reading/writing inventory slot set messages.
 		provider.addMarshaller(new InventorySlotSetMarshaller());
 		// Add the marshaller used for reading/writing use inventory item messages.

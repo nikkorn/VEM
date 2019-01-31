@@ -99,4 +99,13 @@ public interface IWorldEventsHandler {
 	 * @param container The container details.
 	 */
 	void onContainerAdd(String[] playerIds, IPositionDetails position, IContainerDetails container);
+	
+	/**
+	 * Called when a slot in a container changes.
+	 * @param playerIds The ids of any players who are in the vicinity of the added container.
+	 * @param position The position of the container.
+	 * @param item The item that is now in the container slot.
+	 * @param slotIndex The index of the changed container slot.
+	 */
+	void onContainerSlotSet(String[] playerIds, IPositionDetails position, ItemType item, int slotIndex);
 }

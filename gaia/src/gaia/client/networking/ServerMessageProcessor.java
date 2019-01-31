@@ -80,9 +80,13 @@ public class ServerMessageProcessor {
 				// Handle the placement removal.
 				onContainerAdded(container, position);
 				break;
+				
+			case MessageIdentifier.CONTAINER_SLOT_SET:
+				setContainerSlot(((ContainerSlotSet)message).getPosition(), ((ContainerSlotSet)message).getItemHeld(), ((ContainerSlotSet)message).getSlotIndex());
+				break;
 			
 			case MessageIdentifier.INVENTORY_SLOT_CHANGED:
-				setInventorySlot(((InventorySlotSet)message).getItemType(), ((InventorySlotSet)message).getSlotIndex());
+				setInventorySlot(((InventorySlotSet)message).getItemHeld(), ((InventorySlotSet)message).getSlotIndex());
 				break;
 			
 			case MessageIdentifier.PLAYER_SPAWNED:
@@ -111,6 +115,16 @@ public class ServerMessageProcessor {
 	 */
 	private void setInventorySlot(ItemType itemType, int slotIndex) {
 		this.serverState.getPlayers().getClientsPlayer().getInventory().set(slotIndex, itemType);
+	}
+	
+	/**
+	 * Set the item type for a container slot.
+	 * @param itemType The item type.
+	 * @param slotIndex The container slot index.
+	 */
+	private void setContainerSlot(Position position, ItemType itemType, int slotIndex) {
+		// TODO Set container slot.
+		System.out.println("SET CONTAINER SLOT!");
 	}
 
 	/**

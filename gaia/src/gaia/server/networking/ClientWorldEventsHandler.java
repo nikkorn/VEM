@@ -2,6 +2,7 @@ package gaia.server.networking;
 
 import java.util.ArrayList;
 import gaia.networking.messages.ContainerAdded;
+import gaia.networking.messages.ContainerSlotSet;
 import gaia.networking.messages.InventorySlotSet;
 import gaia.networking.messages.PlacementCreated;
 import gaia.networking.messages.PlacementRemoved;
@@ -112,6 +113,14 @@ public class ClientWorldEventsHandler implements IWorldEventsHandler {
 		// Let each player that cares about this added container know about it.
 		for (String playerId : playerIds) {
 			this.clientProxyManager.sendMessage(playerId, new ContainerAdded(position.copy(), container.getType(), container.getCategory(), container.getItemsHeld()));
+		}
+	}
+
+	@Override
+	public void onContainerSlotSet(String[] playerIds, IPositionDetails position, ItemType item, int slotIndex) {
+		// Let each player that cares about this changed container know about it.
+		for (String playerId : playerIds) {
+			this.clientProxyManager.sendMessage(playerId, new ContainerSlotSet(position.copy(), slotIndex, item));
 		}
 	}
 }
