@@ -36,6 +36,9 @@ public class Gaia extends ApplicationAdapter {
 	/** The current active inventory slot index. */
 	private int activeInventorySlot = 0;
 	
+	/** The maintainer of state for accessible containers. */
+	private ContainerInteractionState containerInteractionState = null;
+	
 	/** The server/player details. */
 	String address;
 	int port;
@@ -79,6 +82,17 @@ public class Gaia extends ApplicationAdapter {
 		// Do nothing if we are not connected.
 		if (!server.isConnected()) {
 			return;
+		}
+		// Get the container that the player is facing (if there is one).
+		IContainerDetails accessibleContainerDetails = server.getServerState().getAccessibleContainer();
+		// Update the accessible container state if we are facing a container.
+		if (accessibleContainerDetails != null) {
+			if (this.containerInteractionState == null || !this.containerInteractionState.isStateFor(accessibleContainerDetails)) {
+				this.containerInteractionState = new ContainerInteractionState(accessibleContainerDetails);
+			}
+		} else {
+			// There should be no container state as there is no accessible container.
+			this.containerInteractionState = null;
 		}
 		// Check whether the player wants to move.
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -183,7 +197,7 @@ public class Gaia extends ApplicationAdapter {
 		// Draw the Inventory bar!
 		batch.draw(HUDResources.INVENTORY_BAR, 0, 0);
 		// Draw the Inventory bar active slot!
-		batch.draw(HUDResources.INVENTORY_BAR_ACTIVE_SLOT, activeInventorySlot * 16, 0);
+		batch.draw(HUDResources.ITEM_BAR_ACTIVE_SLOT, activeInventorySlot * 16, 0);
 		// Draw the items in the inventory bar!
 		for (int slotIndex = 0; slotIndex < Constants.PLAYER_INVENTORY_SIZE; slotIndex++) {
 			// Get the item type at the current player slot.
@@ -193,21 +207,29 @@ public class Gaia extends ApplicationAdapter {
 		}
 		// Draw the items for the clients players accessible container (if there is one).
 		if (server.getServerState().getAccessibleContainer() != null) {
-			// Get the details of the container that the clients player is facing.
-			IContainerDetails containerDetails = server.getServerState().getAccessibleContainer();
-			// Draw each item in the contianer to the top of the screen.
-			for (int containerItemIndex = 0; containerItemIndex < containerDetails.getSize(); containerItemIndex++) {
-				// Get the item type at the current container slot.
-				ItemType item = containerDetails.get(containerItemIndex);
-				// Draw the item in this slot.
-				batch.draw(itemResources.getItemTexture(item), containerItemIndex * 16, Gdx.graphics.getHeight() - 16);
-			}
+			drawContainerBar(server.getServerState().getAccessibleContainer());
 		}
 		// Draw the disconnect overlay if we are disconnected.
 		if (!server.isConnected()) {
 			batch.draw(HUDResources.DISCONNECT, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		}
 		batch.end();
+	}
+	
+	/**
+	 * Draw the container bar fro the accessible container.
+	 * @param containerDetails The container details.
+	 */
+	private void drawContainerBar(IContainerDetails containerDetails) {
+		// Draw the container backing bar.
+		batch.draw(HUDResources.CONTAINER_BAR, 0, Gdx.graphics.getHeight() - HUDResources.CONTAINER_BAR.getHeight());
+		// Draw each item in the contianer to the top of the screen.
+		for (int containerItemIndex = 0; containerItemIndex < containerDetails.getSize(); containerItemIndex++) {
+			// Get the item type at the current container slot.
+			ItemType item = containerDetails.get(containerItemIndex);
+			// Draw the item in this slot.
+			batch.draw(itemResources.getItemTexture(item), containerItemIndex * 16, Gdx.graphics.getHeight() - 16);
+		}
 	}
 	
 	@Override

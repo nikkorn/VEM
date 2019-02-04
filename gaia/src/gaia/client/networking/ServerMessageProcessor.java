@@ -123,8 +123,10 @@ public class ServerMessageProcessor {
 	 * @param slotIndex The container slot index.
 	 */
 	private void setContainerSlot(Position position, ItemType itemType, int slotIndex) {
-		// TODO Set container slot.
-		System.out.println("SET CONTAINER SLOT!");
+		// Get the target container.
+		Container container =  this.serverState.getContainers().getContainerAt(position.getX(), position.getY());
+		// Update the relevant container slot.
+		container.set(slotIndex, itemType);
 	}
 
 	/**
